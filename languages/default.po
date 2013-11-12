@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Google Authenticator for WordPress\n"
+"POT-Creation-Date: 2013-11-12 22:47+0700\n"
+"PO-Revision-Date: 2013-11-12 22:47+0700\n"
+"Last-Translator: \n"
+"Language-Team: Julien Liabeuf <julien@liabeuf.fr>\n"
+"Language: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_n\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: C:\\wamp\\www\\plugins-dev\\wp-content\\plugins\\wp-"
+"google-authenticator\n"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:60
+msgid "Authenticator"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:62
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:564
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:628
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/settings.class.php:219
+msgid "WP Google Authenticator Settings"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:85
+msgid "Activate Plugin"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:86
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:104
+msgid "Name under which this site will appear in the Google Authenticator app."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:88
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:97
+msgid "Yes"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:94
+msgid "Force Use"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:95
+msgid ""
+"Do you want to force your users to use 2-factor authentication (admins AND "
+"you included)?"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:103
+msgid "Site Name"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:111
+msgid "Max Attempts"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:112
+msgid ""
+"If you chose to force users to use 2-factor authentication, you can specify "
+"a maximum number of times a user can login WITHOUT setting up the 2-factor "
+"authentication (leave <code>0</code> for unlimited attempts)."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:119
+msgid "Authorized Clock Desynchronization"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:120
+msgid ""
+"Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords "
+"issues. Please read the contextual help for more info."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:139
+msgid "Desynchronization"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:140
+msgid ""
+"<h2>Authorized Clock Desynchronization</h2><p>First of all, you have to "
+"understand how the 2-factor authentication works.</p><p>The Google "
+"Authenticator will generate a TOTP which stands for Time based One Time "
+"Pasword. This one time password, as you might now understand, is generated "
+"based on the current time.</p><p>If the server's (where your site is hosted) "
+"clock and the user's phone clock are not perfectly synchronized, the one "
+"time password generated won't work, as it will be generated on a time which "
+"is different from the server.</p><p>The authorized desynchronization will "
+"allow your users more time to use their one time password. By default, one "
+"code will be valid for <strong>30 seconds</strong>. If you want to give them "
+"more time, you can specify a delay in <strong>minutes</strong>.</p><p>Of "
+"course, if you give users more time, the security will be lowered. It is "
+"advised to stick with the default 30 secs.</p>"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:212
+msgid "Your secret key has been regenerated."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:213
+#, php-format
+msgid "The key for user %s has been revoked."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:214
+msgid "The attempts count has been reset."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:249
+#, php-format
+msgid ""
+"The admin is requesting all users to activate 2-factor authentication. <a "
+"href=\"%s\">Please do it now</a>. You only have <strong>%s</strong> login "
+"attempts left."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:264
+msgid " version "
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:449
+msgid "Please provide your one time password."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:465
+msgid "The one time password you used has already been revoked."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:471
+msgid ""
+"The Google Authenticator one time password is incorrect or expired. Please "
+"try with a newly generated password."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:491
+msgid ""
+"You have reached the maximum number of logins WITHOUT using 2-factor "
+"authentication. Please contact the admin to reset your account."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:579
+msgid "Activate"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:582
+msgid ""
+"Do you wish to use 2-factor authentication (require the Google Authenticator "
+"app)?"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:589
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:633
+msgid "Secret"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:593
+msgid "Generate Key"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:594
+msgid ""
+"This is going to be your secret key. Please save changes and scroll back to "
+"this field to get your QR code."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:598
+msgid "Get QR Code"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:599
+msgid "Regenerate Key"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:600
+msgid "This is your personal secret key. Don't share it!"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:603
+msgid "QR Code"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:636
+msgid "This user didn't set a secret key."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:638
+msgid "This user has a secret key."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:638
+msgid "Revoke Key"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:643
+msgid "Login Attempts"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:646
+msgid "Reset"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:647
+msgid "(This user is locked out)"
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:648
+msgid "Number of times the user logged-in without using the TOTP."
+msgstr ""
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:691
+msgid "Google Authenticator"
+msgstr ""
