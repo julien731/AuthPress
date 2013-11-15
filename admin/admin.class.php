@@ -41,6 +41,8 @@ class WPGA_Admin {
 				add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
 		}
 
+		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
+
 		add_action( 'login_form', array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user', array( $this, 'authenticateUser' ), 10, 3 );
 
@@ -69,6 +71,22 @@ class WPGA_Admin {
 		/* Instanciate the options class */
 		$this->settings = new TAV_Settings( $args );
 		
+	}
+
+	/**
+	 * Load the scripts resources on the login page used for the tooltip
+	 */
+	public function loadResources() {
+
+		global $pagenow;
+
+		if( 'wp-login.php' == $pagenow ) {
+			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array(), null, true );
+			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), null, true );
+			wp_enqueue_style( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.css', array(), null, 'all' );
+		}
+
 	}
 
 	/**
@@ -688,9 +706,9 @@ class WPGA_Admin {
 		?>
 		<p>
 			<label for="authenticator">
-				<?php _e( 'Google Authenticator', 'wpga' ); ?>
+				<?php _e( 'Google Authenticator', 'wpga' ); ?> <small><a href="#" title="<?php _e( 'If you do not have configured the 2-factor authentication,<br> just leave this field blank and you will be logged-in as usual.', 'wpga' ); ?>" class="wpgahelp">[?]</a></small>
 				<br>
-				<input id="authenticator" class="input" type="text" size="20" value="" name="totp"></input>
+				<input id="authenticator" class="input" type="text" size="20" value="" name="totp">
 			</label>
 		</p>
 		<?php
