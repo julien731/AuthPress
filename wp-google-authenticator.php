@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Google Authenticator for WordPress
+ * Plugin Name: WP Google Authenticator
  * Plugin URI: https://github.com/julien731/WP-Google-Authenticator
  * Description: WP Google Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
  * Version: 1.0.0
