@@ -217,10 +217,6 @@ class TAV_Settings {
 		<div class="wrap">  
 			<div class="icon32" id="<?php echo $this->icon; ?>"></div>  
 			<h2><?php _e( 'WP Google Authenticator Settings', 'wpga' ); ?></h2>
-
-			<?php if( isset($_GET['settings-updated']) ) {
-				echo '<div class="updated"><p>Settings updated successfully.</p></div>';
-			} ?>
 			  
 			<form action="options.php" method="post">
 				<?php
