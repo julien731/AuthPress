@@ -101,7 +101,7 @@ class WPGA_Admin {
 		$this->settings->addOption( 'general', array(
 			'id' 		=> 'active',
 			'title' 	=> __( 'Activate Plugin', 'wpga' ),
-			'desc' 		=> __( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
+			'desc' 		=> __( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
 			'field' 	=> 'checkbox',
 			'opts' 		=> array( 'yes' => __( 'Yes', 'wpga' ) )
 			)
@@ -449,6 +449,11 @@ class WPGA_Admin {
 	 */
 	public function authenticateUser( $user, $password ) {
 
+		$options = get_option( 'wpga_options', array() );
+
+		if( !isset( $options['active'] ) || !in_array( 'yes', $options['active'] )  )
+			return $user;
+
 		if( !is_wp_error( $user ) ) {
 
 			$username 	= $user->data->user_login;
@@ -702,6 +707,11 @@ class WPGA_Admin {
 	 * Add verification code field to login form.
 	 */
 	public function customizeLoginForm() {
+
+		$options = get_option( 'wpga_options', array() );
+
+		if( !isset( $options['active'] ) || !in_array( 'yes', $options['active'] )  )
+			return;
 
 		?>
 		<p>
