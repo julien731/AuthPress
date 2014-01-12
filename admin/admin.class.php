@@ -454,6 +454,29 @@ class WPGA_Admin {
 		if( !isset( $options['active'] ) || !in_array( 'yes', $options['active'] )  )
 			return $user;
 
+		/**
+		 * We cannot add support to the WordPress Android / iPhone app,
+		 * so we deactivate the 2-factor authentication in this case,
+		 * even if it lowers security. No choice for now.
+		 *
+		 * @since 1.0.3
+		 */
+		$excludes = array(
+			'wp-iphone',
+			'wp-android'
+		);
+
+		/* Get the current user agent */
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+		foreach( $excludes as $exclude ) {
+
+			/* If the user agent matches a WordPress app we abort */
+			if( strpos( $user_agent, $exclude ) !== false )
+				return $user;
+
+		}
+
 		if( !is_wp_error( $user ) ) {
 
 			$username 	= $user->data->user_login;
