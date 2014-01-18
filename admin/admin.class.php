@@ -35,14 +35,13 @@ class WPGA_Admin {
 			add_action( 'edit_user_profile', array( $this, 'UserAdminCustomProfileFields' ) );
 			add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
 			add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
-			// add_action( 'edit_user_profile_update', array( $this, 'SaveCustomProfileFields' ) );
 
 			if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) )
 				add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
 		}
 
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 9 );
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
-
 		add_action( 'login_form', array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user', array( $this, 'authenticateUser' ), 10, 3 );
 
@@ -72,6 +71,21 @@ class WPGA_Admin {
 		$this->settings = new TAV_Settings( $args );
 		
 	}
+
+	/**
+	 * Load the plugin text domain for translation.
+	 *
+	 * @since    1.0.3
+	 */
+	public function load_plugin_textdomain() {
+
+		$domain = WPGA_PREFIX;
+		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+
+		$textdomain = load_textdomain( $domain, WPGA_PATH . 'languages/' . $domain . '-' . $locale . '.mo' );
+
+	}
+
 
 	/**
 	 * Load the scripts resources on the login page used for the tooltip
