@@ -3,14 +3,14 @@
  * Plugin Name: WP Google Authenticator
  * Plugin URI: https://github.com/julien731/WP-Google-Authenticator
  * Description: WP Google Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Julien Liabeuf
  * Author URI: http://julienliabeuf.com/
  * License: GPL3
  */
 
 /* Define all the plugin constants */
-define( 'WPGA_VERSION', '1.0.3' );
+define( 'WPGA_VERSION', '1.0.4' );
 define( 'WPGA_NAME', 'WP Google Authenticator' );
 define( 'WPGA_AUTHOR', 'Julien Liabeuf' );
 define( 'WPGA_URI', 'http://julienliabeuf.com' );
@@ -73,8 +73,11 @@ function wpga_uninstallPlugin() {
 
 		foreach( $users->results as $key => $user ) {
 
+			delete_user_meta( $user->ID, 'wpga_active' );
 			delete_user_meta( $user->ID, 'wpga_attempts' );
 			delete_user_meta( $user->ID, 'wpga_secret' );
+			delete_user_meta( $user->ID, 'wpga_backup_key' );
+			delete_user_meta( $user->ID, 'wpga_backup_key_time' );
 
 		}
 
