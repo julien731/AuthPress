@@ -18,22 +18,25 @@ class WPGA_Admin {
 	public function __construct() {
 
 		$this->settings 	= array();
-		$this->key_length 	= 16;
-		$this->codelength 	= 6;
+		$this->key_length 	= apply_filters( 'wpga_secret_key_length', 16 );
+		$this->codelength 	= apply_filters( 'wpga_code_length', 6 );
 		$this->qr_height 	= 300;
 		$this->qr_width 	= 300;
 		$this->def_attempt  = 3;
+		$this->bkp_length   = apply_filters( 'wpga_recovery_code_length', 24 );
 
 		if( is_admin() ) {
 
 			add_action( 'init', array( $this, 'initSettings' ) );
 			add_action( 'init', array( $this, 'registerSettings' ) );
 			add_action( 'init', array( $this, 'EditSecret' ) );
+			add_action( 'wp_ajax_wpga_get_recovery', array( $this, 'ajax_callback' ) );
 			add_action( 'admin_notices', array( $this, 'adminNotices' ) );
 			add_action( 'admin_notices', array( $this, 'ForceSetSecret' ) );
 			add_action( 'show_user_profile', array( $this, 'addUserProfileFields' ) );
 			add_action( 'edit_user_profile', array( $this, 'UserAdminCustomProfileFields' ) );
 			add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
+			add_action( 'admin_print_scripts', array( $this, 'load_admin_scripts' ) );
 			add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
 
 			if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) )
@@ -97,10 +100,26 @@ class WPGA_Admin {
 		if( 'wp-login.php' == $pagenow ) {
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array(), null, true );
-			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), null, true );
+			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), WPGA_VERSION, true );
 			wp_enqueue_style( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.css', array(), null, 'all' );
 		}
 
+	}
+
+	/**
+	 * Load the plugin custom JS
+	 *
+	 * @since 1.0.4
+	 * @return (void)
+	 */
+	public function load_admin_scripts() {
+
+		global $pagenow;
+
+		if( 'profile.php' != $pagenow )
+			return;
+
+		wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
 	}
 
 	/**
@@ -235,6 +254,14 @@ class WPGA_Admin {
 	 */
 	public function adminNotices() {
 
+		if( isset( $_GET['2fa_reset'] ) && 'true' == $_GET['2fa_reset'] ) { ?>
+
+			<div class="error">
+				<p><?php printf( __( '2-factor authentication has been deactivated for your account. If you want to reactivate it, go to your %sprofile page%s.', 'wpga' ), '<a href="' . admin_url( 'profile.php' ) . '#wpga">', '</a>' ); ?></p>
+			</div>
+
+		<?php }
+
 		if( !isset( $_GET['update'] ) )
 			return;
 
@@ -317,6 +344,29 @@ class WPGA_Admin {
 		}
 
 		return $secret;
+	}
+
+	/**
+	 * Generate a backup key
+	 *
+	 * In case the user loses his phone or cannot access the Google Authenticator app,
+	 * we generate a unique backup key that the user can use to authenticate once.
+	 * After one (only) authentication the key will be voided.
+	 * 
+	 * @return (string) Backup key
+	 * @since 1.0.4
+	 */
+	public function generate_backup_key() {
+
+		$length = $this->bkp_length;
+		$max    = ceil( $length / 40 );
+		$random = '';
+
+		for ($i = 0; $i < $max; $i ++) {
+			$random .= sha1( microtime( true ) . mt_rand( 10000,90000 ) );
+		}
+
+		return substr( $random, 0, $length );
 	}
 
    /**
@@ -526,6 +576,30 @@ class WPGA_Admin {
 
 						}
 
+					}
+					/**
+					 * Check if the user is sending a recovery key.
+					 * 
+					 * If the recovery key is valid, we deactivate
+					 * 2FA for this user so that he can log-in
+					 * without using the app.
+					 *
+					 * @since 1.0.4
+					 */
+					elseif( $this->check_recovery_key( $user, $totp ) ) {
+
+						/* Clean the 2FA data */
+						delete_user_meta( $user->ID, 'wpga_active' );
+						delete_user_meta( $user->ID, 'wpga_attempts' );
+						delete_user_meta( $user->ID, 'wpga_secret' );
+						delete_user_meta( $user->ID, 'wpga_backup_key' );
+						delete_user_meta( $user->ID, 'wpga_backup_key_time' );
+
+						/* Add URL var to the login redirect */
+						add_filter( 'login_redirect', array( $this, 'login_redirect_notify' ) );
+
+						return $user;
+
 					} else {
 
 						return new WP_Error( 'totp_invalid', __( 'The Google Authenticator one time password is incorrect or expired. Please try with a newly generated password.', 'wpga' ) );
@@ -581,6 +655,38 @@ class WPGA_Admin {
 	}
 
 	/**
+	 * Add a URL var to login redirect page
+	 * 
+	 * @return (string) Redirect URL
+	 * @since 1.0.4
+	 */
+	public function login_redirect_notify() {
+
+		return add_query_arg( array( '2fa_reset' => 'true' ), admin_url() );
+
+	}
+
+	/**
+	 * Check validity of a recovery key
+	 * 
+	 * @param  (object) $user User object
+	 * @param  (string) $key  Recovery key to check
+	 * @return (boolean)      Whether or not the key is valid
+	 * @since  1.0.4
+	 */
+	public function check_recovery_key( $user, $key ) {
+
+		$recovery = get_user_meta( $user->ID, 'wpga_backup_key', true );
+
+		if( sanitize_key( $key ) == $recovery )
+			return true;
+
+		else
+			return false;
+		
+	}
+
+	/**
 	 * Get QR Code
 	 *
 	 * Generate QR code through Google Chart using https
@@ -610,6 +716,7 @@ class WPGA_Admin {
 		$height	= $this->qr_height+10;
 		$secret = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
 		$args 	= array( 'action' => 'regenerate' );
+		$backup = get_user_meta( $user->ID, 'wpga_backup_key', true );
 		if( isset( $_GET['user_id'] ) ) { $args['user_id'] = $_GET['user_id']; }
 		$regenerate = wp_nonce_url( add_query_arg( $args, admin_url( 'profile.php' ) ), 'regenerate_key' );
 
@@ -665,8 +772,83 @@ class WPGA_Admin {
 				</td>
 			</tr>
 
+			<?php if( '' != $backup ):
+
+				$time  = get_user_meta( $user->ID, 'wpga_backup_key_time', true );
+				$limit = $time + 300; // Recovery key generation time + 5 mins
+				?>
+				<tr id="wpga-recovery-field">
+					<th><label for="wpga_active"><?php _e( 'Recovery Code', 'wpga' ); ?></label></th>
+					<td>
+
+						<?php
+						/**
+						 * After it was generated, the rescue code
+						 * will be displayed for 5 minutes. After that,
+						 * the user will need to type his password
+						 * to reveal the rescue code.
+						 */
+						if( time() <= $limit ): ?>
+
+							<div style='font-size:18px; font-weight: bold;'><?php echo $backup; ?></div><p><?php _e( 'Write this down and keep it safe', 'wpga' ); ?></p>
+
+						<?php else: ?>
+
+							<p class="wpga-check-pwd-link"><a href="#" class="wpga-check-password"><?php _e( 'Show', 'wpga' ); ?></a></p>
+
+							<div id="wpga-recovery" style="display:none;">
+								<p><?php _e( 'For security reasons, please type your password to see your recovery code.', 'wpga' ); ?></p>
+								<input type="password" name="pwd" id="pwd">
+								<input type="submit" value="OK" placeholder="<?php _e( 'Account password', 'wpga' ); ?>" class="button button-secondary wpga-show-recovery">
+								<p class="description"><?php _e( 'If you are unable to use the Google Authenticator for any reason, you can use this one time recovery code instead of the TOTP. Save this code in a safe place.', 'wpga' ); ?></p>
+							</div>
+
+						<?php endif; ?>
+
+					</td>
+				</tr>
+			<?php endif; ?>
+
 		</table>
 	<?php }
+
+	/**
+	 * Get recovery code
+	 *
+	 * The function will check the user's password and,
+	 * if the password is correct, it will return
+	 * the recovery code.
+	 *
+	 * @return (void)
+	 * @since 1.0.4
+	 */
+	public function ajax_callback() {
+
+		if( !isset( $_POST['pwd'] ) )
+			return false;
+
+		/* Password to check */
+		$pwd = sanitize_text_field( $_POST['pwd'] );
+
+		$user_id = get_current_user_id();
+		$user    = get_user_by( 'id', $user_id );
+
+		if ( $user && wp_check_password( $pwd, $user->data->user_pass, $user->ID ) ) {
+
+			$recovery = get_user_meta( $user_id, 'wpga_backup_key', true );
+
+			if( '' != $recovery )
+				echo "<div style='font-size:18px; font-weight: bold;'>$recovery</div><p>" . _e( 'Write this down and keep it safe', 'wpga' ) . "</p>";
+			else
+				_e( 'No recovery code set yet.', 'wpga' );
+
+		} else {
+			?><strong><?php _e( 'Wrong password', 'wpga' ); ?></strong><?php
+		}
+
+		die();
+
+	}
 
 	/**
 	 * Add admin control fields in user profile
@@ -738,6 +920,25 @@ class WPGA_Admin {
 		}
 
 		update_user_meta( $user_id, 'wpga_secret', $_POST['wpga_secret'] );
+
+		/* Check if backup key exist */
+		$backup = get_user_meta( $user_id, 'wpga_backup_key', true );
+
+		if( '' == $backup ) {
+
+			/* Generate a new backup key */
+			$key = $this->generate_backup_key();
+
+			/* Save the backup key */
+			update_user_meta( $user_id, 'wpga_backup_key', sanitize_key( $key ) );
+
+			/**
+			 * Set a session var to allow user seeing the backup key
+			 * without having to enter his password. This will only happen once
+			 */
+			update_user_meta( $user_id, 'wpga_backup_key_time', time() );
+
+		}
 	}
 
 	/**
@@ -753,7 +954,7 @@ class WPGA_Admin {
 		?>
 		<p>
 			<label for="authenticator">
-				<?php _e( 'Google Authenticator', 'wpga' ); ?> <small><a href="#" title="<?php _e( 'If you do not have configured the 2-factor authentication,<br> just leave this field blank and you will be logged-in as usual.', 'wpga' ); ?>" class="wpgahelp">[?]</a></small>
+				<?php _e( 'Google Authenticator', 'wpga' ); ?> <small><a href="#" title="<?php _e( 'If you do not have configured the 2-factor authentication,<br> just leave this field blank and you will be logged-in as usual.<br><br>If you can\'t use the Google Authenticator app for whatever reason,<br>you can use your recovery code instead.', 'wpga' ); ?>" class="wpgahelp" tabindex="-1">[?]</a></small>
 				<br>
 				<input id="authenticator" class="input" type="text" size="20" value="" name="totp">
 			</label>
