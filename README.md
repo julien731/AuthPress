@@ -10,14 +10,12 @@ Google Authenticator for WordPress
   
 **Tested up to:** 3.8
   
-**Stable tag:** 1.0.2
-  
 **License:** GPLv2 or later
   
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
   
 
-A Google Authenticator WordPress plugin which safely adds 2-factor authentication to your blog.
+A Google Authenticator WordPress plugin which adds 2-factor authentication to your blog.
 
 ## Description ##
 
@@ -43,6 +41,7 @@ What the plugin does:
 - Admin can revoke any user's key at anytime,
 - If a user is locked-out after logging-in too many times without using 2FA, admin can reset the counter,
 - Used one time passwords are hashed and stored in the DB to avoid multiple use (in case of interception by an attacker)
+- Recovery code in case the user can't use the app
 
 ## Installation ##
 
@@ -56,24 +55,13 @@ Setup tutorial [available here](http://julienliabeuf.com/wordpres-2-factor-authe
 
 ### What if a user is unable to generate his TOTP (phone lost, stolen, reset...)? ###
 
-As an admin, edit the user's profile and revoke his secret. The user will then be able to login again and re-generate a secret.
-
-## Screenshots ##
-
-###1. Plugin settings
-###
-[missing image]
-
-###2. Edit profile screen
-###
-[missing image]
-
-###3. Admin view of the user edit screen
-###
-[missing image]
-
+The user can use his recovery code to disable 2FA for his account. Alternatively, an admin can edit the user's profile and revoke his secret. The user will then be able to login again and re-generate a secret.
 
 ## Changelog ##
+
+### v1.0.4 ###
+* Add recovery code feature
+* Update translations
 
 ### v1.0.3 ###
 * Add support for WordPress Android / iPhone app
