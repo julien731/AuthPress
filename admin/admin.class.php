@@ -695,10 +695,12 @@ class WPGA_Admin {
 	 */
 	public function getQRCodeGoogleUrl() {
 
-		$name 	= $this->settings->getOption( 'blog_name' );
-		$secret = esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$blogname	= rawurlencode( $this->settings->getOption( 'blog_name' ) );
+		$secret		= esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$account	= ( get_the_author_meta( 'user_login', get_current_user_id() ) );
+		$label		= $blogname . ':' . $account;
 
-		$urlencoded = urlencode('otpauth://totp/' . $name . '?secret=' . $secret );
+		$urlencoded = rawurlencode('otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname );
 		return 'https://chart.googleapis.com/chart?chs=' . $this->qr_width . 'x' . $this->qr_height . '&chld=M|0&cht=qr&chl=' . $urlencoded;
 	}
 
