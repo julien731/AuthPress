@@ -29,7 +29,10 @@ class WPGA_Admin {
 
 			add_action( 'init', array( $this, 'initSettings' ) );
 			add_action( 'init', array( $this, 'registerSettings' ) );
-			add_action( 'init', array( $this, 'EditSecret' ) );
+
+			if( isset( $_GET['action'] ) )
+				add_action( 'init', array( $this, 'EditSecret' ) );
+
 			add_action( 'wp_ajax_wpga_get_recovery', array( $this, 'ajax_callback' ) );
 			add_action( 'admin_notices', array( $this, 'adminNotices' ) );
 			add_action( 'admin_notices', array( $this, 'ForceSetSecret' ) );
@@ -37,7 +40,9 @@ class WPGA_Admin {
 			add_action( 'edit_user_profile', array( $this, 'UserAdminCustomProfileFields' ) );
 			add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
 			add_action( 'admin_print_scripts', array( $this, 'load_admin_scripts' ) );
-			add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
+
+			if( isset( $_GET['page'] ) && $_GET['page'] == 'wpga_options' )
+				add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
 
 			if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) )
 				add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
@@ -202,9 +207,6 @@ class WPGA_Admin {
 	 * are checked against a nonce before doing anything.
 	 */
 	public function EditSecret() {
-
-		if( !isset( $_GET['action'] ) )
-			return;
 
 		switch( $_GET['action'] ):
 
@@ -695,10 +697,12 @@ class WPGA_Admin {
 	 */
 	public function getQRCodeGoogleUrl() {
 
-		$name 	= $this->settings->getOption( 'blog_name' );
-		$secret = esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$name 		= $this->settings->getOption( 'blog_name' );
+		$user 		= get_userdata( get_current_user_id() );
+		$email 		= $user->data->user_email;
+		$secret 	= esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$urlencoded = urlencode('otpauth://totp/' . $email . '?secret=' . $secret .'&issuer=' . $name );
 
-		$urlencoded = urlencode('otpauth://totp/' . $name . '?secret=' . $secret );
 		return 'https://chart.googleapis.com/chart?chs=' . $this->qr_width . 'x' . $this->qr_height . '&chld=M|0&cht=qr&chl=' . $urlencoded;
 	}
 
