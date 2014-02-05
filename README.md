@@ -27,6 +27,9 @@ What the plugin does:
 
 ## Changelog ##
 
+### v1.0.5 ###
+* Add issuer in the Google Authenticator account
+
 ### v1.0.4 ###
 * Add recovery code feature
 * Update translations
