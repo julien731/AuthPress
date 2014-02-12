@@ -27,6 +27,9 @@ What the plugin does:
 
 ## Changelog ##
 
+### v1.0.6 ###
+* Fix issue with spaces in site name (jeremyawhite)
+
 ### v1.0.5 ###
 * Add issuer in the Google Authenticator account
 
