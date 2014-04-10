@@ -25,6 +25,11 @@ class WPGA_Admin {
 		$this->def_attempt  = 3;
 		$this->bkp_length   = apply_filters( 'wpga_recovery_code_length', 24 );
 
+		/* Add a new cron hook */
+		if ( ! wp_next_scheduled( 'wpas_clean_totps' ) ) {
+			wp_schedule_event( time(), 'hourly', 'my_task_hook' );
+		}
+
 		if( is_admin() ) {
 
 			add_action( 'init', array( $this, 'initSettings' ) );
@@ -52,6 +57,7 @@ class WPGA_Admin {
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
 		add_action( 'login_form', array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user', array( $this, 'authenticateUser' ), 10, 3 );
+		add_action( 'wpas_clean_totps', array( $this, 'clean_totps' ) );
 
 	}
 
@@ -965,6 +971,19 @@ class WPGA_Admin {
 			</label>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Delete all TOTPs from DB.
+	 *
+	 * As TOTPs expire after a defined amount of time
+	 * per definition, there is no need to store them
+	 * in the database forever.
+	 *
+	 * @since 1.0.7
+	 */
+	public function clean_totps() {
+		delete_option( 'wpga_used_totp' );
 	}
 
 }
