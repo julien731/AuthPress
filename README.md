@@ -27,6 +27,9 @@ What the plugin does:
 
 ## Changelog ##
 
+### v1.0.7
+* Add cron task to clean TOTPs from DB
+
 ### v1.0.6 ###
 * Fix issue with spaces in site name (jeremyawhite)
 
