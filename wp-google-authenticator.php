@@ -23,6 +23,7 @@ define( 'TAV_SHORTNAME', 'tav' );
 
 require( WPGA_PATH . 'admin/admin.class.php' );
 require( WPGA_PATH . 'admin/settings.class.php' );
+add_action( 'plugins_loaded', array( 'WPGA_Admin', 'get_instance' ) );
 
 register_activation_hook( __FILE__, 'wpga_installPlugin' );
 /**
@@ -38,6 +39,11 @@ function wpga_installPlugin() {
 
 	if( !get_option( WPGA_PREFIX . '_options' ) )
 		update_option( WPGA_PREFIX . '_options', $defaults );
+
+	/* Add a new cron hook */
+	if ( ! wp_next_scheduled( 'wpas_clean_totps' ) ) {
+		wp_schedule_event( time(), 'daily', 'wpas_clean_totps' );
+	}
 
 }
 
@@ -82,5 +88,11 @@ function wpga_uninstallPlugin() {
 		}
 
 	}
+
+	/**
+	 * Remove cron task
+	 */
+	$timestamp = wp_next_scheduled( 'wpas_clean_totps' );
+	wp_unschedule_event( $timestamp, 'wpas_clean_totps' );
 
 }

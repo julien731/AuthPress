@@ -15,6 +15,14 @@
  */
 class WPGA_Admin {
 
+	/**
+	 * Instance of this class.
+	 *
+	 * @since    1.0.7
+	 * @var      object
+	 */
+	protected static $instance = null;
+
 	public function __construct() {
 
 		$this->settings 	= array();
@@ -24,11 +32,6 @@ class WPGA_Admin {
 		$this->qr_width 	= 300;
 		$this->def_attempt  = 3;
 		$this->bkp_length   = apply_filters( 'wpga_recovery_code_length', 24 );
-
-		/* Add a new cron hook */
-		if ( ! wp_next_scheduled( 'wpas_clean_totps' ) ) {
-			wp_schedule_event( time(), 'hourly', 'my_task_hook' );
-		}
 
 		if( is_admin() ) {
 
@@ -59,6 +62,23 @@ class WPGA_Admin {
 		add_action( 'wp_authenticate_user', array( $this, 'authenticateUser' ), 10, 3 );
 		add_action( 'wpas_clean_totps', array( $this, 'clean_totps' ) );
 
+	}
+
+	/**
+	 * Return an instance of this class.
+	 *
+	 * @since     1.0.7
+	 *
+	 * @return    object    A single instance of this class.
+	 */
+	public static function get_instance() {
+
+		// If the single instance hasn't been set, set it now.
+		if ( null == self::$instance ) {
+			self::$instance = new self;
+		}
+
+		return self::$instance;
 	}
 
 	/**
@@ -987,5 +1007,3 @@ class WPGA_Admin {
 	}
 
 }
-
-$wpga = new WPGA_Admin();
