@@ -25,6 +25,9 @@ What the plugin does:
 - Used one time passwords are hashed and stored in the DB to avoid multiple use (in case of interception by an attacker)
 - Recovery code in case the user can't use the app
 
+### Using Authy
+You're using [Authy](https://www.authy.com/)? Google Authenticator for WordPress is fully compatible with Authy. You can add the 2-steps authentication and use Authy to generate the one time password.
+
 ## Changelog ##
 
 ### v1.0.7
