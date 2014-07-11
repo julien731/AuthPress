@@ -952,6 +952,15 @@ class WPGA_Admin {
 
 		update_user_meta( $user_id, 'wpga_secret', $_POST['wpga_secret'] );
 
+		/**
+		 * Delete the user login attempts without using 2FA.
+		 * This avoids an incorrect number of allowed attempts
+		 * in case the user deactivates the 2FA for his account.
+		 *
+		 * @since  1.0.8
+		 */
+		delete_user_meta( $user_id, 'wpga_attempts' );
+
 		/* Check if backup key exist */
 		$backup = get_user_meta( $user_id, 'wpga_backup_key', true );
 
