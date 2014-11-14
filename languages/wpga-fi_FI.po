@@ -1,0 +1,313 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Google Authenticator for WordPress\n"
+"POT-Creation-Date: 2014-01-25 12:58+0700\n"
+"PO-Revision-Date: 2014-10-12 23:14+0200\n"
+"Last-Translator: \n"
+"Language-Team: Julien Liabeuf <julien@liabeuf.fr>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.9\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_n\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: C:\\wamp\\www\\plugins-dev\\wp-content\\plugins\\wp-"
+"google-authenticator\n"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:64
+msgid "Authenticator"
+msgstr "Authenticator"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:66
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:731
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:870
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/settings.class.php:219
+msgid "WP Google Authenticator Settings"
+msgstr "WP Google Authenticator Asetukset"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:136
+msgid "Activate Plugin"
+msgstr "Aktivoi Lisäosa"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:137
+msgid "Do you wish to enable the 2-factor authentication for this site?"
+msgstr ""
+"Haluatko käyttää Googlen 2-factor authenticationia? Tämä ominaisuus vaatii "
+"Google Authenticator sovelluksen puhelimellesi."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:139
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:148
+msgid "Yes"
+msgstr "Kyllä"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:145
+msgid "Force Use"
+msgstr "Pakota Käyttö"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:146
+msgid ""
+"Do you want to force your users to use 2-factor authentication (admins AND "
+"you included)?"
+msgstr ""
+"Haluatko pakottaa käyttäjäsi käyttämään kaksivaihteista vahvistusta? (tähän "
+"kuuluu adminit JA sinä mukaan lukien)"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:154
+msgid "Site Name"
+msgstr "Sivuston nimi"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:155
+msgid "Name under which this site will appear in the Google Authenticator app."
+msgstr ""
+"Nimi jolla tämä sivusto näkyy Googlen kaksivaiheisessa vahvistus "
+"sovelluksessa."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:162
+msgid "Max Attempts"
+msgstr "Maksimi yritykset"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:163
+msgid ""
+"If you chose to force users to use 2-factor authentication, you can specify "
+"a maximum number of times a user can login WITHOUT setting up the 2-factor "
+"authentication (leave <code>0</code> for unlimited attempts)."
+msgstr ""
+"Jos valitsit pakota käyttäjät käyttämään kaksivaiheista vahvistusta, voit "
+"määrittää kuinka monta kertaa käyttäjä voi kirjautua sisään ILMAN ettei "
+"aseta itselleen kaksivaiheista vahvistusta (jätä <code>0</code> jos haluat "
+"rajoittamatonta yritystä)."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:170
+msgid "Authorized Clock Desynchronization"
+msgstr "Authorized Clock Desynchronization"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:171
+msgid ""
+"Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords "
+"issues. Please read the contextual help for more info."
+msgstr ""
+"On oltava vähintään <code>min</code> (&plusmn;). Että vältät virheet.  Ole "
+"hyvä ja lue ohje saadaksesi lisätietoja."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:190
+msgid "Desynchronization"
+msgstr "Desynchronization"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:191
+msgid ""
+"<h2>Authorized Clock Desynchronization</h2><p>First of all, you have to "
+"understand how the 2-factor authentication works.</p><p>The Google "
+"Authenticator will generate a TOTP which stands for Time based One Time "
+"Pasword. This one time password, as you might now understand, is generated "
+"based on the current time.</p><p>If the server's (where your site is hosted) "
+"clock and the user's phone clock are not perfectly synchronized, the one "
+"time password generated won't work, as it will be generated on a time which "
+"is different from the server.</p><p>The authorized desynchronization will "
+"allow your users more time to use their one time password. By default, one "
+"code will be valid for <strong>30 seconds</strong>. If you want to give them "
+"more time, you can specify a delay in <strong>minutes</strong>.</p><p>Of "
+"course, if you give users more time, the security will be lowered. It is "
+"advised to stick with the default 30 secs.</p>"
+msgstr ""
+"<h2>Authorized Clock Desynchronization</h2><p>First of all, you have to "
+"understand how the 2-factor authentication works.</p><p>The Google "
+"Authenticator will generate a TOTP which stands for Time based One Time "
+"Pasword. This one time password, as you might now understand, is generated "
+"based on the current time.</p><p>If the server's (where your site is hosted) "
+"clock and the user's phone clock are not perfectly synchronized, the one "
+"time password generated won't work, as it will be generated on a time which "
+"is different from the server.</p><p>The authorized desynchronization will "
+"allow your users more time to use their one time password. By default, one "
+"code will be valid for <strong>30 seconds</strong>. If you want to give them "
+"more time, you can specify a delay in <strong>minutes</strong>.</p><p>Of "
+"course, if you give users more time, the security will be lowered. It is "
+"advised to stick with the default 30 secs.</p>"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:260
+#, php-format
+msgid ""
+"2-factor authentication has been deactivated for your account. If you want "
+"to reactivate it, go to your %sprofile page%s."
+msgstr ""
+"Kaksivaiheinen vahvistus on pois käytöstä tililtäsi. Jos haluat aktivoida "
+"sen, mene %sprofiili sivu%s."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:271
+msgid "Your secret key has been regenerated."
+msgstr "Salainen avaimesi on luotu uudelleen."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:272
+#, php-format
+msgid "The key for user %s has been revoked."
+msgstr "Avain käyttäjälle %s on kumottu."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:273
+msgid "The attempts count has been reset."
+msgstr "Yrityskset laskuri on nollattu."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:308
+#, php-format
+msgid ""
+"The admin is requesting all users to activate 2-factor authentication. <a "
+"href=\"%s\">Please do it now</a>. You only have <strong>%s</strong> login "
+"attempts left."
+msgstr ""
+"Admin pyytää kaikkia käyttäjiä aktivoimaan kaksivaiheisen vahvistuksen <a "
+"href=\"%s\">Ole hyvä ja tee se nyt</a>. Sinulla on vain <strong>%s</strong> "
+"kirjautumisyritystä jäljellä."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:323
+msgid " version "
+msgstr "versio"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:559
+msgid "Please provide your one time password."
+msgstr "Ole hyvä, Anna kaksivaiheisen vahvistuksen koodi."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:575
+msgid "The one time password you used has already been revoked."
+msgstr " kaksivaiheisen vahvistuksen koodi on jo vanhentunut."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:605
+msgid ""
+"The Google Authenticator one time password is incorrect or expired. Please "
+"try with a newly generated password."
+msgstr ""
+"Kaksivaiheisen vahvistuksen koodi on väärä tai vanhentunut. Yritä uudelleen "
+"vastikään luodulla salasanalla."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:625
+msgid ""
+"You have reached the maximum number of logins WITHOUT using 2-factor "
+"authentication. Please contact the admin to reset your account."
+msgstr ""
+"Olet saavuttanut enimmäismäärän kirjautums yrityksiä käyttämättä "
+"kaksivaiheista vahvistusta. Ota yhteyttä adminiin nollataksesi tilisi."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:746
+msgid "Activate"
+msgstr "Aktivoi"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:749
+msgid ""
+"Do you wish to use 2-factor authentication (require the Google Authenticator "
+"app)?"
+msgstr ""
+"Haluatko käyttää kaksivaiheista vahvistusta (vaatii Google Authenticator "
+"laajennuksen)?"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:756
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:875
+msgid "Secret"
+msgstr "Salainen"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:760
+msgid "Generate Key"
+msgstr "Luo Avain"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:761
+msgid ""
+"This is going to be your secret key. Please save changes and scroll back to "
+"this field to get your QR code."
+msgstr ""
+"Tämä tulee olemaan sinun salainen avaimesi. Ole hyvä ja Tallenna muutokset "
+"ja siirry takaisin tähän kenttään niin saat QR koodisi."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:765
+msgid "Get QR Code"
+msgstr "Hanki QR Koodilla"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:766
+msgid "Regenerate Key"
+msgstr "Luo Avain Uudelleen"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:767
+msgid "This is your personal secret key. Don't share it!"
+msgstr "Tämä on sinun henkilökohtainen salainen avain. Älä jaa sitä!"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:770
+msgid "QR Code"
+msgstr "QR Koodi"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:781
+msgid "Recovery Code"
+msgstr "Palautus Koodi"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:793
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:841
+msgid "Write this down and keep it safe"
+msgstr "Kirjoita tämä muistiin ja säilytä se turvallisessa paikassa"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:797
+msgid "Show"
+msgstr "Näytä"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:800
+msgid ""
+"For security reasons, please type your password to see your recovery code."
+msgstr "Turvallisuussyistä, kirjoita salasanasi nähdäksesi palautuskoodisi."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:802
+msgid "Account password"
+msgstr "Käyttäjän salasana"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:803
+msgid ""
+"If you are unable to use the Google Authenticator for any reason, you can "
+"use this one time recovery code instead of the TOTP. Save this code in a "
+"safe place."
+msgstr ""
+"jos et pysty käyttämään Google Authenticatoria jostain syystä enään, voit "
+"käyttää tätä koodia kerran palautuskoodinasi. TOTP Sijasta. Ole hyvä ja "
+"säilytä koodi turvallisessa paikassa."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:843
+msgid "No recovery code set yet."
+msgstr "Palautus koodia ei ole vielä asetettu."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:846
+msgid "Wrong password"
+msgstr "Väärä salasana"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:878
+msgid "This user didn't set a secret key."
+msgstr "Tämä käyttäjä ei ole asettanut salaista avainta."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:880
+msgid "This user has a secret key."
+msgstr "Tällä käyttäjä on salainen avain."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:880
+msgid "Revoke Key"
+msgstr "Kumoa Avain"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:885
+msgid "Login Attempts"
+msgstr "Kirjautumis Yrityksiä"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:888
+msgid "Reset"
+msgstr "Nollaa"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:889
+msgid "(This user is locked out)"
+msgstr "(Tämä käyttäjä on lukittu ulos)"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:890
+msgid "Number of times the user logged-in without using the TOTP."
+msgstr "Määrä kuinka monta kertaa käyttäjä on kirjautunut sisään ilman TOTP."
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:957
+msgid "Google Authenticator"
+msgstr "Google Authenticator"
+
+#: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:957
+msgid ""
+"If you do not have configured the 2-factor authentication,<br> just leave "
+"this field blank and you will be logged-in as usual.<br><br>If you can't use "
+"the Google Authenticator app for whatever reason,<br>you can use your "
+"recovery code instead."
+msgstr ""
+"Jos et ole määrittänyt Googlen kaksivaiheista vahvistusta tälle sivustolle, "
+"Jätä tämä kenttä tyhjäksi."
