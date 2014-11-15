@@ -116,7 +116,7 @@ $alt       = 'class="alternate"';
 	</div>
 
 	<h3><?php _e( 'Access Log', 'wpga' ); ?></h3>
-	<p><?php printf( __( 'The access log will display the last %s access using one of your application passwords.', 'wpga' ), 50 ); ?></p>
+	<p><?php printf( __( 'The access log will display the last %s access using one of your application passwords.', 'wpga' ), apply_filters( 'wpga_apps_passwords_log_max', 50 ) ); ?></p>
 	<table class="widefat" cellspacing="0">
 		<thead>
 			<tr>
