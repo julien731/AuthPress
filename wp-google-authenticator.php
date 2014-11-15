@@ -3,22 +3,22 @@
  * Plugin Name: WP Google Authenticator
  * Plugin URI: https://github.com/julien731/WP-Google-Authenticator
  * Description: WP Google Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
- * Version: 1.0.8
+ * Version: 1.1.0
  * Author: Julien Liabeuf
  * Author URI: http://julienliabeuf.com/
  * License: GPL3
  */
 
 /* Define all the plugin constants */
-define( 'WPGA_VERSION', '1.0.8' );
-define( 'WPGA_NAME', 'WP Google Authenticator' );
-define( 'WPGA_AUTHOR', 'Julien Liabeuf' );
-define( 'WPGA_URI', 'http://julienliabeuf.com' );
-define( 'WPGA_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPGA_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WPGA_PREFIX', 'wpga' );
+define( 'WPGA_VERSION',  '1.1.0' );
+define( 'WPGA_NAME',     'WP Google Authenticator' );
+define( 'WPGA_AUTHOR',   'Julien Liabeuf' );
+define( 'WPGA_URI',      'http://julienliabeuf.com' );
+define( 'WPGA_URL',      plugin_dir_url( __FILE__ ) );
+define( 'WPGA_PATH',     plugin_dir_path( __FILE__ ) );
+define( 'WPGA_PREFIX',   'wpga' );
 define( 'WPGA_BASENAME', plugin_basename(__FILE__) );
-define( 'WPGA_LOG', false );
+define( 'WPGA_LOG',      false );
 define( 'TAV_SHORTNAME', 'tav' );
 
 require( WPGA_PATH . 'admin/admin.class.php' );
