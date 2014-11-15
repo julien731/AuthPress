@@ -23,6 +23,7 @@ define( 'TAV_SHORTNAME', 'tav' );
 
 require( WPGA_PATH . 'admin/admin.class.php' );
 require( WPGA_PATH . 'admin/settings.class.php' );
+require( WPGA_PATH . 'admin/functions-apps-passwords.php' );
 add_action( 'plugins_loaded', array( 'WPGA_Admin', 'get_instance' ) );
 
 register_activation_hook( __FILE__, 'wpga_installPlugin' );

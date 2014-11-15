@@ -15,16 +15,17 @@ class TAV_Settings {
 	
 	public function __construct( $init = array() ) {
 
-		$this->settings 	= array();
-		$this->page 		= $init['page'];
-		$this->group 		= $init['prefix'];
-		$this->option		= isset( $init['name'] ) ? $init['name'] : 'tav_options';
-		$this->menu_name 	= isset( $init['menu_name'] ) ? $init['menu_name'] : 'Settings';
-		$this->slug 		= isset( $init['slug'] ) ? $init['slug'] : 'tav-settings';
-		$this->parent 		= isset( $init['parent'] ) ? $init['parent'] : false;
-		$this->page_title 	= isset( $init['page_title'] ) ? $init['page_title'] : 'Settings';
-		$this->icon			= isset( $init['icon'] ) ? $init['icon'] : 'icon-options-general';
-		$this->capability	= isset( $init['capability'] ) ? $init['capability'] : 'administrator';
+		$this->settings   = array();
+		$this->page       = $init['page'];
+		$this->group      = $init['prefix'];
+		$this->option     = isset( $init['name'] ) ? $init['name'] : 'tav_options';
+		$this->menu_name  = isset( $init['menu_name'] ) ? $init['menu_name'] : 'Settings';
+		$this->slug       = isset( $init['slug'] ) ? $init['slug'] : 'tav-settings';
+		$this->parent     = isset( $init['parent'] ) ? $init['parent'] : false;
+		$this->page_title = isset( $init['page_title'] ) ? $init['page_title'] : 'Settings';
+		$this->icon       = isset( $init['icon'] ) ? $init['icon'] : 'icon-options-general';
+		$this->capability = isset( $init['capability'] ) ? $init['capability'] : 'administrator';
+		$this->callback   = isset( $init['callback'] ) ? $init['callback'] : 'settingsPage';
 
 		add_action( 'admin_menu', array( $this, 'addMenuItems' ) );
 		add_action( 'admin_init', array( $this, 'registerSettings' ), 10 );
@@ -68,10 +69,12 @@ class TAV_Settings {
 	 */
 	public function addMenuItems() {
 
+		$callback = method_exists( $this, $this->callback ) ? array( $this, $this->callback ) : array( $this, 'settingsPage' );
+
 		if( $this->parent ) {
-			add_submenu_page( $this->parent, $this->page_title, $this->menu_name, $this->capability, $this->slug, array( $this, 'settingsPage' ) );
+			add_submenu_page( $this->parent, $this->page_title, $this->menu_name, $this->capability, $this->slug, $callback );
 		} else {
-			add_menu_page( $this->page_title, $this->menu_name, $this->capability, $this->slug, array( $this, 'settingsPage' ) );
+			add_menu_page( $this->page_title, $this->menu_name, $this->capability, $this->slug, $callback );
 		}
 		
 	}

@@ -25,27 +25,30 @@ class WPGA_Admin {
 
 	public function __construct() {
 
-		$this->settings 	= array();
-		$this->key_length 	= apply_filters( 'wpga_secret_key_length', 16 );
-		$this->codelength 	= apply_filters( 'wpga_code_length', 6 );
-		$this->qr_height 	= 300;
-		$this->qr_width 	= 300;
-		$this->def_attempt  = 3;
-		$this->bkp_length   = apply_filters( 'wpga_recovery_code_length', 24 );
+		$this->settings      = array();
+		$this->apps_settings = array();
+		$this->key_length    = apply_filters( 'wpga_secret_key_length', 16 );
+		$this->codelength    = apply_filters( 'wpga_code_length', 6 );
+		$this->qr_height     = 300;
+		$this->qr_width      = 300;
+		$this->def_attempt   = 3;
+		$this->bkp_length    = apply_filters( 'wpga_recovery_code_length', 24 );
+		$this->log_max       = apply_filters( 'wpga_apps_passwords_log_max', 50 );
 
 		if( is_admin() ) {
 
 			add_action( 'wp_ajax_wpga_get_recovery', array( $this, 'ajax_callback' ) );
+			add_action( 'wp_ajax_wpga_create_app_password', array( $this, 'create_app_password' ) );
 
 			if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) {
-
-				add_action( 'init', array( $this, 'initSettings' ) );
-				add_action( 'init', array( $this, 'registerSettings' ) );
 
 				if( isset( $_GET['action'] ) ) {
 					add_action( 'init', array( $this, 'EditSecret' ) );
 				}
 				
+				add_action( 'init',                    array( $this, 'initSettings' ) );
+				add_action( 'init',                    array( $this, 'registerSettings' ) );
+				add_action( 'admin_menu',              array( $this, 'add_app_password_menu' ) );
 				add_action( 'admin_notices',           array( $this, 'adminNotices' ) );
 				add_action( 'admin_notices',           array( $this, 'ForceSetSecret' ) );
 				add_action( 'show_user_profile',       array( $this, 'addUserProfileFields' ) );
@@ -66,8 +69,10 @@ class WPGA_Admin {
 
 		add_action( 'init',                  array( $this, 'load_plugin_textdomain' ), 9 );
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
+		add_action( 'admin_print_scripts',   array( $this, 'loadResources' ) );
 		add_action( 'login_form',            array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user',  array( $this, 'authenticateUser' ), 10, 3 );
+		add_filter( 'authenticate',          array( $this, 'checkAppPassword' ), 50, 3 );
 		add_action( 'wpas_clean_totps',      array( $this, 'clean_totps' ) );
 
 	}
@@ -99,19 +104,32 @@ class WPGA_Admin {
 
 		/* Prepare arguments */
 		$args = array(
-			'name' 			=> WPGA_PREFIX . '_options',
-			'menu_name' 	=> __( 'Authenticator', 'wpga' ),
-			'parent' 		=> 'options-general.php',
-			'page_title' 	=> __( 'WP Google Authenticator Settings', 'wpga' ),
-			'slug' 			=> WPGA_PREFIX . '_options',
-			'page' 			=> 'wpga-settings',
-			'prefix' 		=> WPGA_PREFIX,
-			'row_name' 		=> WPGA_PREFIX . '_options'
+			'name'       => WPGA_PREFIX . '_options',
+			'menu_name'  => __( 'Authenticator', 'wpga' ),
+			'parent'     => 'options-general.php',
+			'page_title' => __( 'WP Google Authenticator Settings', 'wpga' ),
+			'slug'       => WPGA_PREFIX . '_options',
+			'page'       => 'wpga-settings',
+			'prefix'     => WPGA_PREFIX,
+			'row_name'   => WPGA_PREFIX . '_options'
 		);
 
 		/* Instanciate the options class */
 		$this->settings = new TAV_Settings( $args );
 		
+	}
+
+	/**
+	 * Add required menu items
+	 */
+	public function add_app_password_menu() {
+		add_users_page(
+			__( 'Google Authenticator Applications Passwords', 'wpga' ),
+			__( 'My Apps Passwords', 'wpga' ),
+			'read',
+			WPGA_PREFIX . '_apps_passwords',
+			'wpga_apps_passwords_display'
+		);		
 	}
 
 	/**
@@ -136,7 +154,7 @@ class WPGA_Admin {
 
 		global $pagenow;
 
-		if( 'wp-login.php' == $pagenow ) {
+		if( in_array( $pagenow, array( 'wp-login.php', 'users.php' ) ) ) {
 			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array( 'jquery' ), null, true );
 			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), WPGA_VERSION, true );
 			wp_enqueue_style( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.css', array(), null, 'all' );
@@ -154,7 +172,7 @@ class WPGA_Admin {
 
 		global $pagenow;
 
-		if( 'profile.php' === $pagenow || isset( $_GET['page'] ) && 'wpga_options' === $_GET['page'] ) {
+		if( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_options', 'wpga_apps_passwords' ) ) ) {
 			wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
 		}
 	}
@@ -355,10 +373,11 @@ class WPGA_Admin {
 	public function ForceSetSecret() {
 
 		$user     = wp_get_current_user();
+		$active   = $this->settings->getOption( 'active', array() );
 		$force    = $this->settings->getOption( 'force_2fa', array() );
 		$affected = !empty( $a = $this->settings->getOption( 'user_roles', array() ) ) ? $a : array( $user->roles[0] );
 
-		if( in_array( 'yes', $force ) ) {
+		if( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
 
 			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || in_array( $user->roles[0], $affected ) ) {
 
@@ -632,28 +651,8 @@ class WPGA_Admin {
 		if( !isset( $options['active'] ) || !in_array( 'yes', $options['active'] )  )
 			return $user;
 
-		/**
-		 * We cannot add support to the WordPress Android / iPhone app,
-		 * so we deactivate the 2-factor authentication in this case,
-		 * even if it lowers security. No choice for now.
-		 *
-		 * @since 1.0.3
-		 */
-		$excludes = array(
-			'wp-iphone',
-			'wp-android'
-		);
-
 		/* Get the current user agent */
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
-
-		foreach( $excludes as $exclude ) {
-
-			/* If the user agent matches a WordPress app we abort */
-			if( strpos( $user_agent, $exclude ) !== false )
-				return $user;
-
-		}
 
 		if( !is_wp_error( $user ) ) {
 
@@ -661,7 +660,7 @@ class WPGA_Admin {
 			$options	= get_option( 'wpga_options', array() );
 			$secret 	= get_user_meta( $user->ID, 'wpga_secret', true );
 			$active 	= get_user_meta( $user->ID, 'wpga_active', true );
-			$totp 		= sanitize_key( $_POST['totp'] );
+			$totp 		= isset( $_POST['totp'] ) ? sanitize_key( $_POST['totp'] ) : null;
 
 			/* TOTP is forced for all users */
 			if ( $this->is_2fa_enabled( $user ) ) {
@@ -669,8 +668,13 @@ class WPGA_Admin {
 				/* Let's make sure the user has generated a secret */
 				if( '' != $secret ) {
 
-					if( !isset( $totp ) || '' == $totp )
+					if ( is_null( $totp ) ) {
+						return new WP_Error( 'no_totp', __( 'An error is preventing the 2-factor authentication from authenticating your session.', 'wpga' ) );
+					}
+
+					if ( empty( $totp ) ) {
 						return new WP_Error( 'no_totp', __( 'Please provide your one time password.', 'wpga' ) );
+					}
 
 					if( $this->checkTOTP( $secret, $totp ) ) {
 
@@ -689,6 +693,7 @@ class WPGA_Admin {
 						}
 
 					}
+
 					/**
 					 * Check if the user is sending a recovery key.
 					 * 
@@ -713,9 +718,7 @@ class WPGA_Admin {
 						return $user;
 
 					} else {
-
 						return new WP_Error( 'totp_invalid', __( 'The Google Authenticator one time password is incorrect or expired. Please try with a newly generated password.', 'wpga' ) );
-
 					}
 
 				} else {
@@ -751,6 +754,94 @@ class WPGA_Admin {
 			return $user;
 		}
 
+	}
+
+	/**
+	 * Check for app password.
+	 *
+	 * If the user has created one or more apps passwords,
+	 * we check if the given password is a registered one.
+	 *
+	 * @since  1.1.0
+	 */
+	public function checkAppPassword( $user, $username, $password ) {
+
+		if ( !is_wp_error( $user ) ) {
+			return;
+		}
+
+		$user_data = get_user_by( 'login', $username );
+
+		if ( !is_object( $user_data ) ) {
+			return;
+		}
+
+		if ( $this->has_app_passwords( $user_data->ID ) ) {
+
+			$passwords = wpga_get_app_passwords( $user_data->ID );
+			$hash      = md5( $password );
+			$key       = wpga_make_unique_key( $hash );
+
+			if ( array_key_exists( $key, $passwords ) ) {
+
+				/* App password is correct. */
+				if ( wp_check_password( trim( $password ), $passwords[$key]['hash'] ) ) {
+
+					$log   = $new = wpga_get_app_passwords_log( $user_data->ID );
+					$count = count( $new );
+					$last  = null;
+
+					/* Delete the oldest entry if the limit is reached */
+					if ( $count === $this->log_max ) {
+						foreach ( $new as $date => $data ) {
+							$last = $date;
+						}
+						unset( $new[$date] );
+					}
+
+					$time  = strtotime( 'now' );
+					$entry = array(
+						'key'        => $key,
+						'last_used'  => $time,
+						'ip'         => $_SERVER['REMOTE_ADDR'],
+						'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+						'method'     => '',
+					);
+
+					/* Update the password use count */
+					$passwords[$key]['count'] = intval( $passwords[$key]['count'] ) + 1;
+					update_user_meta( $user_data->ID, 'wpga_apps_passwords', $passwords );
+
+					/* Save the log entry */
+					$new[$time] = $entry;
+					update_user_meta( $user_data->ID, 'wpga_apps_passwords_log', $new );
+
+					return new WP_User( $user_data->ID );
+
+				} else {
+					return new WP_Error( 'wrong_app_password', __( 'The application password you provided is invalid.', 'wpga' ) );
+				}
+			} else {
+				return new WP_Error( 'no_totp', __( 'Please provide your one time password.', 'wpga' ) );
+			}
+		} else {
+			return $user;
+		}
+	}
+
+	/**
+	 * Check if the current user has app passwords.
+	 *
+	 * @since  1.1.0
+	 * @return boolean True if has app passwords
+	 */
+	public function has_app_passwords( $user_id ) {
+		$passwords = wpga_get_app_passwords( $user_id );
+		if ( empty( $passwords ) ) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -953,6 +1044,32 @@ class WPGA_Admin {
 	}
 
 	/**
+	 * Create a new app password.
+	 *
+	 * @since  1.1.0
+	 */
+	public function create_app_password() {
+
+		if ( !isset( $_POST['description'] ) || empty( $_POST['description'] ) ) {
+			die();
+		}
+
+		global $current_user;
+
+		$passwords = $new = is_array( $p = get_user_meta( $current_user->ID, 'wpga_apps_passwords', true ) ) ? $p : array();
+		$pwd       = $this->generate_backup_key();
+		$hash      = md5( esc_attr( $pwd ) );
+		$key       = wpga_make_unique_key( $hash );
+		$return    = json_encode( array( 'desc' => sanitize_text_field( $_POST['description'] ), 'pwd' => esc_attr( $pwd ) ) );
+		$new[$key] = array( 'description' => sanitize_text_field( $_POST['description'] ), 'hash' => $hash, 'count' => 0 );
+
+		update_user_meta( $current_user->ID, 'wpga_apps_passwords', $new, $passwords );
+
+		echo esc_attr( urlencode( $return ) );
+		die();
+	}
+
+	/**
 	 * Add admin control fields in user profile
 	 */
 	public function UserAdminCustomProfileFields() {
@@ -1086,4 +1203,13 @@ class WPGA_Admin {
 		delete_option( 'wpga_used_totp' );
 	}
 
+}
+
+/**
+ * Display the applications passwords apge.
+ * 
+ * @since 1.1.0
+ */
+function wpga_apps_passwords_display() {
+	require_once( WPGA_PATH . 'admin/views/apps-passwords.php' );
 }

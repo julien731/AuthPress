@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
 
 	$('.wpga-show-recovery').on('click', ajaxSubmit);
 	$('.wpga-check-password').on('click', checkPassword);
+	$('.wpas-generate-app-pwd').on('click', generateAppPwd);
 
 	/* Toggle the user roles option depending on the 3force Use" status */
 	$('#force_2fa_yes').on('click', check_2fa);
@@ -42,7 +43,7 @@ jQuery(document).ready(function($) {
 		$('#wpga-user-roles').hide();
 	}
 
-	function ajaxSubmit(){
+	function ajaxSubmit() {
 
 		var data = {
 			action: 'wpga_get_recovery',
@@ -59,6 +60,48 @@ jQuery(document).ready(function($) {
 		});
 
 		return false;
+	}
+
+	function generateAppPwd() {
+
+		var data = {
+			action: 'wpga_create_app_password',
+			description: $('#wpga-new-app-pwd').find('input[name="wpga_app_password_desc"]').val()
+		};
+
+		jQuery.ajax({
+			type:'POST',
+			url: ajaxurl,
+			data: data,
+			success:function( data ){ console.log(data);
+				data = urldecode(data);
+				var result = jQuery.parseJSON(data);
+
+				/* Replace content with new password values */
+				jQuery('#wpga-app-pwd').html(result.pwd);
+				jQuery('#wpas-extra-row-description').html(result.desc);
+
+				/* Hide the now useless data blocks */
+				$('#wpga-new-app-pwd').hide();
+				$('#wpga-app-pwd-description').hide();
+
+				/* Display the newly created password */
+				$('#wpga-app-pwd-container').show();
+				$('#wpas-extra-row').show();
+
+			}
+		});
+
+		return false;
+
+	}
+
+	function urldecode(str) {
+		return decodeURIComponent((str + '')
+			.replace(/%(?![\da-f]{2})/gi, function() {
+				return '%25';
+			})
+			.replace(/\+/g, '%20'));
 	}
 
 });
