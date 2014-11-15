@@ -15,7 +15,8 @@ What the plugin does:
 ---
 - Adds 2-factor authentication to WordPress login page,
 - Can be eanbled for each user independantly,
-- Admin can force users to use 2FA (and limit the number of allowed logins without setting up 2FA),
+- Admin can force users to use 2FA (and limit the number of allowed logins without setting up 2FA). The use of 2FA can be forced for all users or for specific roles,
+- Support applications passwords (with access log),
 - If admin forces users to use 2FA, users who didn't set it up will be reminded with a warning in their dashboard,
 - Set any name you want to appear in the Google Authenticator app,
 - Allow clock discrepancy (mins +/-),
@@ -30,30 +31,37 @@ You're using [Authy](https://www.authy.com/)? Google Authenticator for WordPress
 
 ## Changelog ##
 
-### v1.0.7
+### 1.1.0
+* Add support for apps passwords
+* Admins can now force 2FA by user role
+* Add Finnish translation (props [Makke375](https://wordpress.org/support/profile/makke375))
+* Improve performance by reducing plugin footprint
+* Fix the bug that allowed users to login 1 more time after they reached the limit when they don't have 2FA setup yet
+
+### 1.0.7
 * Add cron task to clean TOTPs from DB
 
-### v1.0.6 ###
+### 1.0.6 ###
 * Fix issue with spaces in site name (jeremyawhite)
 
-### v1.0.5 ###
+### 1.0.5 ###
 * Add issuer in the Google Authenticator account
 
-### v1.0.4 ###
+### 1.0.4 ###
 * Add recovery code feature
 * Update translations
 
-### v1.0.3 ###
+### 1.0.3 ###
 * Add support for WordPress Android / iPhone app
 * Add French translation
 
-### v1.0.2 ###
+### 1.0.2 ###
 * Update version number
 * Remove double confirmation message after saving options
 * Update option label and disable TOTP if plugin is not set to Active
 
-### v1.0.1 ###
+### 1.0.1 ###
 * Only push the trunk
 
-### v1.0.0 ###
+### 1.0.0 ###
 * First release of the plugin
