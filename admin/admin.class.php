@@ -375,7 +375,8 @@ class WPGA_Admin {
 		$user     = wp_get_current_user();
 		$active   = $this->settings->getOption( 'active', array() );
 		$force    = $this->settings->getOption( 'force_2fa', array() );
-		$affected = !empty( $a = $this->settings->getOption( 'user_roles', array() ) ) ? $a : array( $user->roles[0] );
+		$roles    = $this->settings->getOption( 'user_roles', array() )
+		$affected = !empty( $roles ) ? $roles : array( $user->roles[0] );
 
 		if( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
 
