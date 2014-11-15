@@ -35,32 +35,40 @@ class WPGA_Admin {
 
 		if( is_admin() ) {
 
-			add_action( 'init', array( $this, 'initSettings' ) );
-			add_action( 'init', array( $this, 'registerSettings' ) );
-
-			if( isset( $_GET['action'] ) )
-				add_action( 'init', array( $this, 'EditSecret' ) );
-
 			add_action( 'wp_ajax_wpga_get_recovery', array( $this, 'ajax_callback' ) );
-			add_action( 'admin_notices', array( $this, 'adminNotices' ) );
-			add_action( 'admin_notices', array( $this, 'ForceSetSecret' ) );
-			add_action( 'show_user_profile', array( $this, 'addUserProfileFields' ) );
-			add_action( 'edit_user_profile', array( $this, 'UserAdminCustomProfileFields' ) );
-			add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
-			add_action( 'admin_print_scripts', array( $this, 'load_admin_scripts' ) );
 
-			if( isset( $_GET['page'] ) && $_GET['page'] == 'wpga_options' )
-				add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
+			if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) {
 
-			if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) )
-				add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
+				add_action( 'init', array( $this, 'initSettings' ) );
+				add_action( 'init', array( $this, 'registerSettings' ) );
+
+				if( isset( $_GET['action'] ) ) {
+					add_action( 'init', array( $this, 'EditSecret' ) );
+				}
+				
+				add_action( 'admin_notices',           array( $this, 'adminNotices' ) );
+				add_action( 'admin_notices',           array( $this, 'ForceSetSecret' ) );
+				add_action( 'show_user_profile',       array( $this, 'addUserProfileFields' ) );
+				add_action( 'edit_user_profile',       array( $this, 'UserAdminCustomProfileFields' ) );
+				add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
+				add_action( 'admin_print_scripts',     array( $this, 'load_admin_scripts' ) );
+
+				if( isset( $_GET['page'] ) && $_GET['page'] == 'wpga_options' ) {
+					add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
+				}
+
+				if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) ) {
+					add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
+				}
+
+			}
 		}
 
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 9 );
+		add_action( 'init',                  array( $this, 'load_plugin_textdomain' ), 9 );
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
-		add_action( 'login_form', array( $this, 'customizeLoginForm' ) );
-		add_action( 'wp_authenticate_user', array( $this, 'authenticateUser' ), 10, 3 );
-		add_action( 'wpas_clean_totps', array( $this, 'clean_totps' ) );
+		add_action( 'login_form',            array( $this, 'customizeLoginForm' ) );
+		add_action( 'wp_authenticate_user',  array( $this, 'authenticateUser' ), 10, 3 );
+		add_action( 'wpas_clean_totps',      array( $this, 'clean_totps' ) );
 
 	}
 
@@ -889,14 +897,14 @@ class WPGA_Admin {
 		if( !current_user_can( 'administrator' ) || !isset( $_GET['user_id'] ) )
 			return;
 
-		$options 		= get_option( 'wpga_options', array() );
-		$secret 		= esc_attr( get_the_author_meta( 'wpga_secret', $_GET['user_id'] ) );
-		$args 			= array( 'action' => 'revoke', 'user_id' => $_GET['user_id'] );
-		$rst_arg		= array( 'action' => 'reset', 'user_id' => $_GET['user_id'] );
-		$revoke 		= wp_nonce_url( add_query_arg( $args, admin_url( 'user-edit.php' ) ), 'revoke_key' );
-		$rst 			= wp_nonce_url( add_query_arg( $rst_arg, admin_url( 'user-edit.php' ) ), 'reset_key' );
-		$attempts 		= (int)get_user_meta( $_GET['user_id'], 'wpga_attempts', true );
-		$max_attempts 	= ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? (int)$options['max_attempts'] : $this->def_attempt;
+		$options      = get_option( 'wpga_options', array() );
+		$secret       = esc_attr( get_the_author_meta( 'wpga_secret', $_GET['user_id'] ) );
+		$args         = array( 'action' => 'revoke', 'user_id' => $_GET['user_id'] );
+		$rst_arg      = array( 'action' => 'reset', 'user_id' => $_GET['user_id'] );
+		$revoke       = wp_nonce_url( add_query_arg( $args, admin_url( 'user-edit.php' ) ), 'revoke_key' );
+		$rst          = wp_nonce_url( add_query_arg( $rst_arg, admin_url( 'user-edit.php' ) ), 'reset_key' );
+		$attempts     = (int)get_user_meta( $_GET['user_id'], 'wpga_attempts', true );
+		$max_attempts = ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? (int)$options['max_attempts'] : $this->def_attempt;
 		?>
 		<h3><?php _e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
 
