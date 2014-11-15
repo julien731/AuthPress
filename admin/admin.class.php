@@ -137,8 +137,7 @@ class WPGA_Admin {
 		global $pagenow;
 
 		if( 'wp-login.php' == $pagenow ) {
-			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array(), null, true );
+			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array( 'jquery' ), null, true );
 			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), WPGA_VERSION, true );
 			wp_enqueue_style( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.css', array(), null, 'all' );
 		}
@@ -155,10 +154,9 @@ class WPGA_Admin {
 
 		global $pagenow;
 
-		if( 'profile.php' != $pagenow )
-			return;
-
-		wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
+		if( 'profile.php' === $pagenow || isset( $_GET['page'] ) && 'wpga_options' === $_GET['page'] ) {
+			wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
+		}
 	}
 
 	/**
@@ -189,6 +187,15 @@ class WPGA_Admin {
 		);
 
 		$this->settings->addOption( 'general', array(
+			'id' 		=> 'user_roles',
+			'title' 	=> __( 'Force Roles', 'wpga' ),
+			'desc' 		=> __( 'You can force users to use 2-factor authentication by role. Requires &laquo;Force Use&raquo; to be enabled. If no role is checked, 2FA will be forced for ALL roles.', 'wpga' ),
+			'field' 	=> 'user_roles',
+			'opts' 		=> $this->get_editable_roles()
+			)
+		);
+
+		$this->settings->addOption( 'general', array(
 			'id' 		=> 'blog_name',
 			'title' 	=> __( 'Site Name', 'wpga' ),
 			'desc' 		=> __( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
@@ -212,6 +219,26 @@ class WPGA_Admin {
 			)
 		);
 
+	}
+
+	/**
+	 * Get roles list.
+	 *
+	 * @since  1.0.9
+	 * @return array List of editable roles
+	 */
+	public function get_editable_roles() {
+		global $wp_roles;
+
+		$all_roles      = $wp_roles->roles;
+		$editable_roles = apply_filters('editable_roles', $all_roles);
+		$list           = array();
+
+		foreach ( $editable_roles as $role_id => $role ) {
+			$list[$role_id] = $role['name'];
+		}
+
+		return $list;
 	}
 
 	/**
@@ -327,23 +354,28 @@ class WPGA_Admin {
 	 */
 	public function ForceSetSecret() {
 
-		$force = $this->settings->getOption( 'force_2fa' );
+		$user     = wp_get_current_user();
+		$force    = $this->settings->getOption( 'force_2fa', array() );
+		$affected = !empty( $a = $this->settings->getOption( 'user_roles', array() ) ) ? $a : array( $user->roles[0] );
 
-		if( $force && is_array( $force ) && in_array( 'yes', $force ) ) {
+		if( in_array( 'yes', $force ) ) {
 
-			$user 			= wp_get_current_user();
-			$secret 		= esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
-			$max_attempts 	= (int)$this->settings->getOption( 'max_attempts', $this->def_attempt );
-			$attempts 		= (int)get_user_meta( $user->ID, 'wpga_attempts', true );
-			$left 			= $max_attempts-$attempts;
-			
-			if( '' == $secret ) {
+			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || in_array( $user->roles[0], $affected ) ) {
 
-				?>
-				<div class="error">
-					<p><?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>. You only have <strong>%s</strong> login attempts left.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?></p>
-				</div>
-				<?php
+				$secret       = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
+				$max_attempts = (int)$this->settings->getOption( 'max_attempts', $this->def_attempt );
+				$attempts     = (int)get_user_meta( $user->ID, 'wpga_attempts', true );
+				$left         = $max_attempts-$attempts;
+				
+				if( '' == $secret ) {
+
+					?>
+					<div class="error">
+						<p><?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>. You only have <strong>%s</strong> login attempts left.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?></p>
+					</div>
+					<?php
+
+				}
 
 			}
 
@@ -541,6 +573,52 @@ class WPGA_Admin {
 	}
 
 	/**
+	 * Check if 2FA is enabled.
+	 *
+	 * Verifies if the user trying to log in has 2FA enabled.
+	 * If not, we check if the site admin did force 2FA and if this
+	 * user is affected.
+	 * 
+	 * @param  object  $user The current user object
+	 * @return boolean       True if 2FA is enabled for this user, false otherwise
+	 */
+	public function is_2fa_enabled( $user ) {
+
+		if ( is_wp_error( $user ) ) {
+			return false;
+		}
+
+		/* First of all we check if 2FA is enabled for this user. */
+		if ( 'yes' === get_user_meta( $user->ID, 'wpga_active', true ) ) {
+			return true;
+		}
+
+		$options = get_option( 'wpga_options', array() );
+
+		/* Check if 2FA is forced by the admin */
+		if ( !isset( $options['force_2fa'] ) || !in_array( 'yes', (array)$options['force_2fa'] )  ) {
+			return false;
+		}
+
+		if ( 'all' === $options['user_role_status'] ) {
+			return true;
+		}
+
+		/* If the forced roles list is empty, we consider it active for all users. Hence, we add the current user role in the list. */
+		if ( !isset( $options['user_roles'] ) || empty( $options['user_roles'] ) ) {
+			$options['user_roles'] = array( $user->roles[0] );
+		}
+
+		/* Check if 2FA is forced for the role this user has */
+		if ( !in_array( $user->roles[0], $options['user_roles'] ) ) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/**
 	 * Add TOTP check to WordPress authentication process
 	 * 
 	 * @param  (object) $user
@@ -586,7 +664,7 @@ class WPGA_Admin {
 			$totp 		= sanitize_key( $_POST['totp'] );
 
 			/* TOTP is forced for all users */
-			if( ( isset( $options['force_2fa'] ) && is_array( $options['force_2fa'] ) && in_array( 'yes', $options['force_2fa'] ) ) || 'yes' == $active ) {
+			if ( $this->is_2fa_enabled( $user ) ) {
 
 				/* Let's make sure the user has generated a secret */
 				if( '' != $secret ) {
@@ -607,9 +685,7 @@ class WPGA_Admin {
 							return $user;
 
 						} else {
-
 							return new WP_Error( 'expired_totp', __( 'The one time password you used has already been revoked.', 'wpga' ) );
-
 						}
 
 					}
@@ -683,9 +759,7 @@ class WPGA_Admin {
 			}
 
 		} else {
-
 			return $user;
-
 		}
 
 	}

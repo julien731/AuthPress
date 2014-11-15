@@ -279,8 +279,68 @@ class TAV_Settings {
 
 			break;
 
+			/**
+			 * Markup for user roles.
+			 *
+			 * Gets all available roles for this install and create
+			 * a checkbox list with it.
+			 *
+			 * @since  1.0.9
+			 */
+			case 'user_roles':
+
+				$status         = $this->getOption( 'user_role_status', 'all' );
+				$checked_all    = ( 'all' === $status ) ? 'checked="checked"' : '';
+				$checked_custom = ( 'custom' === $status ) ? 'checked="checked"' : '';
+				?>
+
+				<div id="wpga-user-roles-noforce">
+					<?php _e( 'You must enable the &laquo;Force Use&raquo; option above in order to select user roles.', 'wpga' ); ?>
+				</div>
+
+				<div id="wpga-user-roles">
+
+					<div id="wpga-user-role-status" style="margin-bottom: 20px;">
+						<label for="user_roles_all">
+							<input type="radio" id="user_roles_all" name="wpga_options[user_role_status]" value="all" <?php echo $checked_all; ?>> <?php _e( 'All', 'wpga' ); ?>
+						</label>
+						<label for="user_roles_custom">
+							<input type="radio" id="user_roles_custom" name="wpga_options[user_role_status]" value="custom" <?php echo $checked_custom; ?>> <?php _e( 'Custom', 'wpga' ); ?>
+						</label>
+					</div>
+
+					<div id="wpga-all-roles">
+
+						<?php foreach ( $field['opts'] as $val => $title ):
+
+							$checked = ( is_array( $value ) && in_array( $val, $value ) ) ? 'checked="checked"' : '';
+							$id = $field['id'] . '_' . $val; ?>
+
+							<label for="<?php echo $id; ?>">
+								<input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $this->option . '[' . $field['id'] . ']'; ?>[]" value="<?php echo $val; ?>" <?php echo $checked; ?>> <?php echo $title; ?>
+							</label><br>
+
+						<?php endforeach; ?>
+
+					</div>
+
+					<?php if( isset( $field['desc'] ) ): ?><p class="description"><?php echo $field['desc']; ?></p><?php endif; ?>
+
+				</div>
+
+			<?php break;
+
 		endswitch; ?>
 
 	<?php }
+
+	public function get_editable_roles() {
+		global $wp_roles;
+
+		$all_roles = $wp_roles->roles;
+		$editable_roles = apply_filters('editable_roles', $all_roles);
+
+		return $editable_roles;
+	}
 
 }
