@@ -1213,3 +1213,49 @@ class WPGA_Admin {
 function wpga_apps_passwords_display() {
 	require_once( WPGA_PATH . 'admin/views/apps-passwords.php' );
 }
+
+add_action( 'admin_init', 'wpas_apps_passwords_actions' );
+/**
+ * Run app passwords related actions.
+ *
+ * Run the actions and redirect to the user's page
+ * in "read only" mode, without the URL vars that can cause
+ * undesired actions (like clearing the log again).
+ *
+ * @since  1.1.0
+ * @return void
+ */
+function wpas_apps_passwords_actions() {
+
+	if ( isset( $_GET['action'] ) && isset( $_GET['wpga_nonce'] ) ) {
+
+		if ( wp_verify_nonce( $_GET['wpga_nonce'], 'wpga_action' ) ) {
+
+			switch ( $_GET['action'] ) {
+				case 'delete':
+				
+					if ( isset( $_GET['key'] ) ) {
+						$delete_key = sanitize_key( $_GET['key'] );
+						wpga_delete_app_password( $delete_key );
+					}
+
+				break;
+
+				case 'delete_all':
+					wpga_reset_app_passwords();
+				break;
+
+				case 'clear_log':
+					wpga_clear_log();
+				break;
+				
+			}
+
+		}
+
+		wp_redirect( add_query_arg( array( 'page' => 'wpga_apps_passwords' ), admin_url( 'users.php') ) );
+		exit;
+
+	}
+
+}

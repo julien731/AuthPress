@@ -1,34 +1,4 @@
 <?php
-global $current_user;
-
-if ( isset( $_GET['action'] ) && isset( $_GET['wpga_nonce'] ) ) {
-
-	if ( wp_verify_nonce( $_GET['wpga_nonce'], 'wpga_action' ) ) {
-
-		switch ( $_GET['action'] ) {
-			case 'delete':
-			
-				if ( isset( $_GET['key'] ) ) {
-					$delete_key = sanitize_key( $_GET['key'] );
-					wpga_delete_app_password( $delete_key );
-				}
-
-			break;
-
-			case 'delete_all':
-				wpga_reset_app_passwords();
-			break;
-
-			case 'clear_log':
-				wpga_clear_log();
-			break;
-			
-		}
-
-	}
-
-}
-
 $passwords = wpga_get_app_passwords();
 $log       = wpga_get_app_passwords_log();
 $alt       = 'class="alternate"';
@@ -65,7 +35,7 @@ $alt       = 'class="alternate"';
 							</tfoot>
 							<tbody>
 								<?php if ( empty( $passwords ) ): ?>
-									<tr>
+									<tr id="wpas-no-app-password">
 										<td colspan="4"><em><?php _e( 'No application password created yet.', 'wpga' ); ?></em></td>
 									</tr>
 								<?php else:
@@ -122,9 +92,15 @@ $alt       = 'class="alternate"';
 			<div id="postbox-container-1" class="postbox-container">
 
 				<div class="meta-box-sortables">
+					<div class="postbox">
+						<h3><span><?php _e( 'When to use app passwords?', 'wpga' ); ?></span></h3>
+						<div class="inside">
+							<p><?php _e( 'Whenever an application or a service asks for your password, you\'re better off creating a new app password. You can delete app passwords anytime.', 'wpga' ); ?></p>
+							<p><?php _e( '<strong>WARNING:</strong> app passwords will bypass the one time password. Don\'t abuse them.', 'wpga' ); ?></p>
+						</div>
+					</div> <!-- .postbox -->
 
 					<div class="postbox">
-
 						<h3><span><?php _e( 'Reset Apps Passwords', 'wpga' ); ?></span></h3>
 						<div class="inside">
 							<p><?php _e( 'If you don\'t need your app passwords or you think they have been compromised you can reset all application passwords at once.', 'wpga' ); ?></p>
