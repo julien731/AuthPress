@@ -85,6 +85,8 @@ function wpga_uninstallPlugin() {
 			delete_user_meta( $user->ID, 'wpga_secret' );
 			delete_user_meta( $user->ID, 'wpga_backup_key' );
 			delete_user_meta( $user->ID, 'wpga_backup_key_time' );
+			delete_user_meta( $user->ID, 'wpga_apps_passwords' );
+			delete_user_meta( $user->ID, 'wpga_apps_passwords_log' );
 
 		}
 
