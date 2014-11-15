@@ -767,7 +767,7 @@ class WPGA_Admin {
 	public function checkAppPassword( $user, $username, $password ) {
 
 		if ( !is_wp_error( $user ) ) {
-			return;
+			return $user;
 		}
 
 		$user_data = get_user_by( 'login', $username );
