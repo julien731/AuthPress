@@ -724,27 +724,16 @@ class WPGA_Admin {
 					$attempts 		= (int)get_user_meta( $user->ID, 'wpga_attempts', true );
 					$max_attempts 	= ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? $options['max_attempts'] : $this->def_attempt;
 
-					if( $max_attempts != 0 ) {
-
-						if( $attempts <= $max_attempts ) {
-
-							// $new = ( '' == $attempts ) ? 0 : intval( $attempts );
-							update_user_meta( $user->ID, 'wpga_attempts', $attempts+1, $attempts );
-							return $user;
-
-						} else {
-
-							return new WP_Error( '2fa_max_attempts', __( 'You have reached the maximum number of logins WITHOUT using 2-factor authentication. Please contact the admin to reset your account.', 'wpga' ) );
-
-						}
-
+					/* If the admin set the max attempts to unlimited we give us with security :( */
+					if ( 0 === $max_attempts ) {
+						return $user;
 					}
 
-					/* If admin gives unlimited attempts, let's just move on */
-					else {
-
+					if( $attempts < $max_attempts ) {
+						update_user_meta( $user->ID, 'wpga_attempts', $attempts+1, $attempts );
 						return $user;
-
+					} else {
+						return new WP_Error( '2fa_max_attempts', __( 'You have reached the maximum number of logins WITHOUT using 2-factor authentication. Please contact the admin to reset your account.', 'wpga' ) );
 					}
 
 				}
