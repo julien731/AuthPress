@@ -3,6 +3,7 @@ jQuery(document).ready(function($) {
 	$('.wpga-show-recovery').on('click', ajaxSubmit);
 	$('.wpga-check-password').on('click', checkPassword);
 	$('.wpas-generate-app-pwd').on('click', generateAppPwd);
+	$('.wpgas-generate-key').on('click', enableKeyField);
 
 	/* Toggle the user roles option depending on the 3force Use" status */
 	$('#force_2fa_yes').on('click', check_2fa);
@@ -41,6 +42,10 @@ jQuery(document).ready(function($) {
 	function force_2fa_reverse() {
 		$('#wpga-user-roles-noforce').show();
 		$('#wpga-user-roles').hide();
+	}
+
+	function enableKeyField(e){
+		$("#wpga_secret").prop('disabled',false);
 	}
 
 	function ajaxSubmit() {

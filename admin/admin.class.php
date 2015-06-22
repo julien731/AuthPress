@@ -391,7 +391,12 @@ class WPGA_Admin {
 
 					?>
 					<div class="error">
-						<p><?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>. You only have <strong>%s</strong> login attempts left.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?></p>
+						<p>
+							<?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?>
+							<?php if($max_attempts > 0){ printf( __( 'You only have <strong>%s</strong> login attempts left.', 'wpga' ), $left ); } ?>
+						</p>
+
+						
 					</div>
 					<?php
 
@@ -729,7 +734,7 @@ class WPGA_Admin {
 					$max_attempts 	= ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? $options['max_attempts'] : $this->def_attempt;
 
 					/* If the admin set the max attempts to unlimited we give us with security :( */
-					if ( 0 === $max_attempts ) {
+					if ( "0" === $max_attempts ) {
 						return $user;
 					}
 
@@ -914,11 +919,9 @@ class WPGA_Admin {
 		if( isset( $_GET['user_id'] ) ) { $args['user_id'] = $_GET['user_id']; }
 		$regenerate = wp_nonce_url( add_query_arg( $args, admin_url( 'profile.php' ) ), 'regenerate_key' );
 
-		if( '' == $secret ) {
-
+		if( '' == $secret ){
 			$secret = $this->generateSecretKey();
 			$qr 	= false;
-
 		}
 		?>
 
@@ -950,8 +953,8 @@ class WPGA_Admin {
 				<th><label for="wpga_secret"><?php _e( 'Secret', 'wpga' ); ?></label></th>
 				<td>
 					<?php if( !$qr ): ?>
-						<input type="hidden" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" />
-						<button type="submit" class="button button-secondary"><?php _e( 'Generate Key', 'wpga' ); ?></button>
+						<input type="hidden" name="wpga_secret" id="wpga_secret" disabled value="<?php echo $secret; ?>" />
+						<button type="submit" class="button button-secondary wpgas-generate-key"><?php _e( 'Generate Key', 'wpga' ); ?></button>
 						<p class="description"><?php _e( 'This is going to be your secret key. Please save changes and scroll back to this field to get your QR code.', 'wpga' ); ?></p>
 					<?php else: ?>
 						<input type="text" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" disabled="disabled" /> 
@@ -1121,6 +1124,9 @@ class WPGA_Admin {
 	 * @param (integer) $user_id User ID
 	 */
 	public function SaveCustomProfileFields( $user_id ) {
+		if( !isset($_POST['wpga_secret']) ){
+			return;
+		}
 
 		if( !current_user_can( 'edit_user', $user_id ) )
 			return false;
