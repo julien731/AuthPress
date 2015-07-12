@@ -964,7 +964,7 @@ class WPGA_Admin {
 						<p class="description"><?php _e( 'This is your personal secret key. Don\'t share it!', 'wpga' ); ?></p>
 					<?php endif; ?>
 					<div id="wpga-qr-code" style="display:none;">
-						 <p totp="<?php print $this->getQRCodeInfo() ?>" />
+						 <p totp="<?php print $this->getQRCodeInfo() ?>" style="padding:0;margin:0"/>
 					</div>
 				</td>
 			</tr>
