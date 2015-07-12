@@ -23,6 +23,13 @@ class WPGA_Admin {
 	 */
 	protected static $instance = null;
 
+	/**
+	 * Plugin settings
+	 * 
+	 * @var TAV_Settings
+	 */
+	protected $settings;
+
 	public function __construct() {
 
 		$this->settings      = array();
@@ -99,8 +106,9 @@ class WPGA_Admin {
 	 */
 	public function initSettings() {
 
-		if( !class_exists( 'TAV_Settings' ) )
+		if ( ! class_exists( 'TAV_Settings' ) ) {
 			return;
+		}
 
 		/* Prepare arguments */
 		$args = array(
