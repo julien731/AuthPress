@@ -40,12 +40,12 @@ class WPGA_Admin {
 			add_action( 'wp_ajax_wpga_get_recovery', array( $this, 'ajax_callback' ) );
 			add_action( 'wp_ajax_wpga_create_app_password', array( $this, 'create_app_password' ) );
 
-			if ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ) {
+			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
 				if( isset( $_GET['action'] ) ) {
 					add_action( 'init', array( $this, 'EditSecret' ) );
 				}
-				
+
 				add_action( 'init',                    array( $this, 'initSettings' ) );
 				add_action( 'init',                    array( $this, 'registerSettings' ) );
 				add_action( 'admin_menu',              array( $this, 'add_app_password_menu' ) );
@@ -56,11 +56,11 @@ class WPGA_Admin {
 				add_action( 'personal_options_update', array( $this, 'SaveCustomProfileFields' ) );
 				add_action( 'admin_print_scripts',     array( $this, 'load_admin_scripts' ) );
 
-				if( isset( $_GET['page'] ) && $_GET['page'] == 'wpga_options' ) {
+				if ( isset( $_GET['page'] ) && $_GET['page'] == 'wpga_options' ) {
 					add_filter( 'contextual_help', array( $this, 'help' ), 10, 3 );
 				}
 
-				if( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) ) {
+				if ( isset( $_GET['page'] ) && ( 'wpga_options' == $_GET['page'] ) ) {
 					add_filter( 'admin_footer_text', array( $this, 'versionInFooter' ) );
 				}
 
@@ -95,7 +95,7 @@ class WPGA_Admin {
 	}
 
 	/**
-	 * Instanciate the settings class
+	 * Instantiate the settings class
 	 */
 	public function initSettings() {
 
@@ -114,7 +114,7 @@ class WPGA_Admin {
 			'row_name'   => WPGA_PREFIX . '_options'
 		);
 
-		/* Instanciate the options class */
+		/* Instantiate the options class */
 		$this->settings = new TAV_Settings( $args );
 		
 	}
@@ -136,13 +136,14 @@ class WPGA_Admin {
 	 * Load the plugin text domain for translation.
 	 *
 	 * @since    1.0.3
+	 * @return bool Whether or not the translation was loaded
 	 */
 	public function load_plugin_textdomain() {
 
 		$domain = WPGA_PREFIX;
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		$textdomain = load_textdomain( $domain, WPGA_PATH . 'languages/' . $domain . '-' . $locale . '.mo' );
+		return load_textdomain( $domain, WPGA_PATH . 'languages/' . $domain . '-' . $locale . '.mo' );
 
 	}
 
@@ -166,7 +167,7 @@ class WPGA_Admin {
 	 * Load the plugin custom JS
 	 *
 	 * @since 1.0.4
-	 * @return (void)
+	 * @return void
 	 */
 	public function load_admin_scripts() {
 
@@ -291,8 +292,9 @@ class WPGA_Admin {
 
 			case 'regenerate':
 
-				if( !wp_verify_nonce( $_GET['_wpnonce'], 'regenerate_key' ) )
+				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'regenerate_key' ) ) {
 					return;
+				}
 
 				$secret = $this->generateSecretKey();
 				update_user_meta( get_current_user_id(), 'wpga_secret', $secret );
@@ -303,11 +305,13 @@ class WPGA_Admin {
 
 			case 'revoke':
 
-				if( !isset( $_GET['user_id'] ) )
+				if ( ! isset( $_GET['user_id'] ) ) {
 					return;
+				}
 
-				if( !wp_verify_nonce( $_GET['_wpnonce'], 'revoke_key' ) )
+				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'revoke_key' ) ) {
 					return;
+				}
 
 				delete_user_meta( $_GET['user_id'], 'wpga_secret' );
 				wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '11' ), admin_url( 'user-edit.php' ) ) );
@@ -317,8 +321,9 @@ class WPGA_Admin {
 
 			case 'reset':
 
-				if( !wp_verify_nonce( $_GET['_wpnonce'], 'reset_key' ) )
+				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'reset_key' ) ) {
 					return;
+				}
 
 				delete_user_meta( $_GET['user_id'], 'wpga_attempts' );
 				wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '12' ), admin_url( 'user-edit.php' ) ) );
@@ -420,7 +425,8 @@ class WPGA_Admin {
 	/**
 	 * Generate a secret key based on allowed chars
 	 * base32 compatible.
-	 * @return (string) Secret key
+	 *
+	 * @return string Secret key
 	 */
 	public function generateSecretKey() {
 
@@ -430,9 +436,9 @@ class WPGA_Admin {
 
 		$secret = '';
 
-		for( $i = 0; $i < $this->key_length; $i++ ) {
+		for ( $i = 0; $i < $this->key_length; $i ++ ) {
 
-			$secret .= $validChars[array_rand($validChars)];
+			$secret .= $validChars[ array_rand( $validChars ) ];
 
 		}
 
@@ -445,8 +451,8 @@ class WPGA_Admin {
 	 * In case the user loses his phone or cannot access the Google Authenticator app,
 	 * we generate a unique backup key that the user can use to authenticate once.
 	 * After one (only) authentication the key will be voided.
-	 * 
-	 * @return (string) Backup key
+	 *
+	 * @return string Backup key
 	 * @since 1.0.4
 	 */
 	public function generate_backup_key() {
@@ -455,8 +461,8 @@ class WPGA_Admin {
 		$max    = ceil( $length / 40 );
 		$random = '';
 
-		for ($i = 0; $i < $max; $i ++) {
-			$random .= sha1( microtime( true ) . mt_rand( 10000,90000 ) );
+		for ( $i = 0; $i < $max; $i ++ ) {
+			$random .= sha1( microtime( true ) . mt_rand( 10000, 90000 ) );
 		}
 
 		return substr( $random, 0, $length );
@@ -465,8 +471,8 @@ class WPGA_Admin {
    /**
 	* List the base32 valid chars that can be used for
 	* secret key generation.
-	* 
-	* @return (array) Valid chars
+	*
+	* @return array Valid chars
 	*/
 	private function getValidChars() {
 
@@ -481,9 +487,10 @@ class WPGA_Admin {
 
 	/**
 	 * Decode base32 string
-	 * 
-	 * @param  (string) $string String to decode
-	 * @return (string) Decoded string
+	 *
+	 * @param  string $string String to decode
+	 *
+	 * @return string Decoded string
 	 */
 	function base32_decode( $string ) {
 
@@ -511,15 +518,15 @@ class WPGA_Admin {
 		$j      = 0;
 		$binary = "";
 
-		for ($i = 0; $i < $l; $i++) {
+		for ( $i = 0; $i < $l; $i ++ ) {
 
 			$n = $n << 5;
-			$n = $n + $lut[$string[$i]];       
+			$n = $n + $lut[ $string[ $i ] ];
 			$j = $j + 5;
 
-			if ($j >= 8) {
+			if ( $j >= 8 ) {
 				$j = $j - 8;
-				$binary .= chr(($n & (0xFF << $j)) >> $j);
+				$binary .= chr( ( $n & ( 0xFF << $j ) ) >> $j );
 			}
 		}
 
@@ -527,12 +534,13 @@ class WPGA_Admin {
 	}
 
 	/**
-     * Calculate the code, with given secret and point in time
-     *
-     * @param (string) $secret
-     * @param (integer) $timeSlice
-     * @return (string) Generated code
-     */
+	 * Calculate the code, with given secret and point in time
+	 *
+	 * @param string  $secret
+	 * @param integer $timeSlice
+	 *
+	 * @return string Generated code
+	 */
 	public function getCode( $secret, $timeSlice = null ) {
 
 		if( $timeSlice === null ) {
@@ -568,15 +576,16 @@ class WPGA_Admin {
 	}
 
 	/**
-     * Check if the code is correct. This will accept codes starting from $drift*30sec ago to $drift*30sec from now
-     *
-     * @package PHPGangsta_GoogleAuthenticator
-     * @author Michael Kliewe
-     * @param string $secret
-     * @param string $code
-     * @param int $discrepancy This is the allowed time drift in 30 second units (8 means 4 minutes before or after)
-     * @return bool
-     */
+	 * Check if the code is correct. This will accept codes starting from $drift*30sec ago to $drift*30sec from now
+	 *
+	 * @package PHPGangsta_GoogleAuthenticator
+	 * @author  Michael Kliewe
+	 *
+	 * @param string $secret
+	 * @param string $code
+	 *
+	 * @return bool
+	 */
 	public function checkTOTP( $secret, $code ) {
 
 		$options 			= get_option( 'wpga_options' );
@@ -645,28 +654,23 @@ class WPGA_Admin {
 
 	/**
 	 * Add TOTP check to WordPress authentication process
-	 * 
-	 * @param  (object) $user
-	 * @param  (string) $password
-	 * @return (object) User object on success or WP_Error on failure
+	 *
+	 * @param  object $user
+	 *
+	 * @return object User object on success or WP_Error on failure
 	 */
-	public function authenticateUser( $user, $password ) {
+	public function authenticateUser( $user ) {
 
 		$options = get_option( 'wpga_options', array() );
 
-		if( !isset( $options['active'] ) || !in_array( 'yes', $options['active'] )  )
+		if ( ! isset( $options['active'] ) || ! in_array( 'yes', $options['active'] ) ) {
 			return $user;
+		}
 
-		/* Get the current user agent */
-		$user_agent = $_SERVER['HTTP_USER_AGENT'];
+		if ( ! is_wp_error( $user ) ) {
 
-		if( !is_wp_error( $user ) ) {
-
-			$username 	= $user->data->user_login;
-			$options	= get_option( 'wpga_options', array() );
-			$secret 	= get_user_meta( $user->ID, 'wpga_secret', true );
-			$active 	= get_user_meta( $user->ID, 'wpga_active', true );
-			$totp 		= isset( $_POST['totp'] ) ? sanitize_key( $_POST['totp'] ) : null;
+			$secret = get_user_meta( $user->ID, 'wpga_secret', true );
+			$totp   = isset( $_POST['totp'] ) ? sanitize_key( $_POST['totp'] ) : null;
 
 			/* TOTP is forced for all users */
 			if ( $this->is_2fa_enabled( $user ) ) {
@@ -769,17 +773,23 @@ class WPGA_Admin {
 	 * we check if the given password is a registered one.
 	 *
 	 * @since  1.1.0
+	 *
+	 * @param WP_User $user     The user object
+	 * @param string  $username The username to authenticate
+	 * @param string  $password The user password
+	 *
+	 * @return WP_User A user object
 	 */
 	public function checkAppPassword( $user, $username, $password ) {
 
-		if ( !is_wp_error( $user ) ) {
+		if ( ! is_wp_error( $user ) ) {
 			return $user;
 		}
 
 		$user_data = get_user_by( 'login', $username );
 
-		if ( !is_object( $user_data ) ) {
-			return;
+		if ( ! is_object( $user_data ) ) {
+			return false;
 		}
 
 		if ( $this->has_app_passwords( $user_data->ID ) ) {
@@ -791,9 +801,9 @@ class WPGA_Admin {
 			if ( array_key_exists( $key, $passwords ) ) {
 
 				/* App password is correct. */
-				if ( wp_check_password( trim( $password ), $passwords[$key]['hash'] ) ) {
+				if ( wp_check_password( trim( $password ), $passwords[ $key ]['hash'] ) ) {
 
-					$log   = $new = wpga_get_app_passwords_log( $user_data->ID );
+					$new   = wpga_get_app_passwords_log( $user_data->ID );
 					$count = count( $new );
 					$last  = null;
 
@@ -802,7 +812,7 @@ class WPGA_Admin {
 						foreach ( $new as $date => $data ) {
 							$last = $date;
 						}
-						unset( $new[$date] );
+						unset( $new[ $last ] );
 					}
 
 					$time  = strtotime( 'now' );
@@ -839,6 +849,9 @@ class WPGA_Admin {
 	 * Check if the current user has app passwords.
 	 *
 	 * @since  1.1.0
+	 *
+	 * @param int $user_id A user ID
+	 *
 	 * @return boolean True if has app passwords
 	 */
 	public function has_app_passwords( $user_id ) {
@@ -852,59 +865,58 @@ class WPGA_Admin {
 
 	/**
 	 * Add a URL var to login redirect page
-	 * 
-	 * @return (string) Redirect URL
+	 *
+	 * @return string Redirect URL
 	 * @since 1.0.4
 	 */
 	public function login_redirect_notify() {
-
 		return add_query_arg( array( '2fa_reset' => 'true' ), admin_url() );
-
 	}
 
 	/**
 	 * Check validity of a recovery key
-	 * 
-	 * @param  (object) $user User object
-	 * @param  (string) $key  Recovery key to check
-	 * @return (boolean)      Whether or not the key is valid
+	 *
+	 * @param  object $user User object
+	 * @param  string $key  Recovery key to check
+	 *
+	 * @return boolean      Whether or not the key is valid
 	 * @since  1.0.4
 	 */
 	public function check_recovery_key( $user, $key ) {
 
 		$recovery = get_user_meta( $user->ID, 'wpga_backup_key', true );
 
-		if( sanitize_key( $key ) == $recovery )
+		if ( sanitize_key( $key ) == $recovery ) {
 			return true;
-
-		else
+		} else {
 			return false;
-		
+		}
+
 	}
 
 	/**
 	 * Get QR Code
 	 *
 	 * Generate QR code through Google Chart using https
-	 * 
-	 * @return (string) QR Code URL
+	 *
+	 * @return string QR Code URL
 	 */
 	public function getQRCodeGoogleUrl() {
 
-		$blogname	= rawurlencode( $this->settings->getOption( 'blog_name' ) );
-		$secret		= esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
-		$account	= ( get_the_author_meta( 'user_login', get_current_user_id() ) );
-		$label		= $blogname . ':' . $account;
+		$blogname = rawurlencode( $this->settings->getOption( 'blog_name' ) );
+		$secret   = esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$account  = ( get_the_author_meta( 'user_login', get_current_user_id() ) );
+		$label    = $blogname . ':' . $account;
 
-		$urlencoded = rawurlencode('otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname );
+		$urlencoded = rawurlencode( 'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname );
 
 		return 'https://chart.googleapis.com/chart?chs=' . $this->qr_width . 'x' . $this->qr_height . '&chld=M|0&cht=qr&chl=' . $urlencoded;
 	}
 
 	/**
 	 * Add profile custom fields
-	 * 
-	 * @param (integer) $user
+	 *
+	 * @param WP_User $user The WP_User object of the user being edited.
 	 */
 	public function addUserProfileFields( $user ) {
 
@@ -995,7 +1007,7 @@ class WPGA_Admin {
 
 							<div id="wpga-recovery" style="display:none;">
 								<p><?php _e( 'For security reasons, please type your password to see your recovery code.', 'wpga' ); ?></p>
-								<input type="password" name="pwd" id="pwd">
+								<label for="pwd" class="sr-only"><?php _e( 'Your Password', 'wpga' ); ?></label><input type="password" name="pwd" id="pwd">
 								<input type="submit" value="OK" placeholder="<?php _e( 'Account password', 'wpga' ); ?>" class="button button-secondary wpga-show-recovery">
 								<p class="description"><?php _e( 'If you are unable to use the Google Authenticator for any reason, you can use this one time recovery code instead of the TOTP. Save this code in a safe place.', 'wpga' ); ?></p>
 							</div>
@@ -1016,13 +1028,14 @@ class WPGA_Admin {
 	 * if the password is correct, it will return
 	 * the recovery code.
 	 *
-	 * @return (void)
+	 * @return void
 	 * @since 1.0.4
 	 */
 	public function ajax_callback() {
 
-		if( !isset( $_POST['pwd'] ) )
-			return false;
+		if ( ! isset( $_POST['pwd'] ) ) {
+			return;
+		}
 
 		/* Password to check */
 		$pwd = sanitize_text_field( $_POST['pwd'] );
@@ -1034,10 +1047,11 @@ class WPGA_Admin {
 
 			$recovery = get_user_meta( $user_id, 'wpga_backup_key', true );
 
-			if( '' != $recovery )
+			if ( '' != $recovery ) {
 				echo "<div style='font-size:18px; font-weight: bold;'>$recovery</div><p>" . _e( 'Write this down and keep it safe', 'wpga' ) . "</p>";
-			else
+			} else {
 				_e( 'No recovery code set yet.', 'wpga' );
+			}
 
 		} else {
 			?><strong><?php _e( 'Wrong password', 'wpga' ); ?></strong><?php
@@ -1054,7 +1068,7 @@ class WPGA_Admin {
 	 */
 	public function create_app_password() {
 
-		if ( !isset( $_POST['description'] ) || empty( $_POST['description'] ) ) {
+		if ( ! isset( $_POST['description'] ) || empty( $_POST['description'] ) ) {
 			die();
 		}
 
@@ -1121,23 +1135,28 @@ class WPGA_Admin {
 
 	/**
 	 * Save custom profile fields
-	 * @param (integer) $user_id User ID
+	 *
+	 * @param integer $user_id User ID
+	 *
+	 * @return void
 	 */
 	public function SaveCustomProfileFields( $user_id ) {
-		if( !isset($_POST['wpga_secret']) ){
+
+		if ( ! isset( $_POST['wpga_secret'] ) ) {
 			return;
 		}
 
-		if( !current_user_can( 'edit_user', $user_id ) )
-			return false;
+		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+			return;
+		}
 
-		if( '' == get_user_meta( $user_id, 'wpga_secret', true ) ) {
+		if ( '' == get_user_meta( $user_id, 'wpga_secret', true ) ) {
 
 			update_user_meta( $user_id, 'wpga_active', 'yes' );
 
 		} else {
 
-			if( isset( $_POST['wpga_active'] ) ) {
+			if ( isset( $_POST['wpga_active'] ) ) {
 				update_user_meta( $user_id, 'wpga_active', $_POST['wpga_active'] );
 			} else {
 				delete_user_meta( $user_id, 'wpga_active' );
