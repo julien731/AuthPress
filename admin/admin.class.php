@@ -183,6 +183,7 @@ class WPGA_Admin {
 
 		if( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_options', 'wpga_apps_passwords' ) ) ) {
 			wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
+			wp_enqueue_script( 'wpga-qrcode', WPGA_URL . 'vendor/jquery.qrcode.min.js', array( 'jquery' ), null, true );
 		}
 	}
 
@@ -903,23 +904,22 @@ class WPGA_Admin {
 	}
 
 	/**
-	 * Get QR Code
+	 * Get QR Code text
 	 *
-	 * Generate QR code through Google Chart using https
-	 *
-	 * @return string QR Code URL
+	 * Do API calls to get the data for the QR code.  rawurlencode() blog_name and account
+	 * 
+	 * @return (string) QR Code URL
 	 */
-	public function getQRCodeGoogleUrl() {
+    public function getQRCodeInfo() {
 
-		$blogname = rawurlencode( $this->settings->getOption( 'blog_name' ) );
-		$secret   = esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
-		$account  = ( get_the_author_meta( 'user_login', get_current_user_id() ) );
-		$label    = $blogname . ':' . $account;
+		$blogname	= rawurlencode( $this->settings->getOption( 'blog_name' ) );
+		$secret		= esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
+		$account	= get_the_author_meta( 'user_login', get_current_user_id() );
+		$label		= $blogname . ':' . rawurlencode( $account );
 
-		$urlencoded = rawurlencode( 'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname );
+		return  'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname;
 
-		return 'https://chart.googleapis.com/chart?chs=' . $this->qr_width . 'x' . $this->qr_height . '&chld=M|0&cht=qr&chl=' . $urlencoded;
-	}
+    }
 
 	/**
 	 * Add profile custom fields
@@ -979,12 +979,12 @@ class WPGA_Admin {
 					<?php else: ?>
 						<input type="text" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" disabled="disabled" /> 
 						<input type="hidden" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" /> 
-						<a href="#TB_inline?width=<?php echo $width; ?>&height=<?php echo $height; ?>&inlineId=wpga-qr-code" class="thickbox button button-secondary"><?php _e( 'Get QR Code', 'wpga' ); ?></a> 
+						<a href="#TB_inline?width=<?php echo $width; ?>&height=<?php echo $height; ?>&inlineId=wpga-qr-code" class="thickbox button button-secondary wpga_generate_qrcode"><?php _e( 'Get QR Code', 'wpga' ); ?></a>
 						<a href="<?php echo $regenerate; ?>" class="button button-secondary"><?php _e( 'Regenerate Key', 'wpga' ); ?></a>
 						<p class="description"><?php _e( 'This is your personal secret key. Don\'t share it!', 'wpga' ); ?></p>
 					<?php endif; ?>
 					<div id="wpga-qr-code" style="display:none;">
-						 <img src="<?php echo $this->getQRCodeGoogleUrl(); ?>" alt="<?php _e( 'QR Code', 'wpga' ); ?>">
+						 <p totp="<?php print $this->getQRCodeInfo() ?>" style="padding:0;margin:0"/>
 					</div>
 				</td>
 			</tr>

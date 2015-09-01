@@ -4,6 +4,7 @@ jQuery(document).ready(function($) {
 	$('.wpga-check-password').on('click', checkPassword);
 	$('.wpas-generate-app-pwd').on('click', generateAppPwd);
 	$('.wpgas-generate-key').on('click', enableKeyField);
+	$('.wpga_generate_qrcode').on('click', populateQrcode);
 
 	/* Toggle the user roles option depending on the 3force Use" status */
 	$('#force_2fa_yes').on('click', check_2fa);
@@ -17,6 +18,19 @@ jQuery(document).ready(function($) {
 	if( $('#user_roles_all').is(':checked') ) { $('#wpga-all-roles').hide(); }
 	$('#user_roles_all').on('click', function() { $('#wpga-all-roles').hide(); } );
 	$('#user_roles_custom').on('click', function() { $('#wpga-all-roles').show(); } );
+
+	/**
+	 * Grab the TOTP data from the DOM and call
+	 * jquery plugin to render it using <canvas> tags
+	 * see https://larsjung.de/jquery-qrcode/ for more info.
+	 */
+	function populateQrcode(targetId){
+		var totp = $('#wpga-qr-code p').attr('totp');
+		$('#wpga-qr-code p').html('').qrcode({
+			"ecLevel": "M",
+			"size": 300,
+			"text": totp});
+	}
 
 	function checkPassword() {
 		$('#wpga-recovery').show();
