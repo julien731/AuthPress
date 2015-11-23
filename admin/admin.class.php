@@ -368,6 +368,10 @@ class WPGA_Admin {
 			'12' => sprintf( __( 'The attempts count has been reset.', 'wpga' ), $uid ),
 		);
 
+		if ( ! isset( $messages[ $_GET['update'] ] ) ) {
+			return;
+		}
+
 		?>
 		<div class="updated">
 			<p><?php echo $messages[$_GET['update']]; ?></p>
