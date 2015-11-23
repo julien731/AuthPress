@@ -322,6 +322,10 @@ class WPGA_Admin {
 					return;
 				}
 
+				if ( ! current_user_can( 'edit_user', $_GET['user_id'] ) ) {
+					return;
+				}
+
 				delete_user_meta( $_GET['user_id'], 'wpga_secret' );
 				wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '11' ), admin_url( 'user-edit.php' ) ) );
 				exit;
@@ -331,6 +335,10 @@ class WPGA_Admin {
 			case 'reset':
 
 				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'reset_key' ) ) {
+					return;
+				}
+				
+				if ( ! current_user_can( 'edit_user', $_GET['user_id'] ) ) {
 					return;
 				}
 
