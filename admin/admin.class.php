@@ -390,11 +390,12 @@ class WPGA_Admin {
 		$active   = $this->settings->getOption( 'active', array() );
 		$force    = $this->settings->getOption( 'force_2fa', array() );
 		$roles    = $this->settings->getOption( 'user_roles', array() );
-		$affected = !empty( $roles ) ? $roles : array( $user->roles[0] );
+
+		$affected = !empty( $roles ) ? $roles : $user->roles;
 
 		if( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
 
-			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || in_array( $user->roles[0], $affected ) ) {
+			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || array_intersect( $user->roles, $affected ) ) {
 
 				$secret       = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
 				$max_attempts = (int)$this->settings->getOption( 'max_attempts', $this->def_attempt );
@@ -649,11 +650,11 @@ class WPGA_Admin {
 
 		/* If the forced roles list is empty, we consider it active for all users. Hence, we add the current user role in the list. */
 		if ( !isset( $options['user_roles'] ) || empty( $options['user_roles'] ) ) {
-			$options['user_roles'] = array( $user->roles[0] );
+			$options['user_roles'] = $user->roles;
 		}
 
 		/* Check if 2FA is forced for the role this user has */
-		if ( !in_array( $user->roles[0], $options['user_roles'] ) ) {
+		if ( ! array_intersect( $user->roles, $options['user_roles'] ) ) {
 			return false;
 		}
 
