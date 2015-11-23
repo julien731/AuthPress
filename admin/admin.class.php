@@ -1105,7 +1105,7 @@ class WPGA_Admin {
 	 */
 	public function UserAdminCustomProfileFields() {
 
-		if( !current_user_can( 'administrator' ) || !isset( $_GET['user_id'] ) )
+		if( !current_user_can( 'edit_users' ) || !isset( $_GET['user_id'] ) )
 			return;
 
 		$options      = get_option( 'wpga_options', array() );
