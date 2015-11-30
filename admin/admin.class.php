@@ -322,6 +322,10 @@ class WPGA_Admin {
 					return;
 				}
 
+				if ( ! current_user_can( 'edit_user', $_GET['user_id'] ) ) {
+					return;
+				}
+
 				delete_user_meta( $_GET['user_id'], 'wpga_secret' );
 				wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '11' ), admin_url( 'user-edit.php' ) ) );
 				exit;
@@ -331,6 +335,10 @@ class WPGA_Admin {
 			case 'reset':
 
 				if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'reset_key' ) ) {
+					return;
+				}
+				
+				if ( ! current_user_can( 'edit_user', $_GET['user_id'] ) ) {
 					return;
 				}
 
@@ -368,6 +376,10 @@ class WPGA_Admin {
 			'12' => sprintf( __( 'The attempts count has been reset.', 'wpga' ), $uid ),
 		);
 
+		if ( ! isset( $messages[ $_GET['update'] ] ) ) {
+			return;
+		}
+
 		?>
 		<div class="updated">
 			<p><?php echo $messages[$_GET['update']]; ?></p>
@@ -390,11 +402,12 @@ class WPGA_Admin {
 		$active   = $this->settings->getOption( 'active', array() );
 		$force    = $this->settings->getOption( 'force_2fa', array() );
 		$roles    = $this->settings->getOption( 'user_roles', array() );
-		$affected = !empty( $roles ) ? $roles : array( $user->roles[0] );
+
+		$affected = !empty( $roles ) ? $roles : $user->roles;
 
 		if( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
 
-			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || in_array( $user->roles[0], $affected ) ) {
+			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || array_intersect( $user->roles, $affected ) ) {
 
 				$secret       = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
 				$max_attempts = (int)$this->settings->getOption( 'max_attempts', $this->def_attempt );
@@ -649,11 +662,11 @@ class WPGA_Admin {
 
 		/* If the forced roles list is empty, we consider it active for all users. Hence, we add the current user role in the list. */
 		if ( !isset( $options['user_roles'] ) || empty( $options['user_roles'] ) ) {
-			$options['user_roles'] = array( $user->roles[0] );
+			$options['user_roles'] = $user->roles;
 		}
 
 		/* Check if 2FA is forced for the role this user has */
-		if ( !in_array( $user->roles[0], $options['user_roles'] ) ) {
+		if ( ! array_intersect( $user->roles, $options['user_roles'] ) ) {
 			return false;
 		}
 
@@ -1100,7 +1113,7 @@ class WPGA_Admin {
 	 */
 	public function UserAdminCustomProfileFields() {
 
-		if( !current_user_can( 'administrator' ) || !isset( $_GET['user_id'] ) )
+		if( !current_user_can( 'edit_users' ) || !isset( $_GET['user_id'] ) )
 			return;
 
 		$options      = get_option( 'wpga_options', array() );
