@@ -76,7 +76,6 @@ class WPGA_Admin {
 
 		add_action( 'init',                  array( $this, 'load_plugin_textdomain' ), 9 );
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
-		add_action( 'admin_print_scripts',   array( $this, 'loadResources' ) );
 		add_action( 'login_form',            array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user',  array( $this, 'authenticateUser' ), 10, 3 );
 		add_filter( 'authenticate',          array( $this, 'checkAppPassword' ), 50, 3 );
@@ -164,9 +163,7 @@ class WPGA_Admin {
 		global $pagenow;
 
 		if( in_array( $pagenow, array( 'wp-login.php', 'users.php' ) ) ) {
-			wp_enqueue_script( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.js', array( 'jquery' ), null, true );
-			wp_enqueue_script( 'wpga-main', WPGA_URL . 'js/main.js', array(), WPGA_VERSION, true );
-			wp_enqueue_style( 'wpga-powertip', WPGA_URL . 'vendor/powertip/jquery.powertip.min.css', array(), null, 'all' );
+			wp_enqueue_style( 'wpga-simple-hint', WPGA_URL . 'css/wpga.css', array(), null, 'all' );
 		}
 
 	}
@@ -1228,10 +1225,10 @@ class WPGA_Admin {
 
 		?>
 		<p>
-			<label for="authenticator">
-				<?php _e( 'Google Authenticator', 'wpga' ); ?> <small><a href="#" title="<?php _e( 'If you do not have configured the 2-factor authentication,<br> just leave this field blank and you will be logged-in as usual.<br><br>If you can\'t use the Google Authenticator app for whatever reason,<br>you can use your recovery code instead.', 'wpga' ); ?>" class="wpgahelp" tabindex="-1">[?]</a></small>
+			<label for="authenticator" class="wpga-label">
+				<?php _e( 'Google Authenticator', 'wpga' ); ?> <span data-hint="<?php _e( 'If you do not have configured the 2-factor authentication, just leave this field blank and you will be logged-in as usual. If you can\'t use the Google Authenticator app for whatever reason, you can use your recovery code instead.', 'wpga' ); ?>" class="hint-top-s-big hint-fade"><a class="wpga-hint" href="javascript:void(0);">[?]</a></span>
 				<br>
-				<input id="authenticator" class="input" type="text" size="20" value="" name="totp">
+				<input id="authenticator" class="input" type="text" size="20" value="" name="totp" autocomplete="off">
 			</label>
 		</p>
 		<?php
