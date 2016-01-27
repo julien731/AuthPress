@@ -1228,7 +1228,7 @@ class WPGA_Admin {
 			<label for="authenticator" class="wpga-label">
 				<?php _e( 'Google Authenticator', 'wpga' ); ?> <span data-hint="<?php _e( 'If you do not have configured the 2-factor authentication, just leave this field blank and you will be logged-in as usual. If you can\'t use the Google Authenticator app for whatever reason, you can use your recovery code instead.', 'wpga' ); ?>" class="hint-top-s-big hint-fade"><a class="wpga-hint" href="javascript:void(0);">[?]</a></span>
 				<br>
-				<input id="authenticator" class="input" type="text" size="20" value="" name="totp">
+				<input id="authenticator" class="input" type="text" size="20" value="" name="totp" autocomplete="off">
 			</label>
 		</p>
 		<?php
