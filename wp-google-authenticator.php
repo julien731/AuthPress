@@ -38,7 +38,7 @@ function wpga_installPlugin() {
 		'authorized_delay' 	=> 0,
 		);
 
-	if( !get_option( WPGA_PREFIX . '_options' ) )
+	if ( ! get_option( WPGA_PREFIX . '_options' ) )
 		update_option( WPGA_PREFIX . '_options', $defaults );
 
 	/* Add a new cron hook */
@@ -76,7 +76,7 @@ function wpga_uninstallPlugin() {
 	$users = new WP_User_Query( $args );
 
 	/* Delete all user metas */
-	if( !empty( $users->results ) ) {
+	if ( ! empty( $users->results ) ) {
 
 		foreach( $users->results as $key => $user ) {
 
