@@ -379,7 +379,7 @@ class WPGA_Admin {
 
 		?>
 		<div class="updated">
-			<p><?php echo $messages[ $_GET['update'] ]; ?></p>
+			<p><?php echo esc_html( $messages[ $_GET['update'] ] ); ?></p>
 		</div>
 		<?php
 
