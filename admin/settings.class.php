@@ -248,7 +248,7 @@ class TAV_Settings {
 			case 'text': ?>
 
 				<input type="text" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" class="regular-text" />
-				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo esc_html( $field['desc'] ); ?></p><?php endif;
+				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo wp_kses( $field['desc'], array( 'code' => array() ) ); ?></p><?php endif;
 
 			break;
 
@@ -258,7 +258,7 @@ class TAV_Settings {
 			case 'smalltext': ?>
 
 				<input type="text" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" class="small-text" />
-				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo esc_html( $field['desc'] ); ?></p><?php endif;
+				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo wp_kses( $field['desc'], array( 'code' => array() ) ); ?></p><?php endif;
 
 			break;
 

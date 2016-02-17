@@ -195,26 +195,26 @@ class WPGA_Admin {
 
 		$this->settings->addOption( 'general', array(
 			'id' 		=> 'active',
-			'title' 	=> esc_html__( 'Activate Plugin', 'wpga' ),
-			'desc' 		=> esc_html__( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
+			'title' 	=> __( 'Activate Plugin', 'wpga' ),
+			'desc' 		=> __( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
 			'field' 	=> 'checkbox',
-			'opts' 		=> array( 'yes' => esc_html__( 'Yes', 'wpga' ) )
+			'opts' 		=> array( 'yes' => __( 'Yes', 'wpga' ) )
 			)
 		);
 
 		$this->settings->addOption( 'general', array(
 			'id' 		=> 'force_2fa',
-			'title' 	=> esc_html__( 'Force Use', 'wpga' ),
-			'desc' 		=> esc_html__( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
+			'title' 	=> __( 'Force Use', 'wpga' ),
+			'desc' 		=> __( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
 			'field' 	=> 'checkbox',
-			'opts' 		=> array( 'yes' => esc_html__( 'Yes', 'wpga' ) )
+			'opts' 		=> array( 'yes' => __( 'Yes', 'wpga' ) )
 			)
 		);
 
 		$this->settings->addOption( 'general', array(
 			'id' 		=> 'user_roles',
-			'title' 	=> esc_html__( 'Force Roles', 'wpga' ),
-			'desc' 		=> esc_html__( 'You can force users to use 2-factor authentication by role. Requires &laquo;Force Use&raquo; to be enabled. If no role is checked, 2FA will be forced for ALL roles.', 'wpga' ),
+			'title' 	=> __( 'Force Roles', 'wpga' ),
+			'desc' 		=> __( 'You can force users to use 2-factor authentication by role. Requires &laquo;Force Use&raquo; to be enabled. If no role is checked, 2FA will be forced for ALL roles.', 'wpga' ),
 			'field' 	=> 'user_roles',
 			'opts' 		=> $this->get_editable_roles()
 			)
@@ -222,25 +222,25 @@ class WPGA_Admin {
 
 		$this->settings->addOption( 'general', array(
 			'id' 		=> 'blog_name',
-			'title' 	=> esc_html__( 'Site Name', 'wpga' ),
-			'desc' 		=> esc_html__( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
+			'title' 	=> __( 'Site Name', 'wpga' ),
+			'desc' 		=> __( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
 			'field' 	=> 'text'
 			)
 		);
 
 		$this->settings->addOption( 'security', array(
-			'id' 		=> 'max_attempts',
-			'title' 	=> esc_html__( 'Max Attempts', 'wpga' ),
-			'desc' 		=> wp_kses( __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ), array( 'code' => array() ) ),
-			'field' 	=> 'smalltext'
+			'id'    => 'max_attempts',
+			'title' => __( 'Max Attempts', 'wpga' ),
+			'desc'  => __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ),
+			'field' => 'smalltext'
 			)
 		);
 
 		$this->settings->addOption( 'security', array(
-			'id' 		=> 'authorized_delay',
-			'title' 	=> esc_html__( 'Authorized Clock Desynchronization', 'wpga' ),
-			'desc' 		=> wp_kses( __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ), array( 'code' => array() ) ),
-			'field' 	=> 'smalltext'
+			'id'    => 'authorized_delay',
+			'title' => __( 'Authorized Clock Desynchronization', 'wpga' ),
+			'desc'  => __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ),
+			'field' => 'smalltext'
 			)
 		);
 
