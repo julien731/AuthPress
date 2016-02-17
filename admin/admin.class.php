@@ -354,15 +354,15 @@ class WPGA_Admin {
 	 */
 	public function adminNotices() {
 
-		if( isset( $_GET['2fa_reset'] ) && 'true' == $_GET['2fa_reset'] ) { ?>
+		if ( isset( $_GET['2fa_reset'] ) && 'true' == $_GET['2fa_reset'] ) { ?>
 
 			<div class="error">
-				<p><?php printf( __( '2-factor authentication has been deactivated for your account. If you want to reactivate it, go to your %sprofile page%s.', 'wpga' ), '<a href="' . admin_url( 'profile.php' ) . '#wpga">', '</a>' ); ?></p>
+				<p><?php printf( wp_kses( __( '2-factor authentication has been deactivated for your account. If you want to reactivate it, go to your %sprofile page%s.', 'wpga' ), array( 'a' => array( 'href' => array() ) ) ), '<a href="' . admin_url( 'profile.php' ) . '#wpga">', '</a>' ); ?></p>
 			</div>
 
 		<?php }
 
-		if( !isset( $_GET['update'] ) )
+		if ( ! isset( $_GET['update'] ) )
 			return;
 
 		$uid = isset( $_GET['user_id'] ) ? $_GET['user_id'] : '';
@@ -416,8 +416,8 @@ class WPGA_Admin {
 					?>
 					<div class="error">
 						<p>
-							<?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?>
-							<?php if ( $max_attempts > 0 ) { printf( __( 'You only have <strong>%s</strong> login attempts left.', 'wpga' ), $left ); } ?>
+							<?php printf( wp_kses( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>.', 'wpga' ), array( 'a' => array( 'href' => array() ) ) ), admin_url( 'profile.php#wpga' ), $left ); ?>
+							<?php if ( $max_attempts > 0 ) { printf( wp_kses( __( 'You only have <strong>%s</strong> login attempts left.', 'wpga' ), array( 'strong' => array() ) ), $left ); } ?>
 						</p>
 
 						
