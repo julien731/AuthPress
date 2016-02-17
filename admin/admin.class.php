@@ -198,7 +198,7 @@ class WPGA_Admin {
 			'title' 	=> esc_html__( 'Activate Plugin', 'wpga' ),
 			'desc' 		=> esc_html__( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
 			'field' 	=> 'checkbox',
-			'opts' 		=> array( 'yes' => __( 'Yes', 'wpga' ) )
+			'opts' 		=> array( 'yes' => esc_html__( 'Yes', 'wpga' ) )
 			)
 		);
 
@@ -207,7 +207,7 @@ class WPGA_Admin {
 			'title' 	=> esc_html__( 'Force Use', 'wpga' ),
 			'desc' 		=> esc_html__( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
 			'field' 	=> 'checkbox',
-			'opts' 		=> array( 'yes' => __( 'Yes', 'wpga' ) )
+			'opts' 		=> array( 'yes' => esc_html__( 'Yes', 'wpga' ) )
 			)
 		);
 
