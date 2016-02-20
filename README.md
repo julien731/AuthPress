@@ -1,6 +1,8 @@
 Google Authenticator for WordPress
 ==================================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/julien731/WP-Google-Authenticator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/julien731/WP-Google-Authenticator/?branch=master)
+
 If you are concerned about security, you should look into 2-factor authentication.
 
 *Quick reminder:* 2-factor authentication adds an extra layer of security by requesting a one time password in addition to standard username / password credentials.
