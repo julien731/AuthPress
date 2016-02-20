@@ -218,8 +218,8 @@ class TAV_Settings {
 
 		?>
 		<div class="wrap">  
-			<div class="icon32" id="<?php echo $this->icon; ?>"></div>  
-			<h2><?php _e( 'WP Google Authenticator Settings', 'wpga' ); ?></h2>
+			<div class="icon32" id="<?php echo esc_attr( $this->icon ); ?>"></div>
+			<h2><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h2>
 			  
 			<form action="options.php" method="post">
 				<?php
@@ -240,15 +240,15 @@ class TAV_Settings {
 
 		$value = $this->getOption( $field['id'], '' );
 
-		switch( $field['type'] ):
+		switch ( $field['type'] ):
 
 			/**
 			 * Markup for regular text fields
 			 */
 			case 'text': ?>
 
-				<input type="text" id="<?php echo $field['id']; ?>" name="<?php echo $this->option . '[' . $field['id'] . ']'; ?>" value="<?php echo $value; ?>" class="regular-text" />
-				<?php if( isset( $field['desc'] ) ): ?><p class="description"><?php echo $field['desc']; ?></p><?php endif;
+				<input type="text" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" class="regular-text" />
+				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo wp_kses( $field['desc'], array( 'code' => array() ) ); ?></p><?php endif;
 
 			break;
 
@@ -257,8 +257,8 @@ class TAV_Settings {
 			 */
 			case 'smalltext': ?>
 
-				<input type="text" id="<?php echo $field['id']; ?>" name="<?php echo $this->option . '[' . $field['id'] . ']'; ?>" value="<?php echo $value; ?>" class="small-text" />
-				<?php if( isset( $field['desc'] ) ): ?><p class="description"><?php echo $field['desc']; ?></p><?php endif;
+				<input type="text" id="<?php echo esc_attr( $field['id'] ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>" value="<?php echo esc_attr( $value ); ?>" class="small-text" />
+				<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo wp_kses( $field['desc'], array( 'code' => array() ) ); ?></p><?php endif;
 
 			break;
 
@@ -267,18 +267,18 @@ class TAV_Settings {
 			 */
 			case 'checkbox':
 
-				foreach( $field['opts'] as $val => $title ):
+				foreach( $field['opts'] as $val => $title ) :
 
 					$checked = ( is_array( $value ) && in_array( $val, $value ) ) ? 'checked="checked"' : '';
 					$id = $field['id'] . '_' . $val; ?>
 
 					<label for="<?php echo $id; ?>">
-						<input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $this->option . '[' . $field['id'] . ']'; ?>[]" value="<?php echo $val; ?>" <?php echo $checked; ?>> <?php echo $title; ?>
+						<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>[]" value="<?php echo esc_attr( $val ); ?>" <?php echo $checked; ?>> <?php echo $title; ?>
 					</label>
 
 				<?php endforeach;
 
-				if( isset( $field['desc'] ) ): ?><p class="description"><?php echo $field['desc']; ?></p><?php endif;
+				if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo esc_html( $field['desc'] ); ?></p><?php endif;
 
 			break;
 
@@ -298,17 +298,17 @@ class TAV_Settings {
 				?>
 
 				<div id="wpga-user-roles-noforce">
-					<?php _e( 'You must enable the &laquo;Force Use&raquo; option above in order to select user roles.', 'wpga' ); ?>
+					<?php esc_html_e( 'You must enable the &laquo;Force Use&raquo; option above in order to select user roles.', 'wpga' ); ?>
 				</div>
 
 				<div id="wpga-user-roles">
 
 					<div id="wpga-user-role-status" style="margin-bottom: 20px;">
 						<label for="user_roles_all">
-							<input type="radio" id="user_roles_all" name="wpga_options[user_role_status]" value="all" <?php echo $checked_all; ?>> <?php _e( 'All', 'wpga' ); ?>
+							<input type="radio" id="user_roles_all" name="wpga_options[user_role_status]" value="all" <?php echo $checked_all; ?>> <?php esc_html_e( 'All', 'wpga' ); ?>
 						</label>
 						<label for="user_roles_custom">
-							<input type="radio" id="user_roles_custom" name="wpga_options[user_role_status]" value="custom" <?php echo $checked_custom; ?>> <?php _e( 'Custom', 'wpga' ); ?>
+							<input type="radio" id="user_roles_custom" name="wpga_options[user_role_status]" value="custom" <?php echo $checked_custom; ?>> <?php esc_html_e( 'Custom', 'wpga' ); ?>
 						</label>
 					</div>
 
@@ -320,14 +320,14 @@ class TAV_Settings {
 							$id = $field['id'] . '_' . $val; ?>
 
 							<label for="<?php echo $id; ?>">
-								<input type="checkbox" id="<?php echo $id; ?>" name="<?php echo $this->option . '[' . $field['id'] . ']'; ?>[]" value="<?php echo $val; ?>" <?php echo $checked; ?>> <?php echo $title; ?>
+								<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $this->option . '[' . $field['id'] . ']' ); ?>[]" value="<?php echo esc_attr( $val ); ?>" <?php echo $checked; ?>> <?php echo esc_html( $title ); ?>
 							</label><br>
 
 						<?php endforeach; ?>
 
 					</div>
 
-					<?php if( isset( $field['desc'] ) ): ?><p class="description"><?php echo $field['desc']; ?></p><?php endif; ?>
+					<?php if ( isset( $field['desc'] ) ) : ?><p class="description"><?php echo esc_html( $field['desc'] ); ?></p><?php endif; ?>
 
 				</div>
 

@@ -112,9 +112,9 @@ class WPGA_Admin {
 		/* Prepare arguments */
 		$args = array(
 			'name'       => WPGA_PREFIX . '_options',
-			'menu_name'  => __( 'Authenticator', 'wpga' ),
+			'menu_name'  => esc_html__( 'Authenticator', 'wpga' ),
 			'parent'     => 'options-general.php',
-			'page_title' => __( 'WP Google Authenticator Settings', 'wpga' ),
+			'page_title' => esc_html__( 'WP Google Authenticator Settings', 'wpga' ),
 			'slug'       => WPGA_PREFIX . '_options',
 			'page'       => 'wpga-settings',
 			'prefix'     => WPGA_PREFIX,
@@ -131,8 +131,8 @@ class WPGA_Admin {
 	 */
 	public function add_app_password_menu() {
 		add_users_page(
-			__( 'Google Authenticator Applications Passwords', 'wpga' ),
-			__( 'My Apps Passwords', 'wpga' ),
+			esc_html__( 'Google Authenticator Applications Passwords', 'wpga' ),
+			esc_html__( 'My Apps Passwords', 'wpga' ),
 			'read',
 			WPGA_PREFIX . '_apps_passwords',
 			'wpga_apps_passwords_display'
@@ -162,7 +162,7 @@ class WPGA_Admin {
 
 		global $pagenow;
 
-		if( in_array( $pagenow, array( 'wp-login.php', 'users.php' ) ) ) {
+		if ( in_array( $pagenow, array( 'wp-login.php', 'users.php' ) ) ) {
 			wp_enqueue_style( 'wpga-simple-hint', WPGA_URL . 'css/wpga.css', array(), null, 'all' );
 		}
 
@@ -178,7 +178,7 @@ class WPGA_Admin {
 
 		global $pagenow;
 
-		if( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_options', 'wpga_apps_passwords' ) ) ) {
+		if ( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_options', 'wpga_apps_passwords' ) ) ) {
 			wp_enqueue_script( 'wpga-custom', WPGA_URL . 'js/custom.js', array(), WPGA_VERSION, true );
 			wp_enqueue_script( 'wpga-qrcode', WPGA_URL . 'vendor/jquery.qrcode.min.js', array( 'jquery' ), null, true );
 		}
@@ -229,18 +229,18 @@ class WPGA_Admin {
 		);
 
 		$this->settings->addOption( 'security', array(
-			'id' 		=> 'max_attempts',
-			'title' 	=> __( 'Max Attempts', 'wpga' ),
-			'desc' 		=> __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ),
-			'field' 	=> 'smalltext'
+			'id'    => 'max_attempts',
+			'title' => __( 'Max Attempts', 'wpga' ),
+			'desc'  => __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ),
+			'field' => 'smalltext'
 			)
 		);
 
 		$this->settings->addOption( 'security', array(
-			'id' 		=> 'authorized_delay',
-			'title' 	=> __( 'Authorized Clock Desynchronization', 'wpga' ),
-			'desc' 		=> __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ),
-			'field' 	=> 'smalltext'
+			'id'    => 'authorized_delay',
+			'title' => __( 'Authorized Clock Desynchronization', 'wpga' ),
+			'desc'  => __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ),
+			'field' => 'smalltext'
 			)
 		);
 
@@ -271,15 +271,15 @@ class WPGA_Admin {
 	 */
 	public function help() {
 
-		if( !isset( $_GET['page'] ) || $_GET['page'] != 'wpga_options' )
+		if( ! isset( $_GET['page'] ) || $_GET['page'] != 'wpga_options' )
 			return;
 
 		$screen = get_current_screen();
 
 		$screen->add_help_tab( array(
 			'id'      => 'desynchronization',
-			'title'   => __( 'Desynchronization', 'wpga' ),
-			'content' => __('<h2>Authorized Clock Desynchronization</h2><p>First of all, you have to understand how the 2-factor authentication works.</p><p>The Google Authenticator will generate a TOTP which stands for Time based One Time Pasword. This one time password, as you might now understand, is generated based on the current time.</p><p>If the server\'s (where your site is hosted) clock and the user\'s phone clock are not perfectly synchronized, the one time password generated won\'t work, as it will be generated on a time which is different from the server.</p><p>The authorized desynchronization will allow your users more time to use their one time password. By default, one code will be valid for <strong>30 seconds</strong>. If you want to give them more time, you can specify a delay in <strong>minutes</strong>.</p><p>Of course, if you give users more time, the security will be lowered. It is advised to stick with the default 30 secs.</p>', 'wpga')
+			'title'   => esc_html__( 'Desynchronization', 'wpga' ),
+			'content' => wp_kses( __('<h2>Authorized Clock Desynchronization</h2><p>First of all, you have to understand how the 2-factor authentication works.</p><p>The Google Authenticator will generate a TOTP which stands for Time based One Time Pasword. This one time password, as you might now understand, is generated based on the current time.</p><p>If the server\'s (where your site is hosted) clock and the user\'s phone clock are not perfectly synchronized, the one time password generated won\'t work, as it will be generated on a time which is different from the server.</p><p>The authorized desynchronization will allow your users more time to use their one time password. By default, one code will be valid for <strong>30 seconds</strong>. If you want to give them more time, you can specify a delay in <strong>minutes</strong>.</p><p>Of course, if you give users more time, the security will be lowered. It is advised to stick with the default 30 secs.</p>', 'wpga'), array( 'h2' => array(), 'p' => array(), 'strong' => array() ) ),
 			)
 		);
 
@@ -354,23 +354,23 @@ class WPGA_Admin {
 	 */
 	public function adminNotices() {
 
-		if( isset( $_GET['2fa_reset'] ) && 'true' == $_GET['2fa_reset'] ) { ?>
+		if ( isset( $_GET['2fa_reset'] ) && 'true' == $_GET['2fa_reset'] ) { ?>
 
 			<div class="error">
-				<p><?php printf( __( '2-factor authentication has been deactivated for your account. If you want to reactivate it, go to your %sprofile page%s.', 'wpga' ), '<a href="' . admin_url( 'profile.php' ) . '#wpga">', '</a>' ); ?></p>
+				<p><?php printf( wp_kses( __( '2-factor authentication has been deactivated for your account. If you want to reactivate it, go to your %sprofile page%s.', 'wpga' ), array( 'a' => array( 'href' => array() ) ) ), '<a href="' . admin_url( 'profile.php' ) . '#wpga">', '</a>' ); ?></p>
 			</div>
 
 		<?php }
 
-		if( !isset( $_GET['update'] ) )
+		if ( ! isset( $_GET['update'] ) )
 			return;
 
 		$uid = isset( $_GET['user_id'] ) ? $_GET['user_id'] : '';
 
 		$messages = array(
-			'10' => __( 'Your secret key has been regenerated.', 'wpga' ),
-			'11' => sprintf( __( 'The key for user %s has been revoked.', 'wpga' ), $uid ),
-			'12' => sprintf( __( 'The attempts count has been reset.', 'wpga' ), $uid ),
+			'10' => esc_html__( 'Your secret key has been regenerated.', 'wpga' ),
+			'11' => sprintf( esc_html__( 'The key for user %s has been revoked.', 'wpga' ), $uid ),
+			'12' => sprintf( esc_html__( 'The attempts count has been reset.', 'wpga' ), $uid ),
 		);
 
 		if ( ! isset( $messages[ $_GET['update'] ] ) ) {
@@ -379,7 +379,7 @@ class WPGA_Admin {
 
 		?>
 		<div class="updated">
-			<p><?php echo $messages[$_GET['update']]; ?></p>
+			<p><?php echo esc_html( $messages[ $_GET['update'] ] ); ?></p>
 		</div>
 		<?php
 
@@ -400,9 +400,9 @@ class WPGA_Admin {
 		$force    = $this->settings->getOption( 'force_2fa', array() );
 		$roles    = $this->settings->getOption( 'user_roles', array() );
 
-		$affected = !empty( $roles ) ? $roles : $user->roles;
+		$affected = ! empty( $roles ) ? $roles : $user->roles;
 
-		if( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
+		if ( in_array( 'yes', $active ) && in_array( 'yes', $force ) ) {
 
 			if ( 'all' === $this->settings->getOption( 'user_role_status', 'all' ) || array_intersect( $user->roles, $affected ) ) {
 
@@ -411,13 +411,13 @@ class WPGA_Admin {
 				$attempts     = (int)get_user_meta( $user->ID, 'wpga_attempts', true );
 				$left         = $max_attempts-$attempts;
 				
-				if( '' == $secret ) {
+				if ( '' == $secret ) {
 
 					?>
 					<div class="error">
 						<p>
-							<?php printf( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>.', 'wpga' ), admin_url( 'profile.php#wpga' ), $left ); ?>
-							<?php if($max_attempts > 0){ printf( __( 'You only have <strong>%s</strong> login attempts left.', 'wpga' ), $left ); } ?>
+							<?php printf( wp_kses( __( 'The admin is requesting all users to activate 2-factor authentication. <a href="%s">Please do it now</a>.', 'wpga' ), array( 'a' => array( 'href' => array() ) ) ), admin_url( 'profile.php#wpga' ), $left ); ?>
+							<?php if ( $max_attempts > 0 ) { printf( wp_kses( __( 'You only have <strong>%s</strong> login attempts left.', 'wpga' ), array( 'strong' => array() ) ), $left ); } ?>
 						</p>
 
 						
@@ -437,7 +437,7 @@ class WPGA_Admin {
 	 */
 	public function versionInFooter() {
 
-		printf( __( WPGA_NAME . ' version ' . WPGA_VERSION . ' by <a href="%s">' . WPGA_AUTHOR . '</a>.', 'gtsp' ), esc_url( WPGA_URI ) );
+		printf( wp_kses( __( WPGA_NAME . ' version ' . WPGA_VERSION . ' by <a href="%s">' . WPGA_AUTHOR . '</a>.', 'gtsp' ), array( 'a' => array( 'href' => array() ), ) ), esc_url( WPGA_URI ) );
 
 	}
 
@@ -698,11 +698,11 @@ class WPGA_Admin {
 				if( '' != $secret ) {
 
 					if ( is_null( $totp ) ) {
-						return new WP_Error( 'no_totp', __( 'An error is preventing the 2-factor authentication from authenticating your session.', 'wpga' ) );
+						return new WP_Error( 'no_totp', esc_html__( 'An error is preventing the 2-factor authentication from authenticating your session.', 'wpga' ) );
 					}
 
 					if ( empty( $totp ) ) {
-						return new WP_Error( 'no_totp', __( 'Please provide your one time password.', 'wpga' ) );
+						return new WP_Error( 'no_totp', esc_html__( 'Please provide your one time password.', 'wpga' ) );
 					}
 
 					if( $this->checkTOTP( $secret, $totp ) ) {
@@ -718,7 +718,7 @@ class WPGA_Admin {
 							return $user;
 
 						} else {
-							return new WP_Error( 'expired_totp', __( 'The one time password you used has already been revoked.', 'wpga' ) );
+							return new WP_Error( 'expired_totp', esc_html__( 'The one time password you used has already been revoked.', 'wpga' ) );
 						}
 
 					}
@@ -747,7 +747,7 @@ class WPGA_Admin {
 						return $user;
 
 					} else {
-						return new WP_Error( 'totp_invalid', __( 'The Google Authenticator one time password is incorrect or expired. Please try with a newly generated password.', 'wpga' ) );
+						return new WP_Error( 'totp_invalid', esc_html__( 'The Google Authenticator one time password is incorrect or expired. Please try with a newly generated password.', 'wpga' ) );
 					}
 
 				} else {
@@ -765,7 +765,7 @@ class WPGA_Admin {
 						update_user_meta( $user->ID, 'wpga_attempts', $attempts+1, $attempts );
 						return $user;
 					} else {
-						return new WP_Error( '2fa_max_attempts', __( 'You have reached the maximum number of logins WITHOUT using 2-factor authentication. Please contact the admin to reset your account.', 'wpga' ) );
+						return new WP_Error( '2fa_max_attempts', esc_html__( 'You have reached the maximum number of logins WITHOUT using 2-factor authentication. Please contact the admin to reset your account.', 'wpga' ) );
 					}
 
 				}
@@ -854,10 +854,10 @@ class WPGA_Admin {
 					return new WP_User( $user_data->ID );
 
 				} else {
-					return new WP_Error( 'wrong_app_password', __( 'The application password you provided is invalid.', 'wpga' ) );
+					return new WP_Error( 'wrong_app_password', esc_html__( 'The application password you provided is invalid.', 'wpga' ) );
 				}
 			} else {
-				return new WP_Error( 'no_totp', __( 'Please provide your one time password.', 'wpga' ) );
+				return new WP_Error( 'no_totp', esc_html__( 'Please provide your one time password.', 'wpga' ) );
 			}
 		} else {
 			return $user;
@@ -943,69 +943,69 @@ class WPGA_Admin {
 		$qr 	= true;
 		$width 	= $this->qr_width+10;
 		$height	= $this->qr_height+10;
-		$secret = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
+		$secret = get_the_author_meta( 'wpga_secret', $user->ID );
 		$args 	= array( 'action' => 'regenerate' );
 		$backup = get_user_meta( $user->ID, 'wpga_backup_key', true );
-		if( isset( $_GET['user_id'] ) ) { $args['user_id'] = $_GET['user_id']; }
+		if ( isset( $_GET['user_id'] ) ) { $args['user_id'] = $_GET['user_id']; }
 		$regenerate = wp_nonce_url( add_query_arg( $args, admin_url( 'profile.php' ) ), 'regenerate_key' );
 
-		if( '' == $secret ){
+		if ( '' == $secret ) {
 			$secret = $this->generateSecretKey();
 			$qr 	= false;
 		}
 		?>
 
-		<h3 id="wpga"><?php _e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
+		<h3 id="wpga"><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
 
 		<table class="form-table">
 
-			<?php if( !$force || $force && is_array( $force ) && !in_array( 'yes', $force ) ):
+			<?php if ( ! $force || $force && is_array( $force ) && ! in_array( 'yes', $force ) ) :
 
 				$active = esc_attr( get_the_author_meta( 'wpga_active', $user->ID ) );
 
-				if( 'yes' == $active ) {
+				if ( 'yes' == $active ) {
 					$checked = 'checked="checked"';
 				} else {
 					$checked = '';
 				} ?>
 
 				<tr>
-					<th><label for="wpga_active"><?php _e( 'Activate', 'wpga' ); ?></label></th>
+					<th><label for="wpga_active"><?php esc_html_e( 'Activate', 'wpga' ); ?></label></th>
 					<td>
 						<input type="checkbox" name="wpga_active" id="wpga_active" value="yes" <?php echo $checked; ?> /><br />
-						<p class="description"><?php _e( 'Do you wish to use 2-factor authentication (require the Google Authenticator app)?', 'wpga' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Do you wish to use 2-factor authentication (require the Google Authenticator app)?', 'wpga' ); ?></p>
 					</td>
 				</tr>
 
 			<?php endif; ?>
 
 			<tr>
-				<th><label for="wpga_secret"><?php _e( 'Secret', 'wpga' ); ?></label></th>
+				<th><label for="wpga_secret"><?php esc_html_e( 'Secret', 'wpga' ); ?></label></th>
 				<td>
 					<?php if( !$qr ): ?>
-						<input type="hidden" name="wpga_secret" id="wpga_secret" disabled value="<?php echo $secret; ?>" />
-						<button type="submit" class="button button-secondary wpgas-generate-key"><?php _e( 'Generate Key', 'wpga' ); ?></button>
-						<p class="description"><?php _e( 'This is going to be your secret key. Please save changes and scroll back to this field to get your QR code.', 'wpga' ); ?></p>
+						<input type="hidden" name="wpga_secret" id="wpga_secret" disabled value="<?php echo esc_attr( $secret ); ?>" />
+						<button type="submit" class="button button-secondary wpgas-generate-key"><?php esc_html_e( 'Generate Key', 'wpga' ); ?></button>
+						<p class="description"><?php esc_html_e( 'This is going to be your secret key. Please save changes and scroll back to this field to get your QR code.', 'wpga' ); ?></p>
 					<?php else: ?>
-						<input type="text" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" disabled="disabled" /> 
-						<input type="hidden" name="wpga_secret" id="wpga_secret" value="<?php echo $secret; ?>" /> 
-						<a href="#TB_inline?width=<?php echo $width; ?>&height=<?php echo $height; ?>&inlineId=wpga-qr-code" class="thickbox button button-secondary wpga_generate_qrcode"><?php _e( 'Get QR Code', 'wpga' ); ?></a>
-						<a href="<?php echo $regenerate; ?>" class="button button-secondary"><?php _e( 'Regenerate Key', 'wpga' ); ?></a>
-						<p class="description"><?php _e( 'This is your personal secret key. Don\'t share it!', 'wpga' ); ?></p>
+						<input type="text" name="wpga_secret" id="wpga_secret" value="<?php echo esc_attr( $secret ); ?>" disabled="disabled" />
+						<input type="hidden" name="wpga_secret" id="wpga_secret" value="<?php echo esc_attr( $secret ); ?>" />
+						<a href="#TB_inline?width=<?php echo $width; ?>&height=<?php echo esc_attr( $height ); ?>&inlineId=wpga-qr-code" class="thickbox button button-secondary wpga_generate_qrcode"><?php _e( 'Get QR Code', 'wpga' ); ?></a>
+						<a href="<?php echo $regenerate; ?>" class="button button-secondary"><?php esc_html_e( 'Regenerate Key', 'wpga' ); ?></a>
+						<p class="description"><?php esc_html_e( 'This is your personal secret key. Don\'t share it!', 'wpga' ); ?></p>
 					<?php endif; ?>
 					<div id="wpga-qr-code" style="display:none;">
-						 <p totp="<?php print $this->getQRCodeInfo() ?>" style="padding:0;margin:0"/>
+						 <p totp="<?php print $this->getQRCodeInfo(); ?>" style="padding:0;margin:0"/>
 					</div>
 				</td>
 			</tr>
 
-			<?php if( '' != $backup ):
+			<?php if ( '' != $backup ):
 
 				$time  = get_user_meta( $user->ID, 'wpga_backup_key_time', true );
 				$limit = $time + 300; // Recovery key generation time + 5 mins
 				?>
 				<tr id="wpga-recovery-field">
-					<th><label for="wpga_active"><?php _e( 'Recovery Code', 'wpga' ); ?></label></th>
+					<th><label for="wpga_active"><?php esc_html_e( 'Recovery Code', 'wpga' ); ?></label></th>
 					<td>
 
 						<?php
@@ -1015,19 +1015,19 @@ class WPGA_Admin {
 						 * the user will need to type his password
 						 * to reveal the rescue code.
 						 */
-						if( time() <= $limit ): ?>
+						if ( time() <= $limit ) : ?>
 
-							<div style='font-size:18px; font-weight: bold;'><?php echo $backup; ?></div><p><?php _e( 'Write this down and keep it safe', 'wpga' ); ?></p>
+							<div style='font-size:18px; font-weight: bold;'><?php echo esc_html( $backup ); ?></div><p><?php esc_html_e( 'Write this down and keep it safe', 'wpga' ); ?></p>
 
 						<?php else: ?>
 
-							<p class="wpga-check-pwd-link"><a href="#" class="wpga-check-password"><?php _e( 'Show', 'wpga' ); ?></a></p>
+							<p class="wpga-check-pwd-link"><a href="#" class="wpga-check-password"><?php esc_html_e( 'Show', 'wpga' ); ?></a></p>
 
 							<div id="wpga-recovery" style="display:none;">
-								<p><?php _e( 'For security reasons, please type your password to see your recovery code.', 'wpga' ); ?></p>
-								<label for="pwd" class="sr-only"><?php _e( 'Your Password', 'wpga' ); ?></label><input type="password" name="pwd" id="pwd">
-								<input type="submit" value="OK" placeholder="<?php _e( 'Account password', 'wpga' ); ?>" class="button button-secondary wpga-show-recovery">
-								<p class="description"><?php _e( 'If you are unable to use the Google Authenticator for any reason, you can use this one time recovery code instead of the TOTP. Save this code in a safe place.', 'wpga' ); ?></p>
+								<p><?php esc_html_e( 'For security reasons, please type your password to see your recovery code.', 'wpga' ); ?></p>
+								<label for="pwd" class="sr-only"><?php esc_html_e( 'Your Password', 'wpga' ); ?></label><input type="password" name="pwd" id="pwd">
+								<input type="submit" value="OK" placeholder="<?php esc_attr_e( 'Account password', 'wpga' ); ?>" class="button button-secondary wpga-show-recovery">
+								<p class="description"><?php esc_html_e( 'If you are unable to use the Google Authenticator for any reason, you can use this one time recovery code instead of the TOTP. Save this code in a safe place.', 'wpga' ); ?></p>
 							</div>
 
 						<?php endif; ?>
@@ -1066,13 +1066,13 @@ class WPGA_Admin {
 			$recovery = get_user_meta( $user_id, 'wpga_backup_key', true );
 
 			if ( '' != $recovery ) {
-				echo "<div style='font-size:18px; font-weight: bold;'>$recovery</div><p>" . _e( 'Write this down and keep it safe', 'wpga' ) . "</p>";
+				echo "<div style='font-size:18px; font-weight: bold;'>" . esc_html( $recovery ) . "</div><p>" . esc_html_e( 'Write this down and keep it safe', 'wpga' ) . "</p>";
 			} else {
-				_e( 'No recovery code set yet.', 'wpga' );
+				esc_html_e( 'No recovery code set yet.', 'wpga' );
 			}
 
 		} else {
-			?><strong><?php _e( 'Wrong password', 'wpga' ); ?></strong><?php
+			?><strong><?php esc_html_e( 'Wrong password', 'wpga' ); ?></strong><?php
 		}
 
 		die();
@@ -1122,27 +1122,27 @@ class WPGA_Admin {
 		$attempts     = (int)get_user_meta( $_GET['user_id'], 'wpga_attempts', true );
 		$max_attempts = ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? (int)$options['max_attempts'] : $this->def_attempt;
 		?>
-		<h3><?php _e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
+		<h3><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
 
 		<table class="form-table">
 
 			<tr>
-				<th><label for="wpga_secret"><?php _e( 'Secret', 'wpga' ); ?></label></th>
+				<th><label for="wpga_secret"><?php esc_html_e( 'Secret', 'wpga' ); ?></label></th>
 				<td>
-					<?php if( '' == $secret ): ?>
-						<p><strong><?php _e( 'This user didn\'t set a secret key.', 'wpga' ); ?></strong></p>
+					<?php if ( '' == $secret ) : ?>
+						<p><strong><?php esc_html_e( 'This user didn\'t set a secret key.', 'wpga' ); ?></strong></p>
 					<?php else: ?>
-						<p><strong><?php _e( 'This user has a secret key.', 'wpga' ); ?></strong> <a href="<?php echo $revoke; ?>" class="button button-secondary"><?php _e( 'Revoke Key', 'wpga' ); ?></a></p>
+						<p><strong><?php esc_html_e( 'This user has a secret key.', 'wpga' ); ?></strong> <a href="<?php echo esc_url( $revoke ); ?>" class="button button-secondary"><?php esc_html_e( 'Revoke Key', 'wpga' ); ?></a></p>
 					<?php endif; ?>
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpga_attempts"><?php _e( 'Login Attempts', 'wpga' ); ?></label></th>
+				<th><label for="wpga_attempts"><?php esc_html_e( 'Login Attempts', 'wpga' ); ?></label></th>
 				<td>
-					<input type="text" name="wpga_attempts" id="wpga_attempts" value="<?php echo $attempts; ?>" class="small-text" disabled="disabled" /> 
-					<a href="<?php echo $rst; ?>" class="button button-secondary"><?php _e( 'Reset', 'wpga' ); ?></a> 
-					<?php if( $max_attempts != 0 && $attempts > $max_attempts ) { echo '<span style="color: red;"><strong>' . __( '(This user is locked out)', 'wpga' ) . '</strong></span>'; } ?>
-					<p class="description"><?php _e( 'Number of times the user logged-in without using the TOTP.', 'wpga' ); ?></p>
+					<input type="text" name="wpga_attempts" id="wpga_attempts" value="<?php echo esc_attr( $attempts ); ?>" class="small-text" disabled="disabled" />
+					<a href="<?php echo esc_url( $rst ); ?>" class="button button-secondary"><?php esc_html_e( 'Reset', 'wpga' ); ?></a>
+					<?php if ( $max_attempts != 0 && $attempts > $max_attempts ) { echo '<span style="color: red;"><strong>' . esc_html_e( '(This user is locked out)', 'wpga' ) . '</strong></span>'; } ?>
+					<p class="description"><?php esc_html_e( 'Number of times the user logged-in without using the TOTP.', 'wpga' ); ?></p>
 				</td>
 			</tr>
 
@@ -1226,7 +1226,7 @@ class WPGA_Admin {
 		?>
 		<p>
 			<label for="authenticator" class="wpga-label">
-				<?php _e( 'Google Authenticator', 'wpga' ); ?> <span data-hint="<?php _e( 'If you do not have configured the 2-factor authentication, just leave this field blank and you will be logged-in as usual. If you can\'t use the Google Authenticator app for whatever reason, you can use your recovery code instead.', 'wpga' ); ?>" class="hint-top-s-big hint-fade"><a class="wpga-hint" href="javascript:void(0);">[?]</a></span>
+				<?php esc_html_e( 'Google Authenticator', 'wpga' ); ?> <span data-hint="<?php esc_attr_e( 'If you do not have configured the 2-factor authentication, just leave this field blank and you will be logged-in as usual. If you can\'t use the Google Authenticator app for whatever reason, you can use your recovery code instead.', 'wpga' ); ?>" class="hint-top-s-big hint-fade"><a class="wpga-hint" href="javascript:void(0);">[?]</a></span>
 				<br>
 				<input id="authenticator" class="input" type="text" size="20" value="" name="totp" autocomplete="off">
 			</label>

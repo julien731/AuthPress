@@ -92,7 +92,7 @@ jQuery(document).ready(function($) {
 			type:'POST',
 			url: ajaxurl,
 			data: data,
-			success:function( data ){ console.log(data);
+			success:function( data ){
 				data = urldecode(data);
 				var result = jQuery.parseJSON(data);
 
