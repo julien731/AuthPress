@@ -76,6 +76,7 @@ class WPGA_Admin {
 
 		add_action( 'init',                  array( $this, 'load_plugin_textdomain' ), 9 );
 		add_action( 'login_enqueue_scripts', array( $this, 'loadResources' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'loadResources' ) );
 		add_action( 'login_form',            array( $this, 'customizeLoginForm' ) );
 		add_action( 'wp_authenticate_user',  array( $this, 'authenticateUser' ), 10, 3 );
 		add_filter( 'authenticate',          array( $this, 'checkAppPassword' ), 50, 3 );
