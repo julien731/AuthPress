@@ -319,14 +319,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 */
 		private function includes_admin() {
 
-			require( WPGA_PATH . 'admin/admin.class.php' );
+			require( WPGA_PATH . 'includes/admin/admin.class.php' );
 
 			// We don't need all this during Ajax processing
 			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
-				require( WPGA_PATH . 'admin/settings.class.php' );
-				require( WPGA_PATH . 'admin/functions-apps-passwords.php' );
-				require( WPGA_PATH . 'admin/functions-users.php' );
+				require( WPGA_PATH . 'includes/admin/class-settings.php' );
+				require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
+				require( WPGA_PATH . 'includes/admin/functions-users.php' );
 				require( WPGA_PATH . 'includes/admin/install.php' );
 
 			}
