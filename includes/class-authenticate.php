@@ -81,20 +81,46 @@ class WPGA_Authenticate {
 	/**
 	 * Add TOTP check to WordPress authentication process
 	 *
-	 * @param  WP_User|WP_Error $user
+	 * @param WP_User|WP_Error $user
 	 *
 	 * @return object User object on success or WP_Error on failure
 	 */
 	public function authenticate( $user ) {
 
-		if ( true !== wpga_is_2fa_active( $user ) ) {
+		// Well, not much we can do here...
+		if ( is_wp_error( $user ) ) {
 			return $user;
 		}
 
-		if ( ! is_wp_error( $user ) ) {
+		$totp = $this->get_totp();
+
+		// If no TOTP is found then we continue our process to maybe display the TOTP prompt later
+		if ( is_null( $totp ) ) {
+
+			// If the user trying to login has 2FA enabled we need to redirect him to the TOTP prompt
+			if ( true === wpga_is_2fa_active( $user ) ) {
+
+				$redirect = add_query_arg( array(
+					'action' => '2fa',
+					'u'      => $user->data->user_login,
+					'_nonce' => wpga_create_nonce_action( $user )
+				), wp_login_url() );
+
+				wp_safe_redirect( $redirect );
+				die;
+
+			} else {
+				return $user;
+			}
+
+		} else {
+
+			// Double check that the user has 2FA enabled
+			if ( true !== wpga_is_2fa_active( $user ) ) {
+				return $user;
+			}
 
 			$secret = $this->get_user_secret( $user );
-			$totp   = $this->get_totp();
 
 			/* Let's make sure the user has generated a secret */
 			if ( '' !== $secret ) {
@@ -121,9 +147,7 @@ class WPGA_Authenticate {
 
 					return $user;
 
-				}
-
-				/**
+				} /**
 				 * Check if the user is sending a recovery key.
 				 *
 				 * If the recovery key is valid, we deactivate
@@ -173,8 +197,6 @@ class WPGA_Authenticate {
 
 			}
 
-		} else {
-			return $user;
 		}
 
 	}
@@ -289,4 +311,55 @@ class WPGA_Authenticate {
  */
 function wpga_login_redirect_notify() {
 	return add_query_arg( array( '2fa_reset' => 'true' ), admin_url() );
+}
+
+/**
+ * Create a security nonce to validate the TOTP prompt
+ *
+ * @since 1.2.0
+ *
+ * @param WP_User $user The user object
+ *
+ * @return string
+ */
+function wpga_create_nonce_action( $user ) {
+
+	// Set the nonce lifetime to 1 minute for more security
+	add_filter( 'nonce_life', 'wpga_alter_nonce_lifetime' );
+
+	return wp_create_nonce( wp_hash( "wpga_$user->ID" ) );
+
+}
+
+/**
+ * Check the validity of our security nonce
+ *
+ * @since 1.2.0
+ *
+ * @param WP_User $user  User object
+ * @param string  $nonce Nonce to validate
+ *
+ * @return bool
+ */
+function wpga_validate_nonce( $user, $nonce ) {
+
+	// Set the nonce lifetime to 1 minute for more security
+	add_filter( 'nonce_life', 'wpga_alter_nonce_lifetime' );
+
+	if ( $nonce === wpga_create_nonce_action( $user ) ) {
+		return true;
+	}
+
+	return false;
+
+}
+
+/**
+ * Change the nonce lifetime to 60 seconds
+ *
+ * @since 1.2.0
+ * @return int
+ */
+function wpga_alter_nonce_lifetime() {
+	return 120;
 }

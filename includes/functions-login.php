@@ -12,7 +12,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-add_action( 'login_form', 'wpga_customize_login_form' );
+//add_action( 'login_form', 'wpga_customize_login_form' );
 /**
  * Add verification code field to login form.
  */
@@ -35,4 +35,47 @@ function wpga_customize_login_form() {
 		</label>
 	</p>
 	<?php
+}
+
+add_action( 'login_form_2fa', 'wpga_totp_prompt_screen' );
+/**
+ * Display the TOTP prompt screen
+ *
+ * @since 1.2.0
+ * @return void
+ */
+function wpga_totp_prompt_screen() {
+
+	// If there is no nonce or no username is provided we redirect to the login page
+	if ( ! isset( $_GET['_nonce'] ) || ! isset( $_GET['u'] ) ) {
+		wp_safe_redirect( wp_login_url() );
+		die;
+	}
+
+	// Try and get the user
+	$user = get_user_by( 'login', sanitize_text_field( $_GET['u'] ) );
+
+	// If the login is invalid we redirect to the login page
+	if ( ! is_object( $user ) || is_object( $user ) && ! is_a( $user, 'WP_User' ) ) {
+		wp_safe_redirect( wp_login_url() );
+		die;
+	}
+
+	// If the nonce is invalid we redirect to the login page
+	if ( false === wpga_validate_nonce( $user, $_GET['_nonce'] ) ) {
+		wp_safe_redirect( wp_login_url() );
+		die;
+	}
+
+	$redirect_to = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
+	$remember_me = isset( $_REQUEST['remember_me'] ) ? sanitize_text_field( $_REQUEST['remember_me'] ) : '';
+	$action_url  = esc_url( site_url( 'wp-login.php', 'login_post' ) );
+
+	if ( ! empty( $remember_me ) ) {
+		$action_url = add_query_arg( array( 'remember_me' => $remember_me ), $action_url );
+	}
+
+	require( WPGA_PATH . 'includes/views/totp-prompt.php' );
+	die;
+
 }
