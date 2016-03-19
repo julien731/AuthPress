@@ -24,11 +24,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/*----------------------------------------------------------------------------*
- * Load theme's functions
- *----------------------------------------------------------------------------*/
-
-
 if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 
 	/**
@@ -75,6 +70,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		public $php_version_required = '5.2';
 
 		/**
+		 * Holds the instance of our authentication class
+		 *
+		 * @since 1.2.0
+		 * @var WPGA_Authenticate
+		 */
+		public $authenticate;
+
+		/**
 		 * Instantiate and return the unique WP Google Authenticator object
 		 *
 		 * @since     1.2.0
@@ -118,10 +121,10 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 				return;
 			}
 
-			self::$instance->includes_admin();
+			self::$instance->includes();
+			self::$instance->authenticate = new WPGA_Authenticate();
 
 			add_action( 'plugins_loaded', array( self::$instance, 'load_plugin_textdomain' ) );
-			add_action( 'plugins_loaded', array( 'WPGA_Admin', 'get_instance' ) );
 
 		}
 
@@ -278,58 +281,27 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 */
 		private function includes() {
 
-			require( WPAS_PATH . 'includes/functions-fallback.php' );
-			require( WPAS_PATH . 'includes/class-logger.php' );
-			require( WPAS_PATH . 'includes/integrations/loader.php' );
-			require( WPAS_PATH . 'includes/scripts.php' );
-			require( WPAS_PATH . 'includes/shortcodes/shortcode-tickets.php' );
-			require( WPAS_PATH . 'includes/shortcodes/shortcode-submit.php' );
-			require( WPAS_PATH . 'includes/file-uploader/class-file-uploader.php' );
-			require( WPAS_PATH . 'includes/class-mailgun-email-check.php' );
-			require( WPAS_PATH . 'includes/custom-fields/class-custom-field.php' );
-			require( WPAS_PATH . 'includes/custom-fields/class-custom-fields.php' );
-			require( WPAS_PATH . 'includes/custom-fields/functions-custom-fields.php' );
-			require( WPAS_PATH . 'includes/functions-actions.php' );
-			require( WPAS_PATH . 'includes/functions-post.php' );
-			require( WPAS_PATH . 'includes/functions-user.php' );
-			require( WPAS_PATH . 'includes/functions-addons.php' );
-			require( WPAS_PATH . 'includes/functions-deprecated.php' );
-			require( WPAS_PATH . 'includes/class-log-history.php' );
-			require( WPAS_PATH . 'includes/class-email-notifications.php' );
-			require( WPAS_PATH . 'includes/functions-general.php' );
-			require( WPAS_PATH . 'includes/functions-error.php' );
-			require( WPAS_PATH . 'includes/functions-notification.php' );
-			require( WPAS_PATH . 'includes/functions-email-notifications.php' );
-			require( WPAS_PATH . 'includes/functions-templating.php' );
-			require( WPAS_PATH . 'includes/functions-post-type.php' );
-			require( WPAS_PATH . 'includes/class-product-sync.php' );
-			require( WPAS_PATH . 'includes/class-gist.php' );
-			require( WPAS_PATH . 'includes/class-wpas-editor-ajax.php' );
-			require( WPAS_PATH . 'includes/class-agent.php' );
-			require( WPAS_PATH . 'includes/class-wpas-session.php' );
-			require( WPAS_PATH . 'includes/install.php' );
+			if ( is_admin() ) {
 
-		}
-
-		/**
-		 * Include all files used in admin only
-		 *
-		 * @since 1.2.0
-		 * @return void
-		 */
-		private function includes_admin() {
-
-			require( WPGA_PATH . 'includes/admin/admin.class.php' );
-
-			// We don't need all this during Ajax processing
-			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
-
-				require( WPGA_PATH . 'includes/admin/class-settings.php' );
-				require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
-				require( WPGA_PATH . 'includes/admin/functions-users.php' );
-				require( WPGA_PATH . 'includes/admin/install.php' );
+				// We don't need all this during Ajax processing
+				if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+					require( WPGA_PATH . 'includes/admin/class-settings.php' );
+					require( WPGA_PATH . 'includes/admin/functions-user-profile.php' );
+					require( WPGA_PATH . 'includes/admin/functions-secret.php' );
+					require( WPGA_PATH . 'includes/admin/functions-misc.php' );
+					require( WPGA_PATH . 'includes/admin/install.php' );
+				}
 
 			}
+
+			require( WPGA_PATH . 'includes/admin/functions-settings.php' );
+			require( WPGA_PATH . 'includes/functions-login.php' );
+			require( WPGA_PATH . 'includes/functions-totp.php' );
+			require( WPGA_PATH . 'includes/functions-users.php' );
+			require( WPGA_PATH . 'includes/functions-recovery.php' );
+			require( WPGA_PATH . 'includes/class-authenticate.php' );
+			require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
+			require( WPGA_PATH . 'includes/scripts-styles.php' );
 
 		}
 

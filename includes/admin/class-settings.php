@@ -36,7 +36,7 @@ class TAV_Settings {
 	/**
 	 * Get the settings
 	 * 
-	 * @return (array) defined settings
+	 * @return array defined settings
 	 */
 	public function getSettings() {
 		return $this->settings;
