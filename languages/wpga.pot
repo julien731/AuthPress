@@ -296,7 +296,7 @@ msgstr ""
 
 #: ../admin/admin.class.php:1229
 msgid ""
-"If you do not have configured the 2-factor authentication, just leave this "
+"If you have not configured 2-factor authentication, just leave this "
 "field blank and you will be logged-in as usual. If you can't use the Google "
 "Authenticator app for whatever reason, you can use your recovery code "
 "instead."
