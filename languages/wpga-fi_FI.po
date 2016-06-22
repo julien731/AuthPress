@@ -304,7 +304,7 @@ msgstr "Google Authenticator"
 
 #: C:\wamp\www\plugins-dev\wp-content\plugins\wp-google-authenticator/admin/admin.class.php:957
 msgid ""
-"If you do not have configured the 2-factor authentication,<br> just leave "
+"If you have not configured 2-factor authentication,<br> just leave "
 "this field blank and you will be logged-in as usual.<br><br>If you can't use "
 "the Google Authenticator app for whatever reason,<br>you can use your "
 "recovery code instead."
