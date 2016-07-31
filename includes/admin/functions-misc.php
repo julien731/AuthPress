@@ -169,3 +169,38 @@ function wpga_register_notice( $id, $type, $content, $args = array() ) {
 	}
 
 }
+
+/**
+ * Get Options Page URL
+ *
+ * Return the URL to the option page whether the plugin is network activated or only activated on a single site.
+ *
+ * @since 1.2
+ * @return string
+ */
+function wpga_get_option_page_link() {
+
+	$base = is_network_admin() ? admin_url( 'network/settings.php' ) : admin_url( 'options-general.php' );
+	$url  = add_query_arg( 'page', 'wpga-settings', $base );
+
+	return esc_url( $url );
+
+}
+
+add_filter( 'plugin_action_links_' . WPGA_BASENAME, 'wpga_settings_page_link' );
+add_filter( 'network_admin_plugin_action_links_' . WPGA_BASENAME, 'wpga_settings_page_link' );
+/**
+ * Add a link to the settings page
+ *
+ * @since 1.2
+ *
+ * @param  array $links Plugin links
+ *
+ * @return array        Links with the settings
+ */
+function wpga_settings_page_link( $links ) {
+	$link    = wpga_get_option_page_link();
+	$links[] = "<a href='$link'>" . esc_html__( 'Settings', 'wpga' ) . "</a>";
+
+	return $links;
+}
