@@ -12,47 +12,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-//add_action( 'init', 'wpga_init_settings' );
-/**
- * Instantiate the settings class
- */
-function wpga_init_settings() {
-
-	if ( ! class_exists( 'TAV_Settings' ) ) {
-		return;
-	}
-
-	// Prepare arguments
-	$args = array(
-		'name'       => WPGA_PREFIX . '_options',
-		'menu_name'  => esc_html__( 'Authenticator', 'wpga' ),
-		'parent'     => 'options-general.php',
-		'page_title' => sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ),
-		'slug'       => WPGA_PREFIX . '_options',
-		'page'       => 'wpga-settings',
-		'prefix'     => WPGA_PREFIX,
-		'row_name'   => WPGA_PREFIX . '_options',
-	);
-
-	// Instantiate the options class
-	$settings_page = new TAV_Settings( $args );
-
-	// Get the settings
-	$settings = wpga_get_settings();
-
-	// Register sections and settings
-	foreach ( $settings as $section => $options ) {
-
-		$settings_page->addSection( $section, $section );
-
-		foreach ( $options as $option ) {
-			$settings_page->addOption( $section, $option );
-		}
-
-	}
-
-}
-
 add_filter( 'wpga_get_settings', 'wpga_get_settings' );
 /**
  * Plugin Settings
