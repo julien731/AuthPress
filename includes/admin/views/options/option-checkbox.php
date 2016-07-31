@@ -29,7 +29,7 @@ function wpga_option_callback_checkbox( $option ) {
 		$id = $option_id . '_' . $val; ?>
 
 		<label for="<?php echo $id; ?>">
-			<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo WPGA()->settings->get_field_name( $option_id ); ?>[]" value="<?php echo esc_attr( $val ); ?>" <?php if ( in_array( $val, WPGA()->settings->get_option( $option_id ) ) ) { echo 'checked="checked"'; } ?>> <?php echo $title; ?>
+			<input type="checkbox" id="<?php echo esc_attr( $id ); ?>" name="<?php echo WPGA()->settings->get_field_name( $option_id ); ?>[]" value="<?php echo esc_attr( $val ); ?>" <?php if ( in_array( $val, (array) WPGA()->settings->get_option( $option_id ) ) ) { echo 'checked="checked"'; } ?>> <?php echo $title; ?>
 		</label>
 
 	<?php }
