@@ -384,8 +384,7 @@ final class WPGA_Settings {
 		$this->update_option( 'wpga_options', $new );
 
 		// Read-only redirect
-		$redirect = is_network_admin() ? admin_url( 'network/settings.php' ) : admin_url( 'options-general.php' );
-		wp_safe_redirect( add_query_arg( array( 'page' => 'wpga-settings', 'updated' => 'true' ), $redirect ) );
+		wp_safe_redirect( add_query_arg( 'updated', 'true', wpga_get_option_page_link() ) );
 		exit;
 
 	}
@@ -438,13 +437,13 @@ final class WPGA_Settings {
 	 */
 	public function settings_page() {
 
-		if ( isset( $_GET['updated'] ) && 'true' === $_GET['updated'] ) { ?>
+		if ( isset( $_GET['updated'] ) && 'true' === $_GET['updated'] && is_network_admin() ) { ?>
 			<div id="setting-error-settings_updated" class="updated settings-error notice is-dismissible">
 				<p><strong>Settings saved.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 			</div>
 		<?php }
 
-		$form_action = is_network_admin() ? esc_url( add_query_arg( 'page', 'wpga-settings', admin_url( 'network/settings.php' ) ) ): esc_url( add_query_arg( 'page', 'wpga_options', admin_url( 'options-general.php' ) ) ); ?>
+		$form_action = wpga_get_option_page_link(); ?>
 		<div class="wrap">
 
 			<h2><?php printf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ); ?></h2>
