@@ -44,7 +44,7 @@ function wpga_user_profile_fields( $user ) {
 	}
 	?>
 
-	<h3 id="wpga"><?php esc_html_e( 'Authenticator Settings', 'wpga' ); ?></h3>
+	<h3 id="wpga"><?php printf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ); ?></h3>
 
 	<table class="form-table">
 

@@ -27,7 +27,7 @@ function wpga_init_settings() {
 		'name'       => WPGA_PREFIX . '_options',
 		'menu_name'  => esc_html__( 'Authenticator', 'wpga' ),
 		'parent'     => 'options-general.php',
-		'page_title' => esc_html__( 'WP Google Authenticator Settings', 'wpga' ),
+		'page_title' => sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ),
 		'slug'       => WPGA_PREFIX . '_options',
 		'page'       => 'wpga-settings',
 		'prefix'     => WPGA_PREFIX,

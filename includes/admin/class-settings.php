@@ -91,7 +91,7 @@ final class WPGA_Settings {
 
 		// Standalone site menu
 		if ( true === is_multisite() && false === WPGA()->is_network_enabled() ) {
-			add_submenu_page( 'options-general.php', esc_html__( 'WP Google Authenticator Settings', 'wpga' ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
+			add_submenu_page( 'options-general.php', sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
 				$this,
 				'settings_page',
 			) );
@@ -447,7 +447,7 @@ final class WPGA_Settings {
 		$form_action = is_network_admin() ? esc_url( add_query_arg( 'page', 'wpga-settings', admin_url( 'network/settings.php' ) ) ): esc_url( add_query_arg( 'page', 'wpga_options', admin_url( 'options-general.php' ) ) ); ?>
 		<div class="wrap">
 
-			<h2><?php esc_html_e( 'Authenticator Settings', 'wpga' ); ?></h2>
+			<h2><?php printf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ); ?></h2>
 
 			<form action="<?php echo $form_action; ?>" method="post">
 				<?php
@@ -1315,7 +1315,7 @@ class TAV_Settings {
 		?>
 		<div class="wrap">  
 			<div class="icon32" id="<?php echo esc_attr( $this->icon ); ?>"></div>
-			<h2><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h2>
+			<h2><?php printf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ); ?></h2>
 			  
 			<form action="options.php" method="post">
 				<?php
