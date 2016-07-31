@@ -235,13 +235,10 @@ function wpga_clean_totps() {
  */
 function wpga_is_2fa_active( $user = false ) {
 
-	$active  = null;
-	$options = get_option( 'wpga_options', array() );
+	$active = wpga_get_option( 'active', false );
 
-	if ( isset( $options['active'] ) && in_array( 'yes', $options['active'] ) ) {
-		$active = true;
-	} else {
-		$active = false;
+	if ( $active && is_array( $active ) ) {
+		$active = in_array( 'yes', $active ) ? true : false;
 	}
 
 	// If 2FA is enabled on the site, make sure the current user, if any, has it enabled for his account

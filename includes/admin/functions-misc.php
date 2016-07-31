@@ -74,8 +74,8 @@ function wpga_force_set_secret() {
 
 		if ( 'all' === wpga_get_option( 'user_role_status', 'all' ) || array_intersect( $user->roles, $affected ) ) {
 
-			$secret       = esc_attr( get_the_author_meta( 'wpga_secret', $user->ID ) );
-			$max_attempts = (int) wpga_get_option( 'max_attempts', $this->def_attempt );
+			$secret       = esc_attr( get_user_meta( $user->ID, 'wpga_secret', true ) );
+			$max_attempts = (int) wpga_get_option( 'max_attempts' );
 			$attempts     = (int) get_user_meta( $user->ID, 'wpga_attempts', true );
 			$left         = $max_attempts - $attempts;
 
@@ -135,5 +135,37 @@ function wpga_version_footer() {
 	}
 
 	printf( wp_kses( __( WPGA_NAME . ' version ' . WPGA_VERSION . ' by <a href="%s">' . WPGA_AUTHOR . '</a>.', 'gtsp' ), array( 'a' => array( 'href' => array() ), ) ), esc_url( WPGA_URI ) );
+
+}
+
+/**
+ * Wrapper function for dnh_register_notice()
+ *
+ * The function dnh_register_notice() comes with the WP Dismissible Notices Handler library
+ *
+ * @since 1.2
+ *
+ * @param string $id      Notice ID, used to identify it
+ * @param string $type    Type of notice to display
+ * @param string $content Notice content
+ * @param array  $args    Additional parameters
+ *
+ * @return bool
+ */
+function wpga_register_notice( $id, $type, $content, $args = array() ) {
+
+	if ( ! function_exists( 'dnh_register_notice' ) ) {
+
+		$file = WPGA_PATH . 'vendor/julien731/wp-dismissible-notices-handler/handler.php';
+
+		if ( file_exists( $file ) ) {
+			require_once( $file );
+		}
+
+	}
+
+	if ( function_exists( 'dnh_register_notice' ) ) {
+		dnh_register_notice( $id, $type, $content, $args );
+	}
 
 }

@@ -76,8 +76,8 @@ function wpga_edit_secret() {
 				return;
 			}
 
-			$secret = wpga_generate_secret_key();
-			update_user_meta( get_current_user_id(), 'wpga_secret', $secret );
+			delete_user_meta( 'get_current_user_id()', 'wpga_secret' );
+			update_user_meta( get_current_user_id(), 'wpga_secret', wpga_generate_secret_key() );
 			wp_redirect( add_query_arg( array( 'update' => '10' ), admin_url( 'profile.php#wpga' ) ) );
 			exit;
 

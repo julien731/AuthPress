@@ -23,7 +23,7 @@ function wpga_load_admin_scripts() {
 
 	global $pagenow;
 
-	if ( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_options', 'wpga_apps_passwords' ) ) ) {
+	if ( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_apps_passwords', 'wpga-settings' ) ) ) {
 		wp_enqueue_script( 'wpga-custom', WPGA_URL . 'assets/js/custom.js', array(), WPGA_VERSION, true );
 		wp_enqueue_script( 'wpga-qrcode', WPGA_URL . 'assets/js/jquery.qrcode.min.js', array( 'jquery' ), null, true );
 	}

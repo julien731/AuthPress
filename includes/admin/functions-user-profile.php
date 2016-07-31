@@ -28,12 +28,12 @@ function wpga_user_profile_fields( $user ) {
 	$qr     = true;
 	$width  = apply_filters( 'wpga_user_profile_qr_width', 300 + 10 );
 	$height = apply_filters( 'wpga_user_profile_qr_height', 300 + 10 );
-	$secret = get_the_author_meta( 'wpga_secret', $user->ID );
+	$secret = get_user_meta( $user->ID, 'wpga_secret', true );
 	$args   = array( 'action' => 'regenerate' );
 	$backup = get_user_meta( $user->ID, 'wpga_backup_key', true );
 
 	if ( isset( $_GET['user_id'] ) ) {
-		$args['user_id'] = $_GET['user_id'];
+		$args['user_id'] = (int) $_GET['user_id'];
 	}
 
 	$regenerate = wp_nonce_url( add_query_arg( $args, admin_url( 'profile.php' ) ), 'regenerate_key' );
@@ -44,13 +44,13 @@ function wpga_user_profile_fields( $user ) {
 	}
 	?>
 
-	<h3 id="wpga"><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
+	<h3 id="wpga"><?php esc_html_e( 'Authenticator Settings', 'wpga' ); ?></h3>
 
 	<table class="form-table">
 
 		<?php if ( ! $force || $force && is_array( $force ) && ! in_array( 'yes', $force ) ) :
 
-			$active = esc_attr( get_the_author_meta( 'wpga_active', $user->ID ) );
+			$active = esc_attr( get_user_meta( $user->ID, 'wpga_active', true ) );
 
 			if ( 'yes' == $active ) {
 				$checked = 'checked="checked"';
@@ -138,16 +138,16 @@ function wpga_admin_custom_profile_fields() {
 		return;
 	}
 
-	$options      = get_option( 'wpga_options', array() );
-	$secret       = esc_attr( get_the_author_meta( 'wpga_secret', (int) $_GET['user_id'] ) );
-	$args         = array( 'action' => 'revoke', 'user_id' => (int) $_GET['user_id'] );
-	$rst_arg      = array( 'action' => 'reset', 'user_id' => (int) $_GET['user_id'] );
+	$user_id      = (int) $_GET['user_id'];
+	$secret       = esc_attr( get_user_meta( $user_id, 'wpga_secret', true ) );
+	$args         = array( 'action' => 'revoke', 'user_id' => $user_id );
+	$rst_arg      = array( 'action' => 'reset', 'user_id' => $user_id );
 	$revoke       = wp_nonce_url( add_query_arg( $args, admin_url( 'user-edit.php' ) ), 'revoke_key' );
 	$rst          = wp_nonce_url( add_query_arg( $rst_arg, admin_url( 'user-edit.php' ) ), 'reset_key' );
-	$attempts     = (int) get_user_meta( (int) $_GET['user_id'], 'wpga_attempts', true );
-	$max_attempts = ( isset( $options['max_attempts'] ) && '' !== $options['max_attempts'] ) ? (int) $options['max_attempts'] : apply_filters( 'wpga_totp_max_attempts', 3 );
+	$attempts     = (int) get_user_meta( $user_id, 'wpga_attempts', true );
+	$max_attempts = apply_filters( 'wpga_totp_max_attempts', WPGA()->settings->get_option( 'max_attempts' ) );
 	?>
-	<h3><?php esc_html_e( 'WP Google Authenticator Settings', 'wpga' ); ?></h3>
+	<h3><?php esc_html_e( 'Authenticator Settings', 'wpga' ); ?></h3>
 
 	<table class="form-table">
 
@@ -155,7 +155,7 @@ function wpga_admin_custom_profile_fields() {
 			<th><label for="wpga_secret"><?php esc_html_e( 'Secret', 'wpga' ); ?></label></th>
 			<td>
 				<?php if ( '' == $secret ) : ?>
-					<p><strong><?php esc_html_e( 'This user didn\'t set a secret key.', 'wpga' ); ?></strong></p>
+					<p><strong><?php esc_html_e( 'This user didn&#039;t set a secret key.', 'wpga' ); ?></strong></p>
 				<?php else: ?>
 					<p><strong><?php esc_html_e( 'This user has a secret key.', 'wpga' ); ?></strong> <a href="<?php echo esc_url( $revoke ); ?>" class="button button-secondary"><?php esc_html_e( 'Revoke Key', 'wpga' ); ?></a></p>
 				<?php endif; ?>
@@ -186,8 +186,8 @@ function wpga_admin_custom_profile_fields() {
 function wpga_get_qr_code_info() {
 
 	$blogname = rawurlencode( wpga_get_option( 'blog_name' ) );
-	$secret   = esc_attr( get_the_author_meta( 'wpga_secret', get_current_user_id() ) );
-	$account  = get_the_author_meta( 'user_login', get_current_user_id() );
+	$secret   = esc_attr( get_user_meta( get_current_user_id(), 'wpga_secret', true ) );
+	$account  = get_user_meta( get_current_user_id(), 'user_login', true );
 	$label    = $blogname . ':' . rawurlencode( $account );
 
 	return 'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname;

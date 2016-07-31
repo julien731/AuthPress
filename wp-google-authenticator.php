@@ -78,6 +78,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		public $authenticate;
 
 		/**
+		 * Holds the settings class
+		 *
+		 * @since 1.2
+		 * @var WPGA_Settings
+		 */
+		public $settings;
+
+		/**
 		 * Instantiate and return the unique WP Google Authenticator object
 		 *
 		 * @since     1.2.0
@@ -124,7 +132,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			self::$instance->includes();
 			self::$instance->authenticate = new WPGA_Authenticate();
 
+			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+				self::$instance->settings = new WPGA_Settings( 'network' );
+			}
+
 			add_action( 'plugins_loaded', array( self::$instance, 'load_plugin_textdomain' ) );
+
+			// Check for network activation
+			add_action( 'admin_notices', array( self::$instance, 'multisite_check' ), 5 );
 
 		}
 
@@ -217,6 +232,40 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		}
 
 		/**
+		 * Check if the site is a multisite network and, if so, if the plugin is network activated or not
+		 *
+		 * If the plugin is not network activated, we display a warning message highlighting the security issue related to having it active on a per-site basis.
+		 *
+		 * @since 1.2
+		 * @return void
+		 */
+		public function multisite_check() {
+			if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
+				wpga_register_notice( 'wpga_not_network_activated', 'error', sprintf( __( '%2$s is only active on the current site of your network. This introduces a security risk. <strong>It is strongly advised that you network-activate the plugin for maximum security</strong>. <a href="%1$s" target="_blank">Read more about this</a>.', 'wpga' ), '#', WPGA_NAME ) );
+			}
+		}
+
+		/**
+		 * Check if the plugin is network-enabled
+		 *
+		 * @since 1.2
+		 * @return bool
+		 */
+		public function is_network_enabled() {
+
+			if ( false === is_multisite() ) {
+				return false;
+			}
+
+			if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+				require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+			}
+
+			return is_plugin_active_for_network( WPGA_BASENAME );
+
+		}
+
+		/**
 		 * Add error.
 		 *
 		 * Add a new error to the WP_Error object
@@ -285,15 +334,22 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 
 				// We don't need all this during Ajax processing
 				if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
-					require( WPGA_PATH . 'includes/admin/class-settings.php' );
+
 					require( WPGA_PATH . 'includes/admin/functions-user-profile.php' );
 					require( WPGA_PATH . 'includes/admin/functions-secret.php' );
 					require( WPGA_PATH . 'includes/admin/functions-misc.php' );
 					require( WPGA_PATH . 'includes/admin/install.php' );
+
+					// Load all the options callbacks
+					foreach ( glob( WPGA_PATH . 'includes/admin/views/options/option-*.php' ) as $filename ) {
+						include $filename;
+					}
+
 				}
 
 			}
 
+			require( WPGA_PATH . 'includes/admin/class-settings.php' );
 			require( WPGA_PATH . 'includes/admin/functions-settings.php' );
 			require( WPGA_PATH . 'includes/functions-login.php' );
 			require( WPGA_PATH . 'includes/functions-totp.php' );

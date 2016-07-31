@@ -12,7 +12,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-add_action( 'init', 'wpga_init_settings' );
+//add_action( 'init', 'wpga_init_settings' );
 /**
  * Instantiate the settings class
  */
@@ -31,7 +31,7 @@ function wpga_init_settings() {
 		'slug'       => WPGA_PREFIX . '_options',
 		'page'       => 'wpga-settings',
 		'prefix'     => WPGA_PREFIX,
-		'row_name'   => WPGA_PREFIX . '_options'
+		'row_name'   => WPGA_PREFIX . '_options',
 	);
 
 	// Instantiate the options class
@@ -53,60 +53,80 @@ function wpga_init_settings() {
 
 }
 
+add_filter( 'wpga_get_settings', 'wpga_get_settings' );
 /**
- * Register plugin settings that will be displayed in the WP backend
+ * Plugin Settings
  *
+ * Register all the core settings for the plugin.
+ *
+ * @since 1.0
  * @return array
  */
-function wpga_get_settings() {
+function wpga_get_settings( $options ) {
 
-	$settings = array(
-		'general'  => array(
+	$options['general'] = array(
+		'title'   => esc_html__( 'General', 'wpga' ),
+		'options' => array(
 			array(
-				'id'    => 'active',
-				'title' => __( 'Activate Plugin', 'wpga' ),
-				'desc'  => __( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
-				'field' => 'checkbox',
-				'opts'  => array( 'yes' => __( 'Yes', 'wpga' ) )
+				'id'       => 'active',
+				'title'    => __( 'Activate Plugin', 'wpga' ),
+				'desc'     => __( 'Do you wish to enable the 2-factor authentication for this site?', 'wpga' ),
+				'callback' => 'wpga_option_callback_checkbox',
+				'opts'     => array( 'yes' => __( 'Yes', 'wpga' ) ),
+				'default'  => '',
 			),
 			array(
-				'id'    => 'force_2fa',
-				'title' => __( 'Force Use', 'wpga' ),
-				'desc'  => __( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
-				'field' => 'checkbox',
-				'opts'  => array( 'yes' => __( 'Yes', 'wpga' ) )
+				'id'       => 'force_2fa',
+				'title'    => __( 'Force Use', 'wpga' ),
+				'desc'     => __( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
+				'callback' => 'wpga_option_callback_checkbox',
+				'opts'     => array( 'yes' => __( 'Yes', 'wpga' ) ),
 			),
 			array(
-				'id'    => 'user_roles',
-				'title' => __( 'Force Roles', 'wpga' ),
-				'desc'  => __( 'You can force users to use 2-factor authentication by role. Requires &laquo;Force Use&raquo; to be enabled. If no role is checked, 2FA will be forced for ALL roles.', 'wpga' ),
-				'field' => 'user_roles',
-				'opts'  => wpga_get_editable_roles()
+				'id'       => 'user_role_status',
+				'title'    => '',
+				'desc'     => __( 'Do you want to force your users to use 2-factor authentication (admins AND you included)?', 'wpga' ),
+				'callback' => '',
+				'default' => 'all',
 			),
 			array(
-				'id'    => 'blog_name',
-				'title' => __( 'Site Name', 'wpga' ),
-				'desc'  => __( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
-				'field' => 'text'
-			)
+				'id'       => 'user_roles',
+				'title'    => __( 'Force Roles', 'wpga' ),
+				'desc'     => __( 'You can force users to use 2-factor authentication by role. Requires &laquo;Force Use&raquo; to be enabled. If no role is checked, 2FA will be forced for ALL roles.', 'wpga' ),
+				'callback' => 'wpga_option_callback_user_roles',
+				'opts'     => wpga_get_editable_roles(),
+			),
+			array(
+				'id'       => 'blog_name',
+				'title'    => __( 'Site Name', 'wpga' ),
+				'desc'     => __( 'Name under which this site will appear in the Google Authenticator app.', 'wpga' ),
+				'callback' => 'wpga_option_callback_text',
+				'default'  => get_bloginfo( 'name' ),
+			),
 		),
-		'security' => array(
-			array(
-				'id'    => 'max_attempts',
-				'title' => __( 'Max Attempts', 'wpga' ),
-				'desc'  => __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ),
-				'field' => 'smalltext'
-			),
-			array(
-				'id'    => 'authorized_delay',
-				'title' => __( 'Authorized Clock Desynchronization', 'wpga' ),
-				'desc'  => __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ),
-				'field' => 'smalltext'
-			)
-		)
 	);
 
-	return apply_filters( 'wpga_settings', $settings );
+	$options['security'] = array(
+		'title'   => esc_html__( 'Security', 'wpga' ),
+		'options' => array(
+			array(
+				'id'       => 'max_attempts',
+				'title'    => __( 'Max Attempts', 'wpga' ),
+				'desc'     => __( 'If you chose to force users to use 2-factor authentication, you can specify a maximum number of times a user can login WITHOUT setting up the 2-factor authentication (leave <code>0</code> for unlimited attempts).', 'wpga' ),
+				'callback' => 'wpga_option_callback_text_small',
+				'default'  => 3,
+			),
+			array(
+				'id'       => 'authorized_delay',
+				'title'    => __( 'Authorized Clock Desynchronization', 'wpga' ),
+				'desc'     => __( 'Must be in <code>min</code> (&plusmn;). Avoid invalid one-time passwords issues. Please read the contextual help for more info.', 'wpga' ),
+				'callback' => 'wpga_option_callback_text_small',
+				'default'  => 0,
+			),
+		),
+	);
+
+	return apply_filters( 'wpga_settings', $options );
 
 }
 
@@ -136,30 +156,11 @@ function wpga_get_editable_roles() {
  *
  * @since 1.2.0
  *
- * @param string $opt     ID of the option to lookup
+ * @param string $option  ID of the option to lookup
  * @param mixed  $default Default value to return
  *
  * @return mixed
  */
-function wpga_get_option( $opt, $default = false ) {
-
-	if ( ! $opt ) {
-		return $default;
-	}
-
-	/* Get the serialized values */
-	$options = get_option( WPGA_PREFIX . '_options', $default );
-
-	if ( $options && is_array( $options ) && ! empty( $options ) ) {
-
-		if ( isset( $options[ $opt ] ) ) {
-			return $options[ $opt ];
-		} else {
-			return $default;
-		}
-
-	} else {
-		return $default;
-	}
-
+function wpga_get_option( $option, $default = null ) {
+	return WPGA()->settings->get_option( $option, $default );
 }

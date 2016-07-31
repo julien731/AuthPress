@@ -18,9 +18,7 @@ add_action( 'login_form', 'wpga_customize_login_form' );
  */
 function wpga_customize_login_form() {
 
-	$options = get_option( 'wpga_options', array() );
-
-	if ( ! isset( $options['active'] ) || ! in_array( 'yes', $options['active'] ) ) {
+	if ( ! wpga_is_2fa_active() ) {
 		return;
 	}
 
