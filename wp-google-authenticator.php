@@ -355,7 +355,9 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			require( WPGA_PATH . 'includes/functions-totp.php' );
 			require( WPGA_PATH . 'includes/functions-users.php' );
 			require( WPGA_PATH . 'includes/functions-recovery.php' );
+			require( WPGA_PATH . 'includes/functions-deprecated.php' );
 			require( WPGA_PATH . 'includes/class-authenticate.php' );
+			require( WPGA_PATH . 'includes/class-user.php' );
 			require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
 			require( WPGA_PATH . 'includes/scripts-styles.php' );
 

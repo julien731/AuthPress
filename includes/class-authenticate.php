@@ -38,28 +38,17 @@ class WPGA_Authenticate {
 	 */
 	protected $secret;
 
+	/**
+	 * The user object
+	 *
+	 * @since 1.2
+	 * @var WPGA_User
+	 */
+	protected $user;
+
 	public function __construct() {
 		add_action( 'wp_authenticate_user',  array( $this, 'authenticate' ), 10, 3 );
 		add_filter( 'authenticate',          array( $this, 'checkAppPassword' ), 50, 3 );
-	}
-
-	/**
-	 * Get the user secret key
-	 *
-	 * @since 1.2.0
-	 *
-	 * @param WP_User $user User object
-	 *
-	 * @return string
-	 */
-	protected function get_user_secret( $user ) {
-
-		if ( is_null( $this->secret ) ) {
-			$this->secret = get_user_meta( $user->ID, 'wpga_secret', true );
-		}
-
-		return $this->secret;
-
 	}
 
 	/**
@@ -93,7 +82,12 @@ class WPGA_Authenticate {
 
 		if ( ! is_wp_error( $user ) ) {
 
-			$secret = $this->get_user_secret( $user );
+			// Instantiate our user class for easy access to user data
+			if ( is_null( $this->user ) ) {
+				$this->user = new WPGA_User( $user );
+			}
+
+			$secret = $this->user->get_secret();
 			$totp   = $this->get_totp();
 
 			/* Let's make sure the user has generated a secret */
@@ -107,9 +101,9 @@ class WPGA_Authenticate {
 					return new WP_Error( 'no_totp', esc_html__( 'Please provide your one time password.', 'wpga' ) );
 				}
 
-				$totp_valid = wpga_validate_totp( $secret, $totp );
+				$totp_valid = $this->user->is_otp_valid( $totp );
 
-				if ( is_wp_error( $totp ) ) {
+				if ( is_wp_error( $totp_valid ) ) {
 					return $totp_valid;
 				}
 
@@ -132,10 +126,10 @@ class WPGA_Authenticate {
 				 *
 				 * @since 1.0.4
 				 */
-				elseif ( wpga_check_recovery_key( $user, $totp ) ) {
+				elseif ( $this->user->is_recovery_key( $totp ) ) {
 
 					// Disable 2FA for this user
-					wpga_disable_2fa( $user->ID );
+					$this->user->deactivate_2fa();
 
 					/* Add URL var to the login redirect */
 					add_filter( 'login_redirect', 'wpga_login_redirect_notify' );
@@ -151,15 +145,14 @@ class WPGA_Authenticate {
 				/* TOTP is forced for all users */
 				if ( wpga_is_2fa_forced( $user->roles ) ) {
 
-					$remaining_attempts = wpas_get_remaining_login_attempts( $user->ID );
-
 					/* If the admin set the max attempts to unlimited we give up on security :( */
-					if ( - 1 === $remaining_attempts ) {
+					if ( - 1 === $this->user->remaining_attempts() ) {
 						return $user;
 					}
 
-					if ( $remaining_attempts > 0 ) {
-						wpas_increment_attempts( $user->ID );
+					if ( $this->user->remaining_attempts() > 0 ) {
+
+						$this->user->add_attempt();
 
 						return $user;
 					} else {
@@ -191,24 +184,28 @@ class WPGA_Authenticate {
 	 * @param string  $username The username to authenticate
 	 * @param string  $password The user password
 	 *
-	 * @return WP_User A user object
+	 * @return null|WP_User|WP_Error A user object on success or an error message
 	 */
 	public function checkAppPassword( $user, $username, $password ) {
 
+		// Only do our work if the authentication failed.
 		if ( ! is_wp_error( $user ) ) {
 			return $user;
 		}
 
 		$user_data = get_user_by( 'login', $username );
 
-		if ( ! is_object( $user_data ) ) {
-			return false;
+		if ( ! is_object( $user_data ) || ! is_a( $user_data, 'WP_User' ) ) {
+			return null;
 		}
 
-		if ( $this->has_app_passwords( $user_data->ID ) ) {
+		// Get the WPGA user object
+		$wpga_user = new WPGA_User( $user_data );
 
-			$passwords = wpga_get_app_passwords( $user_data->ID );
-			$hash      = md5( $password );
+		if ( $wpga_user->has_app_passwords() ) {
+
+			$passwords = $wpga_user->get_app_passwords(); // Get all user app passwords
+			$hash      = md5( $password ); // Hash the given supposed app password
 			$key       = wpga_make_unique_key( $hash );
 
 			if ( array_key_exists( $key, $passwords ) ) {

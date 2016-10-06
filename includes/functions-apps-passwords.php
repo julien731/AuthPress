@@ -70,6 +70,15 @@ function wpga_get_last_access( $key ) {
 
 }
 
+/**
+ * Get app passwords for a user
+ *
+ * @since 1.1
+ *
+ * @param null|int $user_id
+ *
+ * @return array
+ */
 function wpga_get_app_passwords( $user_id = null ) {
 
 	if ( is_null( $user_id ) ) {
@@ -77,8 +86,10 @@ function wpga_get_app_passwords( $user_id = null ) {
 		$user_id = $current_user->ID;
 	}
 
-	$passwords = is_array( $p = get_user_meta( $user_id, 'wpga_apps_passwords', true ) ) ? $p : array();
-	return $passwords;
+	$user = new WPGA_User( $user_id );
+
+	return $user->get_app_passwords();
+
 }
 
 function wpga_get_app_passwords_log( $user_id = null ) {

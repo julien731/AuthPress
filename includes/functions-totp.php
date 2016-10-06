@@ -13,69 +13,6 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Check if the code is correct. This will accept codes starting from $drift*30sec ago to $drift*30sec from now
- *
- * @since 1.0.0
- *
- * @param string $secret
- * @param string $code
- *
- * @return bool
- */
-function wpga_check_totp( $secret, $code ) {
-
-	$options          = get_option( 'wpga_options' );
-	$drift            = isset( $options['authorized_delay'] ) ? (int) $options['authorized_delay'] * 2 : 1;
-	$currentTimeSlice = floor( time() / 30 );
-
-	for ( $i = - $drift; $i <= $drift; $i ++ ) {
-
-		$calculatedCode = wpga_get_code( $secret, $currentTimeSlice + $i );
-
-		if ( $calculatedCode == $code ) {
-
-			return true;
-
-		}
-	}
-
-	return false;
-}
-
-/**
- * Validate a TOTP
- *
- * Takes a TOTP, makes sure it's valid, and then check if it hasn't been used already.
- *
- * @since 1.2.0
- *
- * @param string $secret
- * @param string $totp
- *
- * @return bool|WP_Error
- */
-function wpga_validate_totp( $secret, $totp ) {
-
-	$result = false;
-	$valid  = wpga_check_totp( $secret, $totp );
-
-	if ( true === $valid ) {
-
-		$used = get_option( 'wpga_used_totp', array() );
-
-		if ( is_array( $used ) && ! in_array( md5( $totp ), $used ) ) {
-			$result = true;
-		} else {
-			$result = new WP_Error( 'expired_totp', esc_html__( 'The one time password you used has already been revoked.', 'wpga' ) );
-		}
-
-	}
-
-	return $result;
-
-}
-
-/**
  * Revoke a TOTP
  *
  * @since 1.2.0
@@ -243,11 +180,8 @@ function wpga_is_2fa_active( $user = false ) {
 
 	// If 2FA is enabled on the site, make sure the current user, if any, has it enabled for his account
 	if ( true === $active && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
-
-		if ( 'yes' !== get_user_meta( $user->ID, 'wpga_active', true ) ) {
-			$active = false;
-		}
-
+		$wpga_user = new WPGA_User( $user );
+		$active    = $wpga_user->has_2fa();
 	}
 
 	return $active;
@@ -287,5 +221,26 @@ function wpga_is_2fa_forced( $roles = array() ) {
 	}
 
 	return false;
+
+}
+
+/**
+ * Check if a OPT has already been used
+ *
+ * @since 1.2
+ *
+ * @param string $otp The OPT to check
+ *
+ * @return bool
+ */
+function wpga_was_otp_used( $otp ) {
+
+	$used = get_option( 'wpga_used_totp', array() );
+
+	if ( is_array( $used ) && ! in_array( md5( $totp ), $used ) ) {
+		return false;
+	} else {
+		return true;
+	}
 
 }

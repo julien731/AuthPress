@@ -12,27 +12,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/**
- * Check validity of a recovery key
- *
- * @param  object $user User object
- * @param  string $key  Recovery key to check
- *
- * @return boolean      Whether or not the key is valid
- * @since  1.0.4
- */
-function wpga_check_recovery_key( $user, $key ) {
-
-	$recovery = get_user_meta( $user->ID, 'wpga_backup_key', true );
-
-	if ( sanitize_key( $key ) == $recovery ) {
-		return true;
-	} else {
-		return false;
-	}
-
-}
-
 add_action( 'wp_ajax_wpga_get_recovery', 'wpga_ajax_callback' );
 /**
  * Get recovery code
