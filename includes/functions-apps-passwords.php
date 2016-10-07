@@ -272,8 +272,8 @@ function wpga_apps_access_log_create_table() {
 				key_id mediumint(9) NOT NULL,
 				time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 				ip VARCHAR(255) NOT NULL,
-				user_agent VARCHAR(100),
-				method VARCHAR(20) NOT NULL,
+				user_agent VARCHAR(255),
+				method VARCHAR(20),
 				UNIQUE KEY ID  (ID)
 				) $charset_collate;";
 

@@ -209,7 +209,10 @@ class WPGA_Authenticate {
 
 			if ( in_array( $hash, $passwords ) ) {
 
-				// LOG ACCESS
+				$pwd_keys = array_flip( $passwords );
+
+				WPGA()->access_log->log_access( $user_data->ID, $pwd_keys[ $hash ], current_time( 'mysql' ), $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] );
+
 				// INCREMENT COUNT
 
 				return new WP_User( $user_data->ID );

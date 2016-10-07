@@ -94,6 +94,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		public $recovery;
 
 		/**
+		 * Holds the access log class instance
+		 *
+		 * @since 1.2
+		 * @var WPGA_Access_Log
+		 */
+		public $access_log;
+
+		/**
 		 * Instantiate and return the unique WP Google Authenticator object
 		 *
 		 * @since     1.2.0
@@ -141,6 +149,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			self::$instance->includes();
 			self::$instance->authenticate = new WPGA_Authenticate();
 			self::$instance->recovery = new WPGA_Recovery_Key();
+			self::$instance->access_log = new WPGA_Access_Log();
 
 			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 				self::$instance->settings = new WPGA_Settings( 'network' );
@@ -386,6 +395,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			require( WPGA_PATH . 'includes/class-recovery-key.php' );
 			require( WPGA_PATH . 'includes/class-authenticate.php' );
 			require( WPGA_PATH . 'includes/class-user.php' );
+			require( WPGA_PATH . 'includes/class-access-log.php' );
 			require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
 			require( WPGA_PATH . 'includes/scripts-styles.php' );
 
@@ -425,7 +435,7 @@ endif;
  * to declare the global.
  *
  * @since 1.2.0
- * @return object WP_Google_Authenticator
+ * @return WP_Google_Authenticator
  */
 function WPGA() {
 	return WP_Google_Authenticator::instance();
