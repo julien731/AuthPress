@@ -33,5 +33,6 @@ function wpga_installPlugin() {
 
 	// Create custom database tables
 	wpga_recovery_keys_create_table();
+	wpga_apps_access_log_create_table();
 
 }
