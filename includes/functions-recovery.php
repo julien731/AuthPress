@@ -87,6 +87,7 @@ function wpga_recovery_keys_create_table() {
 				user_id mediumint(9) NOT NULL,
 				time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 				code VARCHAR(255) NOT NULL,
+				name VARCHAR(100),
 				type VARCHAR(20) NOT NULL,
 				count VARCHAR(20),
 				UNIQUE KEY ID  (ID)
