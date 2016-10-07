@@ -433,12 +433,3 @@ function WPGA() {
 
 // Get WP Google Authenticator Running
 WPGA();
-
-add_action( 'plugins_loaded', 'zob' );
-function zob() {
-//	WPGA()->recovery->add_key( 1, 'blau' );
-//	var_dump( WPGA()->recovery->get_key_by( 'code', 'blah' ) );
-//	var_dump( WPGA()->recovery->get_key_by( 'user_id', 1, true ) );
-//	var_dump( WPGA()->recovery->get_keys() );
-//	WPGA()->recovery->delete_key( 2 );
-}
