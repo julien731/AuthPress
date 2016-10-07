@@ -307,7 +307,7 @@ class WPGA_User {
 			return $this->app_passwords;
 		}
 
-		return $this->app_passwords = is_array( $p = get_user_meta( $this->user_id, 'wpga_apps_passwords', true ) ) ? $p : array();
+		return WPGA()->recovery->get_key_by( 'user_id', $this->user_id, false, 'app_password' );
 
 	}
 

@@ -106,22 +106,43 @@ function wpga_get_app_passwords_log( $user_id = null ) {
 
 }
 
-function wpga_delete_app_password( $key ) {
-
-	global $current_user;
-
-	$passwords = $new = wpga_get_app_passwords();
-
-	if ( array_key_exists( $key, $passwords ) ) {
-		unset( $new[$key] );
-		update_user_meta( $current_user->ID, 'wpga_apps_passwords', $new, $passwords );
-	}
-
+/**
+ * Delete a user's app password
+ *
+ * @since 1.1
+ *
+ * @param string $id ID of the key to delete
+ *
+ * @return bool
+ */
+function wpga_delete_app_password( $id ) {
+	return WPGA()->recovery->delete_key( $id );
 }
 
+/**
+ * Delete all of a user's app passwords at one
+ *
+ * @since 1.1
+ * @return bool
+ */
 function wpga_reset_app_passwords() {
+
 	global $current_user;
-	delete_user_meta( $current_user->ID, 'wpga_apps_passwords' );
+
+	$result = true;
+
+	$keys = WPGA()->recovery->get_key_by( 'user_id', $current_user->ID, false, 'app_password' );
+
+	if ( is_array( $keys ) ) {
+		foreach ( $keys as $key ) {
+			if ( ! wpga_delete_app_password( $key['ID'] ) ) {
+				$result = false;
+			}
+		}
+	}
+
+	return $result;
+
 }
 
 function wpga_clear_log() {
@@ -143,14 +164,17 @@ function wpga_create_app_password() {
 
 	global $current_user;
 
-	$passwords = $new = is_array( $p = get_user_meta( $current_user->ID, 'wpga_apps_passwords', true ) ) ? $p : array();
-	$pwd       = wpga_generate_backup_key();
-	$hash      = md5( esc_attr( $pwd ) );
-	$key       = wpga_make_unique_key( $hash );
-	$return    = json_encode( array( 'desc' => sanitize_text_field( $_POST['description'] ), 'pwd' => esc_attr( $pwd ) ) );
-	$new[$key] = array( 'description' => sanitize_text_field( $_POST['description'] ), 'hash' => $hash, 'count' => 0 );
+	$pwd     = WPGA()->recovery->generate_key();
+	$app_pwd = WPGA()->recovery->add_key( $current_user->ID, $pwd, sanitize_text_field( $_POST['description'] ), 'app_password' );
 
-	update_user_meta( $current_user->ID, 'wpga_apps_passwords', $new, $passwords );
+	if ( false !== $app_pwd ) {
+		$return = json_encode( array(
+			'desc' => sanitize_text_field( $_POST['description'] ),
+			'pwd'  => esc_attr( $pwd ),
+		) );
+	} else {
+		$return = json_encode( array( 'error' ) );
+	}
 
 	echo esc_attr( urlencode( $return ) );
 	die();
