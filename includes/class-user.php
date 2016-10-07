@@ -287,7 +287,7 @@ class WPGA_User {
 		$is_key = false;
 		$keys   = wpga_get_user_recovery_keys( $this->user_id );
 
-		if ( in_array( sanitize_key( $key ), $keys ) ) {
+		if ( in_array( md5( sanitize_key( $key ) ), $keys ) ) {
 			$is_key = true;
 		}
 

@@ -86,7 +86,7 @@ class WPGA_Recovery_Key {
 			'ID'      => false,
 			'user_id' => (int) $user_id,
 			'time'    => current_time( 'mysql' ),
-			'code'    => sanitize_key( $key ),
+			'code'    => md5( sanitize_key( $key ) ),
 			'name'    => sanitize_text_field( $name ),
 			'type'    => $type,
 			'count'   => 0,
@@ -144,6 +144,10 @@ class WPGA_Recovery_Key {
 		// Make sure the id field is uppercase
 		if ( 'id' === $field ) {
 			$field = 'ID';
+		}
+
+		if ( 'code' === $field ) {
+			$value = md5( $value );
 		}
 
 		// Set the base query arguments
