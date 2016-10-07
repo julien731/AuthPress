@@ -12,24 +12,26 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-register_activation_hook( __FILE__, 'wpga_installPlugin' );
+register_activation_hook( WPGA_BASENAME, 'wpga_installPlugin' );
 /**
  * Register settings on plugin activation
  */
 function wpga_installPlugin() {
 
 	$defaults = array(
-		'blog_name' 		=> get_bloginfo( 'name' ),
-		'max_attempts' 		=> 3,
-		'authorized_delay' 	=> 0,
+		'blog_name'        => get_bloginfo( 'name' ),
+		'max_attempts'     => 3,
+		'authorized_delay' => 0,
 	);
 
-	if ( ! get_option( WPGA_PREFIX . '_options' ) )
-		update_option( WPGA_PREFIX . '_options', $defaults );
+	add_option( WPGA_PREFIX . '_options', $defaults );
 
-	/* Add a new cron hook */
+	// Add a new cron hook
 	if ( ! wp_next_scheduled( 'wpas_clean_totps' ) ) {
 		wp_schedule_event( time(), 'daily', 'wpas_clean_totps' );
 	}
+
+	// Create custom database tables
+	wpga_recovery_keys_create_table();
 
 }

@@ -75,3 +75,39 @@ function wpga_generate_backup_key() {
 
 	return substr( $random, 0, $length );
 }
+
+/**
+ * Create the custom database table to store recovery keys
+ *
+ * @since 1.2
+ * @return void
+ */
+function wpga_recovery_keys_create_table() {
+
+	global $wpdb;
+
+	$table           = wpga_recovery_keys_table;
+	$charset_collate = $wpdb->get_charset_collate();
+
+	// Prepare DB structure if not already existing
+	if ( $wpdb->get_var( "show tables like '$table'" ) != $table ) {
+
+		$sql = "CREATE TABLE $table (
+				ID mediumint(9) NOT NULL AUTO_INCREMENT,
+				user_id mediumint(9) NOT NULL,
+				time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+				code VARCHAR(255) NOT NULL,
+				type VARCHAR(20) NOT NULL,
+				count VARCHAR(20),
+				UNIQUE KEY ID  (ID)
+				) $charset_collate;";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+
+		// Save database version. Useful for upgrades.
+		add_option( 'wpga_db_version', WPGA_DB_VERSION );
+
+	}
+
+}

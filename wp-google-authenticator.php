@@ -86,6 +86,14 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		public $settings;
 
 		/**
+		 * Holds the recovery key instance
+		 *
+		 * @since 1.2
+		 * @var WPGA_Recovery_Key
+		 */
+		public $recovery;
+
+		/**
 		 * Instantiate and return the unique WP Google Authenticator object
 		 *
 		 * @since     1.2.0
@@ -129,8 +137,10 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 				return;
 			}
 
+			self::$instance->setup_database_constants();
 			self::$instance->includes();
 			self::$instance->authenticate = new WPGA_Authenticate();
+			self::$instance->recovery = new WPGA_Recovery_Key();
 
 			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 				self::$instance->settings = new WPGA_Settings( 'network' );
@@ -175,17 +185,34 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 * @return void
 		 */
 		private function setup_constants() {
-			define( 'WPGA_VERSION',  '1.1.0' );
-			define( 'WPGA_NAME',     'WP Google Authenticator' );
-			define( 'WPGA_AUTHOR',   'Julien Liabeuf' );
-			define( 'WPGA_URI',      'http://julienliabeuf.com' );
-			define( 'WPGA_URL',      plugin_dir_url( __FILE__ ) );
-			define( 'WPGA_PATH',     plugin_dir_path( __FILE__ ) );
-			define( 'WPGA_ROOT',     trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
-			define( 'WPGA_PREFIX',   'wpga' );
-			define( 'WPGA_BASENAME', plugin_basename(__FILE__) );
-			define( 'WPGA_LOG',      false );
-			define( 'TAV_SHORTNAME', 'tav' );
+			define( 'WPGA_VERSION', '1.1.0' );
+			define( 'WPGA_DB_VERSION', '1' );
+			define( 'WPGA_NAME', 'WP Google Authenticator' );
+			define( 'WPGA_AUTHOR', 'Julien Liabeuf' );
+			define( 'WPGA_URI', 'http://julienliabeuf.com' );
+			define( 'WPGA_URL', plugin_dir_url( __FILE__ ) );
+			define( 'WPGA_PATH', plugin_dir_path( __FILE__ ) );
+			define( 'WPGA_ROOT', trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
+			define( 'WPGA_PREFIX', 'wpga' );
+			define( 'WPGA_BASENAME', plugin_basename( __FILE__ ) );
+			define( 'WPGA_LOG', false );
+		}
+
+		/**
+		 * Setup the custom database table constants
+		 *
+		 * @since 2.0
+		 * @return void
+		 */
+		private function setup_database_constants() {
+
+			global $wpdb;
+
+			define( 'wpga_recovery_keys_table_name', 'wpga_recovery_keys' );
+			define( 'wpga_apps_access_log_table_name', 'wpga_apps_access_log' );
+			define( 'wpga_recovery_keys_table', $wpdb->prefix . wpga_recovery_keys_table_name );
+			define( 'wpga_apps_access_log_table', $wpdb->prefix . wpga_apps_access_log_table_name );
+
 		}
 
 		/**
@@ -356,6 +383,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			require( WPGA_PATH . 'includes/functions-users.php' );
 			require( WPGA_PATH . 'includes/functions-recovery.php' );
 			require( WPGA_PATH . 'includes/functions-deprecated.php' );
+			require( WPGA_PATH . 'includes/class-recovery-key.php' );
 			require( WPGA_PATH . 'includes/class-authenticate.php' );
 			require( WPGA_PATH . 'includes/class-user.php' );
 			require( WPGA_PATH . 'includes/functions-apps-passwords.php' );
@@ -405,3 +433,12 @@ function WPGA() {
 
 // Get WP Google Authenticator Running
 WPGA();
+
+add_action( 'plugins_loaded', 'zob' );
+function zob() {
+//	WPGA()->recovery->add_key( 1, 'blau' );
+//	var_dump( WPGA()->recovery->get_key_by( 'code', 'blah' ) );
+//	var_dump( WPGA()->recovery->get_key_by( 'user_id', 1, true ) );
+//	var_dump( WPGA()->recovery->get_keys() );
+//	WPGA()->recovery->delete_key( 2 );
+}
