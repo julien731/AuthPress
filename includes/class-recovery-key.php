@@ -187,6 +187,32 @@ class WPGA_Recovery_Key {
 	}
 
 	/**
+	 * Get a user's recovery keys
+	 *
+	 * @since 1.2
+	 *
+	 * @param $user_id
+	 *
+	 * @return bool|string
+	 */
+	public function get_recovery_keys( $user_id ) {
+
+		$keys     = array();
+		$recovery = $this->get_key_by( 'user_id', $user_id );
+
+		if ( is_array( $recovery ) ) {
+			foreach ( $recovery as $key ) {
+				if ( 'recovery_key' === $key['type'] ) {
+					$keys[] = $key['code'];
+				}
+			}
+		}
+
+		return $keys;
+
+	}
+
+	/**
 	 * Delete a key from the database
 	 *
 	 * @since 1.2

@@ -54,6 +54,19 @@ function wpga_ajax_callback() {
 }
 
 /**
+ * Helper function to get a user's recovery key
+ *
+ * @since 1.2
+ *
+ * @param int $user_id The user ID
+ *
+ * @return false|string
+ */
+function wpga_get_user_recovery_keys( $user_id ) {
+	return WPGA()->recovery->get_recovery_keys( $user_id );
+}
+
+/**
  * Create the custom database table to store recovery keys
  *
  * @since 1.2

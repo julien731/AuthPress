@@ -284,10 +284,10 @@ class WPGA_User {
 	 */
 	public function is_recovery_key( $key ) {
 
-		$is_key   = false;
-		$recovery = get_user_meta( $this->user_id, 'wpga_backup_key', true );
+		$is_key = false;
+		$keys   = wpga_get_user_recovery_keys( $this->user_id );
 
-		if ( sanitize_key( $key ) === $recovery ) {
+		if ( in_array( sanitize_key( $key ), $keys ) ) {
 			$is_key = true;
 		}
 
