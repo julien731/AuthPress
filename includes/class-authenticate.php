@@ -204,49 +204,16 @@ class WPGA_Authenticate {
 
 		if ( $wpga_user->has_app_passwords() ) {
 
-			$passwords = $wpga_user->get_app_passwords(); // Get all user app passwords
+			$passwords = $wpga_user->get_app_passwords_codes(); // Get all user app passwords
 			$hash      = md5( $password ); // Hash the given supposed app password
-			$key       = wpga_make_unique_key( $hash );
 
-			if ( array_key_exists( $key, $passwords ) ) {
+			if ( in_array( $hash, $passwords ) ) {
 
-				/* App password is correct. */
-				if ( wp_check_password( trim( $password ), $passwords[ $key ]['hash'] ) ) {
+				// LOG ACCESS
+				// INCREMENT COUNT
 
-					$new   = wpga_get_app_passwords_log( $user_data->ID );
-					$count = count( $new );
-					$last  = null;
+				return new WP_User( $user_data->ID );
 
-					/* Delete the oldest entry if the limit is reached */
-					if ( $count === apply_filters( 'wpga_apps_passwords_log_max', 50 ) ) {
-						foreach ( $new as $date => $data ) {
-							$last = $date;
-						}
-						unset( $new[ $last ] );
-					}
-
-					$time  = strtotime( 'now' );
-					$entry = array(
-						'key'        => $key,
-						'last_used'  => $time,
-						'ip'         => $_SERVER['REMOTE_ADDR'],
-						'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-						'method'     => '',
-					);
-
-					/* Update the password use count */
-					$passwords[$key]['count'] = intval( $passwords[$key]['count'] ) + 1;
-					update_user_meta( $user_data->ID, 'wpga_apps_passwords', $passwords );
-
-					/* Save the log entry */
-					$new[$time] = $entry;
-					update_user_meta( $user_data->ID, 'wpga_apps_passwords_log', $new );
-
-					return new WP_User( $user_data->ID );
-
-				} else {
-					return new WP_Error( 'wrong_app_password', esc_html__( 'The application password you provided is invalid.', 'wpga' ) );
-				}
 			} else {
 				return new WP_Error( 'no_totp', esc_html__( 'Please provide your one time password.', 'wpga' ) );
 			}

@@ -312,6 +312,25 @@ class WPGA_User {
 	}
 
 	/**
+	 * Get the actual list of the user's app passwords
+	 *
+	 * @since 1.2
+	 * @return array
+	 */
+	public function get_app_passwords_codes() {
+
+		$passwords = $this->get_app_passwords();
+		$codes     = array();
+
+		foreach ( $passwords as $key ) {
+			$codes[] = $key['code'];
+		}
+
+		return $codes;
+
+	}
+
+	/**
 	 * Check if the user has any app passwords set
 	 *
 	 * @since 1.2
