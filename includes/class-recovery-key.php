@@ -61,11 +61,12 @@ class WPGA_Recovery_Key {
 	 *
 	 * @param int    $user_id The ID of the user whose key it is
 	 * @param string $key     The key to add
+	 * @param string $name    An optional name for the key to be added
 	 * @param string $type    The type of entry
 	 *
 	 * @return int|false New row ID if insertion is successful, false otherwise
 	 */
-	public function add_key( $user_id, $key, $type = 'recovery_key' ) {
+	public function add_key( $user_id, $key, $name = '', $type = 'recovery_key' ) {
 
 		$user = get_user_by( 'id', $user_id );
 
@@ -86,7 +87,7 @@ class WPGA_Recovery_Key {
 			'user_id' => (int) $user_id,
 			'time'    => current_time( 'mysql' ),
 			'code'    => sanitize_key( $key ),
-			'name'    => '',
+			'name'    => sanitize_text_field( $name ),
 			'type'    => $type,
 			'count'   => 0,
 		);
