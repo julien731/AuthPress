@@ -235,7 +235,7 @@ class WPGA_Recovery_Key {
 			$query .= ' WHERE 1';
 		}
 
-		$row = $wpdb->get_results( $wpdb->prepare( $query, wpga_recovery_keys_table ), $output );
+		$row = $wpdb->get_results( $query, $output );
 
 		return $row;
 
