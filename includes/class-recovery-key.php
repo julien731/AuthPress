@@ -22,14 +22,12 @@ class WPGA_Recovery_Key {
 	 */
 	public function generate_key() {
 
-		$key       = $this->generate_random_key();
-		$key_check = $this->get_key_by( 'code', $key, true );
+		$key = $this->generate_random_key();
 
-		if ( true === $this->key_exists( $key_check ) ) {
+		if ( true === $this->key_exists( $key ) ) {
 			do {
-				$key       = $this->generate_random_key();
-				$key_check = $this->get_key_by( 'code', $key );
-			} while ( true === $this->key_exists( $key_check ) );
+				$key = $this->generate_random_key();
+			} while ( true === $this->key_exists( $key ) );
 		}
 
 		return $key;
@@ -88,11 +86,12 @@ class WPGA_Recovery_Key {
 			'user_id' => (int) $user_id,
 			'time'    => current_time( 'mysql' ),
 			'code'    => sanitize_key( $key ),
+			'name'    => '',
 			'type'    => $type,
 			'count'   => 0,
 		);
 
-		$insert = $wpdb->insert( wpga_recovery_keys_table, $data, array( '%s', '%s', '%d', '%s', '%s', '%s' ) );
+		$insert = $wpdb->insert( wpga_recovery_keys_table, $data, array( '%s', '%s', '%d', '%s', '%s', '%s', '%s' ) );
 
 		return false === $insert ? false : $wpdb->insert_id;
 
@@ -155,7 +154,7 @@ class WPGA_Recovery_Key {
 
 		$key = $this->get_key_by( 'code', $key, true );
 
-		if ( is_array( $key ) && empty( $key ) ) {
+		if ( is_array( $key ) && ! empty( $key ) ) {
 			return true;
 		}
 
@@ -209,6 +208,25 @@ class WPGA_Recovery_Key {
 		}
 
 		return $keys;
+
+	}
+
+	/**
+	 * Get the actual recovery code from a key entry
+	 *
+	 * @since 1.2
+	 *
+	 * @param array $key A user's key
+	 *
+	 * @return false|string
+	 */
+	public function get_key_code( $key ) {
+
+		if ( ! is_array( $key ) || ! isset( $key['code'] ) ) {
+			return false;
+		}
+
+		return $key['code'];
 
 	}
 
