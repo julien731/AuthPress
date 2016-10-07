@@ -323,7 +323,7 @@ class WPGA_User {
 		$codes     = array();
 
 		foreach ( $passwords as $key ) {
-			$codes[] = $key['code'];
+			$codes[ $key['ID'] ] = $key['code'];
 		}
 
 		return $codes;
