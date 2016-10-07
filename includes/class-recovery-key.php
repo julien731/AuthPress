@@ -76,7 +76,7 @@ class WPGA_Recovery_Key {
 		}
 
 		// Sanitize the entry type
-		if ( ! in_array( $type, array( 'recovery_key', 'app_password' ) ) ) {
+		if ( ! $this->type_exists( $type ) ) {
 			$type = 'recovery_key';
 		}
 
@@ -96,6 +96,19 @@ class WPGA_Recovery_Key {
 
 		return false === $insert ? false : $wpdb->insert_id;
 
+	}
+
+	/**
+	 * Check if a given key type is valid
+	 *
+	 * @since 1.2
+	 *
+	 * @param string $type Key type
+	 *
+	 * @return bool
+	 */
+	public function type_exists( $type ) {
+		return in_array( $type, array( 'recovery_key', 'app_password' ) ) ? true : false;
 	}
 
 	/**
