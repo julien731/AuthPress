@@ -119,10 +119,11 @@ class WPGA_Recovery_Key {
 	 * @param string $field  What field to use to lookup the key
 	 * @param mixed  $value  Value of the lookup field
 	 * @param bool   $single Should the method return a single result or not
+	 * @param string $type   Optional specify what type of key should be looked up
 	 *
 	 * @return array|WP_Error An array containing the key information on success
 	 */
-	public function get_key_by( $field = 'ID', $value, $single = false ) {
+	public function get_key_by( $field = 'ID', $value, $single = false, $type = '' ) {
 
 		// Sanitize field
 		if ( ! in_array( $field, array( 'ID', 'code', 'user_id', 'type' ) ) ) {
@@ -145,7 +146,15 @@ class WPGA_Recovery_Key {
 			$field = 'ID';
 		}
 
-		$result = $this->get( array( 'where' => "$field = '$value'" ) );
+		// Set the base query arguments
+		$args = array( 'where' => "$field = '$value'" );
+
+		// Possibly add the key type
+		if ( ! empty( $type ) && $this->type_exists( $type ) ) {
+			$args['where'] .= " AND type = '$type'";
+		}
+
+		$result = $this->get( $args );
 
 		if ( is_array( $result ) && count( $result ) > 1 && true === $single ) {
 			$result = $result[0];
@@ -255,7 +264,7 @@ class WPGA_Recovery_Key {
 	 */
 	public function delete_key( $id ) {
 
-		$key = $this->get_key_by( 'ID', $id );
+		$key = $this->get_key_by( 'ID', $id, true );
 
 		if ( false === $key || is_wp_error( $key ) ) {
 			return false;
