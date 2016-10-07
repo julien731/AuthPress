@@ -54,29 +54,6 @@ function wpga_ajax_callback() {
 }
 
 /**
- * Generate a backup key
- *
- * In case the user loses his phone or cannot access the Google Authenticator app,
- * we generate a unique backup key that the user can use to authenticate once.
- * After one (only) authentication the key will be voided.
- *
- * @return string Backup key
- * @since 1.0.4
- */
-function wpga_generate_backup_key() {
-
-	$length = apply_filters( 'wpga_recovery_code_length', 24 );;
-	$max    = ceil( $length / 40 );
-	$random = '';
-
-	for ( $i = 0; $i < $max; $i ++ ) {
-		$random .= sha1( microtime( true ) . mt_rand( 10000, 90000 ) );
-	}
-
-	return substr( $random, 0, $length );
-}
-
-/**
  * Create the custom database table to store recovery keys
  *
  * @since 1.2
