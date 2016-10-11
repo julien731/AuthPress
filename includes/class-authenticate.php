@@ -212,8 +212,7 @@ class WPGA_Authenticate {
 				$pwd_keys = array_flip( $passwords );
 
 				WPGA()->access_log->log_access( $user_data->ID, $pwd_keys[ $hash ], current_time( 'mysql' ), $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] );
-
-				// INCREMENT COUNT
+				WPGA()->recovery->increment_count( $pwd_keys[ $hash ] );
 
 				return new WP_User( $user_data->ID );
 
