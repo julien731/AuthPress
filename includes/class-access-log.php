@@ -18,6 +18,14 @@ class WPGA_Access_Log {
 	 * Log a new access using an app password
 	 *
 	 * @since 1.2
+	 *
+	 * @param int    $user_id    ID of the user who logged in
+	 * @param int    $key_id     ID of the app password used
+	 * @param string $time       Access time
+	 * @param string $ip         IP address used to login
+	 * @param string $user_agent The user user agent
+	 * @param string $method     Login method
+	 *
 	 * @return false|int
 	 */
 	public function log_access( $user_id, $key_id, $time = '', $ip, $user_agent, $method = '' ) {
