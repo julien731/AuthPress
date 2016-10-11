@@ -204,3 +204,30 @@ function wpga_settings_page_link( $links ) {
 
 	return $links;
 }
+
+add_action( 'admin_menu', 'wpga_user_dashboard' );
+/**
+ * Register user dashboard page
+ *
+ * @since 1.0
+ * @return void
+ */
+function wpga_user_dashboard() {
+	add_submenu_page(
+		'users.php',
+		esc_html__( 'AuthPress User Dashboard', 'wpga' ),
+		esc_html__( 'My AuthPress', 'wpga' ),
+		'edit_posts',
+		'authpress',
+		'wpga_user_dashboard_page' );
+}
+
+/**
+ * Load the user dashboard page content
+ *
+ * @since 1.0
+ * @return void
+ */
+function wpga_user_dashboard_page() {
+	require( 'views/dashboard.php' );
+}
