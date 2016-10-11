@@ -105,7 +105,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 * Instantiate and return the unique WP Google Authenticator object
 		 *
 		 * @since     1.2.0
-		 * @return object WP_Google_Authenticator Unique instance of WP Google Authenticator
+		 * @return WP_Google_Authenticator Unique instance of WP Google Authenticator
 		 */
 		public static function instance() {
 
