@@ -283,6 +283,33 @@ class WPGA_Recovery_Key {
 	}
 
 	/**
+	 * Increment the use count for a key
+	 *
+	 * @since 1.2
+	 *
+	 * @param int $key_id ID of the key to increment
+	 *
+	 * @return false|int New count
+	 */
+	public function increment_count( $key_id ) {
+
+		global $wpdb;
+
+		$key = $this->get_key_by( 'ID', $key_id );
+
+		if ( empty( $key ) ) {
+			return false;
+		}
+
+		$count  = (int) $key[0]['count'];
+		$count++;
+		$update = $wpdb->update( wpga_recovery_keys_table, array( 'count' => $count ), array( 'ID' => $key_id ), array( '%s' ), array( '%s' ) );
+
+		return false === $update ? false : $count;
+
+	}
+
+	/**
 	 * Run a query on the recovery keys table
 	 *
 	 * @since 1.2
