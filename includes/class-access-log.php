@@ -65,14 +65,71 @@ class WPGA_Access_Log {
 	 * @since 1.2
 	 * @return array
 	 */
-	public function get_entries() {}
+	public function get_entries() {
+		return $this->get();
+	}
 
 	/**
 	 * Get log entries by field
 	 *
 	 * @since 1.2
+	 *
+	 * @param string $field Database table column to select
+	 * @param mixed  $value Column value
+	 *
+	 * @return array|WP_Error
+	 */
+	public function get_entries_by( $field, $value ) {
+
+		if ( ! in_array( $field, array( 'user_id', 'key_id' ) ) ) {
+			return new WP_Error( 'invalid_field', esc_html__( 'The field you are trying to select is invalid', 'wpga' ) );
+		}
+
+		if ( 'user_id' === $field ) {
+			if ( false === get_user_by( 'id', $value ) ) {
+				return new WP_Error( 'invalid_user', esc_html__( 'The user you are trying to get log entries for does not exist', 'wpga' ) );
+			}
+		}
+
+		return $this->get( array( 'where' => 'user_id = ' . (int) $value ) );
+
+	}
+
+	/**
+	 * Run a query on the access log table
+	 *
+	 * @since 1.2
+	 *
+	 * @global       $wpdb
+	 *
+	 * @param array  $args   Query arguments
+	 * @param string $output Desired output format
+	 *
 	 * @return array
 	 */
-	public function get_entries_by() {}
+	private function get( $args = array(), $output = 'ARRAY_A' ) {
+
+		global $wpdb;
+
+		if ( ! isset( $args['limit'] ) ) {
+			$args['limit'] = 30;
+		}
+
+		$query = 'SELECT * FROM ' . wpga_apps_access_log_table;
+
+		if ( isset( $args['where'] ) ) {
+			$query .= ' WHERE ' . $args['where'];
+		} else {
+			$query .= ' WHERE 1';
+		}
+
+		// Add a limit
+		$query .= ' LIMIT 0, ' . (int) $args['limit'];
+
+		$row = $wpdb->get_results( $query, $output );
+
+		return $row;
+
+	}
 
 }
