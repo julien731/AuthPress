@@ -15,12 +15,12 @@ if ( ! defined( 'WPINC' ) ) {
 	<div class="col-sm-12">
 		<section class="panel">
 			<header class="panel-heading">
-				<?php esc_html_e( 'Application Passwords', 'wpga' ); ?>
+				<?php esc_html_e( 'Application Passwords', 'wpga' ); ?> <span
+					data-hint="<?php esc_attr_e( 'Whenever an application or a service asks for your password, you\'re better off creating a new app password. You can delete app passwords anytime.', 'wpga' ); ?>"
+					class="hint-top-s-big hint-fade" style="text-transform:none;"><i class="fa fa-info-circle wpga-hint" aria-hidden="true"></i></span>
 				<span class="tools pull-right">
-                            <a href="javascript:;" class="fa fa-chevron-down"></a>
-                            <a href="javascript:;" class="fa fa-cog"></a>
-                            <a href="javascript:;" class="fa fa-times"></a>
-                         </span>
+					<a href="javascript:;" class="fa fa-chevron-down"></a>
+				</span>
 			</header>
 			<div class="panel-body">
 				<?php
@@ -48,6 +48,7 @@ if ( ! defined( 'WPINC' ) ) {
 						<?php endforeach; ?>
 						</tbody>
 					</table>
+				<?php else: esc_html_e( 'You do not have any app passwords at the moment.', 'wpga' ); ?>
 				<?php endif; ?>
 			</div>
 		</section>

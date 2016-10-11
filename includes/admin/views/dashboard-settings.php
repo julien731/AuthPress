@@ -17,10 +17,8 @@ if ( ! defined( 'WPINC' ) ) {
 			<header class="panel-heading">
 				<?php esc_html_e( 'Settings', 'wpga' ); ?>
 				<span class="tools pull-right">
-                            <a href="javascript:;" class="fa fa-chevron-down"></a>
-                            <a href="javascript:;" class="fa fa-cog"></a>
-                            <a href="javascript:;" class="fa fa-times"></a>
-                         </span>
+					<a href="javascript:;" class="fa fa-chevron-down"></a>
+				</span>
 			</header>
 			<div class="panel-body">
 				<form action="<?php echo add_query_arg( 'page', 'authpress', admin_url( 'users.php' ) ); ?>" class="form-horizontal">
