@@ -65,3 +65,57 @@ function wpga_2fa_usr_column_content( $value, $column_name, $user_id ) {
 
 	return $value;
 }
+
+/**
+ * Get user option
+ *
+ * Helper function that relies on wpga_get_user_option() and adds a couple of extra operations.
+ *
+ * @since 1.2
+ *
+ * @param string $option  Name of the option to retrieve
+ * @param mixed  $default Default value to return if the option doesn't exist
+ *
+ * @return mixed
+ */
+function wpga_get_user_option( $option, $default = false ) {
+
+	if ( ! is_user_logged_in() ) {
+		return false;
+	}
+
+	global $current_user;
+
+	// Make sure that the option is prefixed
+	if ( 'wpga_' !== substr( $option, 0, 4 ) ) {
+		$option = 'wpga_' . $option;
+	}
+
+	$meta = get_user_meta( $current_user->ID, $option, true );
+
+	if ( '' === $meta ) {
+		$meta = $default;
+	}
+
+	return apply_filters( 'wpga_get_user_option', $meta, $option );
+
+}
+
+/**
+ * Get the user temporary secret
+ *
+ * Once the user enabled 2FA, (s)he needs to validate it by entering a OTP. Until this is done, the user's secret will
+ * not be saved definitely and instead will be stored as a transient.
+ *
+ * This function is a helper for getting, if it exists, the temporary secret for this user from the transients.
+ *
+ * @since 1.2
+ * @return false|string
+ */
+function wpga_get_user_temp_secret() {
+
+	global $current_user;
+
+	return get_transient( 'wpga_tmp_secret_' . $current_user->ID );
+
+}
