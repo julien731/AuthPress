@@ -39,7 +39,7 @@ if ( ! defined( 'WPINC' ) ) {
 							<?php foreach ( $log as $entry ): ?>
 								<tr>
 									<td>#<?php echo $entry['key_id']; ?></td>
-									<td><?php echo $entry['time']; ?></td>
+									<td><?php echo date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $entry['time'] ) ); ?></td>
 									<td><?php echo $entry['ip']; ?></td>
 									<td class="hidden-phone"><?php echo $entry['user_agent']; ?></td>
 								</tr>
