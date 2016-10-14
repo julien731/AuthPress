@@ -372,7 +372,6 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 				if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
 					require( WPGA_PATH . 'includes/admin/functions-user-profile.php' );
-					require( WPGA_PATH . 'includes/admin/functions-secret.php' );
 					require( WPGA_PATH . 'includes/admin/functions-misc.php' );
 					require( WPGA_PATH . 'includes/admin/install.php' );
 
@@ -387,6 +386,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 
 			require( WPGA_PATH . 'includes/admin/class-settings.php' );
 			require( WPGA_PATH . 'includes/admin/functions-settings.php' );
+			require( WPGA_PATH . 'includes/admin/functions-secret.php' );
 			require( WPGA_PATH . 'includes/functions-login.php' );
 			require( WPGA_PATH . 'includes/functions-totp.php' );
 			require( WPGA_PATH . 'includes/functions-users.php' );

@@ -112,9 +112,101 @@ add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret' )
  * @return false|string
  */
 function wpga_get_user_temp_secret() {
+	return get_transient( 'wpga_tmp_secret_' . get_current_user_id() );
+}
 
-	global $current_user;
+add_action( 'wp_ajax_wpga_setup_secret', 'wpga_setup_secret' );
+/**
+ * Setup the user secret key
+ *
+ * If the secret hasn't been confirmed, we simply generate it and save it
+ *
+ * @since 1.2
+ *
+ * @param bool $confirmed Whether or not the secret has been confirmed
+ */
+function wpga_setup_secret( $confirmed = false ) {
 
-	return get_transient( 'wpga_tmp_secret_' . $current_user->ID );
+	$secret = wpga_get_user_option( 'secret' );
+
+	// If the secret has already been generated and validated, we do nothing
+	if ( is_string( $secret ) && ! empty( $secret ) ) {
+		return;
+	}
+
+	$temp    = wpga_get_user_temp_secret();
+	$user_id = get_current_user_id();
+
+	if ( false === $temp ) {
+
+		$key = wpga_generate_secret_key();
+
+		if ( true === $confirmed ) {
+			add_user_meta( $user_id, 'wpga_secret', $key );
+		} else {
+			set_transient( 'wpga_tmp_secret_' . $user_id, $key, 86400 ); // Set the transient for 24 hours
+		}
+
+	} else {
+		if ( true === $confirmed ) {
+			add_user_meta( $user_id, 'wpga_secret', $temp );
+			delete_transient( 'wpga_tmp_secret_' . $user_id );
+		}
+	}
+
+}
+
+add_action( 'wp_ajax_wpga_disable_2fa', 'wpga_disable_2fa' );
+/**
+ * Disable 2FA for a particular user
+ *
+ * @since      1.2.0
+ *
+ * @return void
+ */
+function wpga_disable_2fa() {
+
+	/**
+	 * @var WPGA_User
+	 */
+	$user = new WPGA_User( get_current_user_id() );
+	$user->deactivate_2fa();
+
+}
+
+add_action( 'init', 'wpga_opt_confirm' );
+/**
+ * Confirm the user OTP
+ *
+ * Process the user submitted OTP, make sure it is valid and, if it is, set the OTP as final.
+ *
+ * @since 1.2
+ * @return void
+ */
+function wpga_opt_confirm() {
+
+	if ( ! isset( $_POST['wpga_otp_confirm'] ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST['wpga_otp_confirm'], 'validate_otp' ) ) {
+		return;
+	}
+
+	$otp    = filter_input( INPUT_POST, 'wpga_otp', FILTER_SANITIZE_NUMBER_INT );
+	$user   = new WPGA_User( get_current_user_id() );
+	$result = false;
+
+	if ( true === $user->is_otp_valid( $otp, true ) ) {
+		$user->set_final_otp();
+		$result = true;
+	}
+
+	wp_safe_redirect( add_query_arg( array(
+		'page'    => 'authpress',
+		'message' => true === $result ? 'otp_confirmed' : 'otp_failed',
+	), admin_url( 'users.php' ) ) );
+
+	exit;
 
 }

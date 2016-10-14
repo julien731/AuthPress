@@ -81,27 +81,6 @@ function wpas_increment_attempts( $user_id ) {
 }
 
 /**
- * Disable 2FA for a particular user
- *
- * @since      1.2.0
- *
- * @param $user_id
- *
- * @deprecated 1.2
- *
- * @return void
- */
-function wpga_disable_2fa( $user_id ) {
-
-	/**
-	 * @var WPGA_User
-	 */
-	$user = new WPGA_User( $user_id );
-	$user->deactivate_2fa();
-
-}
-
-/**
  * Check validity of a recovery key
  *
  * @since      1.0.4

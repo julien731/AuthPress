@@ -28,10 +28,11 @@ function wpga_load_admin_scripts() {
 	wp_register_script( 'wpga-bootstrap-switch', WPGA_URL . 'assets/js/bootstrap-switch.js', array( 'jquery', 'wpga-bootstrap' ), '2.0.0', true );
 	wp_register_script( 'wpga-toggle-init', WPGA_URL . 'assets/js/toggle-init.js', array( 'jquery', 'wpga-bootstrap-switch' ), WPGA_VERSION, true );
 	wp_register_script( 'wpga-dashboard', WPGA_URL . 'assets/js/dashboard.js', array( 'jquery', 'wpga-bootstrap-switch' ), WPGA_VERSION, true );
+	wp_register_script( 'wpga-qrcode', WPGA_URL . 'assets/js/jquery-qrcode.min.js', array( 'jquery' ), '0.14.0', true );
 
 	if ( 'profile.php' === $pagenow || isset( $_GET['page'] ) && in_array( $_GET['page'], array( 'wpga_apps_passwords', 'wpga-settings' ) ) ) {
 		wp_enqueue_script( 'wpga-custom', WPGA_URL . 'assets/js/custom.js', array(), WPGA_VERSION, true );
-		wp_enqueue_script( 'wpga-qrcode', WPGA_URL . 'assets/js/jquery-qrcode.min.js', array( 'jquery' ), '0.14.0', true );
+		wp_enqueue_script( 'wpga-qrcode' );
 	}
 
 	if ( 'users.php' === $pagenow && isset( $_GET['page'] ) && 'authpress' === $_GET['page'] ) {
@@ -39,6 +40,7 @@ function wpga_load_admin_scripts() {
 		wp_enqueue_script( 'wpga-bootstrap-switch' );
 		wp_enqueue_script( 'wpga-toggle-init' );
 		wp_enqueue_script( 'wpga-dashboard' );
+		wp_enqueue_script( 'wpga-qrcode' );
 	}
 
 }

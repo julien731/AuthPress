@@ -124,3 +124,34 @@ function wpga_edit_secret() {
 	endswitch;
 
 }
+
+add_action( 'wp_ajax_wpga_get_qr_code_uri', 'wpga_get_qr_code_uri_ajax' );
+/**
+ * Get the QR code URI
+ *
+ * @since 1.2
+ * @return void
+ */
+function wpga_get_qr_code_uri_ajax() {
+	wp_send_json_success( wpga_get_qr_code_info() );
+}
+
+/**
+ * Get QR Code text
+ *
+ * Do API calls to get the data for the QR code.  rawurlencode() blog_name and account
+ *
+ * @since 1.2
+ * @return string QR Code URL
+ */
+function wpga_get_qr_code_info() {
+
+	$options  = get_option( 'wpga_options', array() );
+	$blogname = isset( $options['blog_name'] ) ? rawurlencode( $options['blog_name'] ) : rawurlencode( get_bloginfo( 'name' ) );
+	$secret   = esc_attr( get_user_meta( get_current_user_id(), 'wpga_secret', true ) );
+	$account  = get_user_meta( get_current_user_id(), 'user_login', true );
+	$label    = $blogname . ':' . rawurlencode( $account );
+
+	return 'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname;
+
+}

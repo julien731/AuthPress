@@ -176,24 +176,6 @@ function wpga_admin_custom_profile_fields() {
 
 }
 
-/**
- * Get QR Code text
- *
- * Do API calls to get the data for the QR code.  rawurlencode() blog_name and account
- *
- * @return string QR Code URL
- */
-function wpga_get_qr_code_info() {
-
-	$blogname = rawurlencode( wpga_get_option( 'blog_name' ) );
-	$secret   = esc_attr( get_user_meta( get_current_user_id(), 'wpga_secret', true ) );
-	$account  = get_user_meta( get_current_user_id(), 'user_login', true );
-	$label    = $blogname . ':' . rawurlencode( $account );
-
-	return 'otpauth://totp/' . $label . '?secret=' . $secret . '&issuer=' . $blogname;
-
-}
-
 add_action( 'personal_options_update', 'wpga_save_profile_custom_fields' );
 /**
  * Save custom profile fields

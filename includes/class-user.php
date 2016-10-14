@@ -223,8 +223,7 @@ class WPGA_User {
 		delete_user_meta( $this->user_id, 'wpga_active' );
 		delete_user_meta( $this->user_id, 'wpga_attempts' );
 		delete_user_meta( $this->user_id, 'wpga_secret' );
-		delete_user_meta( $this->user_id, 'wpga_backup_key' );
-		delete_user_meta( $this->user_id, 'wpga_backup_key_time' );
+		delete_transient( 'wpga_tmp_secret_' . $this->user_id ); // Just to make sure
 	}
 
 	/**
@@ -232,11 +231,12 @@ class WPGA_User {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $otp The OTP to check with this user
+	 * @param string $otp      The OTP to check with this user
+	 * @param bool   $validate Whether the check is to validate the user's OTP (used during the activation process)
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function is_otp_valid( $otp ) {
+	public function is_otp_valid( $otp, $validate = false ) {
 
 		// Set the validity to false for the start
 		$valid = false;
@@ -245,12 +245,13 @@ class WPGA_User {
 		$options          = get_option( 'wpga_options' );
 		$drift            = isset( $options['authorized_delay'] ) ? (int) $options['authorized_delay'] * 2 : 1;
 		$currentTimeSlice = floor( time() / 30 );
+		$secret           = false === $validate ? $this->get_secret() : wpga_get_user_temp_secret();
 
 		// Generate all OTPs for the allowed time range and compare them to the OTP we got
 		for ( $i = - $drift; $i <= $drift; $i ++ ) {
 
 			// Generate a new valid OTP
-			$currently_valid_otp = wpga_get_code( $this->get_secret(), $currentTimeSlice + $i );
+			$currently_valid_otp = wpga_get_code( $secret, $currentTimeSlice + $i );
 
 			if ( $currently_valid_otp === $otp ) {
 				$valid = true;
@@ -338,6 +339,17 @@ class WPGA_User {
 	 */
 	public function has_app_passwords() {
 		return empty( $this->get_app_passwords() ) ? false : true;
+	}
+
+	/**
+	 * Remove the temporary OTP and set it as the final one
+	 *
+	 * @since 1.2
+	 * @return void
+	 */
+	public function set_final_otp() {
+		add_user_meta( $this->user_id, 'wpga_secret', wpga_get_user_temp_secret() );
+		delete_transient( 'wpga_tmp_secret_' . $this->user_id );
 	}
 
 }
