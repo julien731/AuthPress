@@ -123,6 +123,9 @@ class WPGA_Access_Log {
 			$query .= ' WHERE 1';
 		}
 
+		// Order the results
+		$query .= ' ORDER BY time DESC';
+
 		// Add a limit
 		$query .= ' LIMIT 0, ' . (int) $args['limit'];
 
