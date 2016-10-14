@@ -84,14 +84,12 @@ function wpga_get_user_option( $option, $default = false ) {
 		return false;
 	}
 
-	global $current_user;
-
 	// Make sure that the option is prefixed
 	if ( 'wpga_' !== substr( $option, 0, 4 ) ) {
 		$option = 'wpga_' . $option;
 	}
 
-	$meta = get_user_meta( $current_user->ID, $option, true );
+	$meta = get_user_meta( get_current_user_id(), $option, true );
 
 	if ( '' === $meta ) {
 		$meta = $default;
