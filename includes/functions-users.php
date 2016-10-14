@@ -101,6 +101,7 @@ function wpga_get_user_option( $option, $default = false ) {
 
 }
 
+add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret' );
 /**
  * Get the user temporary secret
  *

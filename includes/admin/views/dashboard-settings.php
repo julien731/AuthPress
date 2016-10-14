@@ -27,42 +27,41 @@ if ( ! defined( 'WPINC' ) ) {
 							<div class="form-group">
 								<label class="control-label col-md-2" for="wpga-enable-2fa"><?php esc_html_e( 'Enable 2-Step Auth', 'wpga' ); ?></label>
 								<div class="col-md-5">
-									<input type="checkbox" checked class="switch-large" id="wpga-enable-2fa">
+									<input type="checkbox" <?php if( true === (bool) wpga_get_user_option( 'active' ) ): ?>checked<?php endif; ?> class="switch-large" id="wpga-enable-2fa" name="wpga-enable-2fa">
 									<span class="help-block"><?php esc_html_e( 'Strengthen the login process by enabling one time password for your account.', 'wpga' ); ?></span>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label col-md-2" for="wpga-enable-2fa"><?php esc_html_e( 'QR Code', 'wpga' ); ?></label>
-								<div class="col-md-5">
-									<div class="thumbnail" style="width: 300px; height: 300px;">
-										<img src="http://www.placehold.it/300x300/EFEFEF/AAAAAA&amp;text=no+image" alt="">
+					<div id="wpga-otp-validation-wrapper" class="wpga-otp-validation" <?php if ( false === wpga_get_user_temp_secret() ): ?>style="display:none;"<?php endif; ?>>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label col-md-2" for="wpga-enable-2fa"><?php esc_html_e( 'QR Code', 'wpga' ); ?></label>
+									<div class="col-md-5">
+										<div class="thumbnail" style="width: 300px; height: 300px;">
+											<img src="http://www.placehold.it/300x300/EFEFEF/AAAAAA&amp;text=no+image" alt="">
+										</div>
+										<span class="help-block"><?php esc_html_e( 'Scan this QR code with your phone.', 'wpga' ); ?></span>
 									</div>
-									<span class="help-block"><?php esc_html_e( 'Scan this QR code with your phone.', 'wpga' ); ?></span>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label col-md-2" for="wpga-opt-confirm"><?php esc_html_e( 'OTP', 'wpga' ); ?></label>
+									<div class="col-md-5">
+										<div class="input-group">
+											<input type="text" class="form-control" id="wpga-opt-confirm" placeholder="<?php esc_html_e( 'OTP', 'wpga' ); ?>">
+											<span class="input-group-btn"><button class="btn btn-info" type="button"><?php esc_html_e( 'Verify', 'wpga' ); ?></button></span>
+										</div>
+										<span class="help-block"><?php esc_html_e( 'Input your One Time Password (OTP) to confirm 2-steps authentication activation.', 'wpga' ); ?></span>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label col-md-2" for="wpga-opt-confirm"><?php esc_html_e( 'OTP', 'wpga' ); ?></label>
-								<div class="col-md-5">
-									<div class="input-group">
-										<input type="text" class="form-control" id="wpga-opt-confirm" placeholder="<?php esc_html_e( 'OTP', 'wpga' ); ?>">
-										<span class="input-group-btn">
-                                                        <button class="btn btn-info" type="button"><?php esc_html_e( 'Verify', 'wpga' ); ?></button>
-													</span>
-									</div>
-									<span class="help-block"><?php esc_html_e( 'Input your One Time Password (OTP) to confirm 2-steps authentication.', 'wpga' ); ?></span>
-								</div>
-							</div>
-						</div>
-					</div>
-					<button type="submit" class="btn btn-primary"><?php esc_html_e( 'Save', 'wpga' ); ?></button>
 				</form>
 			</div>
 		</section>
