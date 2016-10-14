@@ -131,7 +131,7 @@ class WPGA_User {
 			return $this->secret;
 		}
 
-		return $this->secret = get_user_meta( $this->user_id, 'wpga_secret', true );
+		return $this->secret = wpga_get_user_option( 'wpga_secret' );
 
 	}
 
