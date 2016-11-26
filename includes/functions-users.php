@@ -212,6 +212,7 @@ function wpga_opt_confirm() {
 
 	if ( true === $user->is_otp_valid( $otp, true ) ) {
 		$user->set_final_otp();
+		add_user_meta( $user->user_id, 'wpga_active', 'yes' );
 		$result = true;
 	}
 
