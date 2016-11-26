@@ -67,7 +67,7 @@ if ( ! defined( 'WPINC' ) ) {
 							<div class="form-group">
 								<label class="control-label col-md-2" for="wpga-enable-2fa"><?php esc_html_e( 'QR Code', 'wpga' ); ?></label>
 								<div class="col-md-5">
-									<div class="thumbnail" id="wpga-2fa-validation-qr" style="width: 300px; height: 300px;">
+									<div class="thumbnail" id="wpga-2fa-validation-qr" style="width: 310px; height: 310px;">
 										<div class="spinner is-active" style="margin:130px 140px"></div>
 									</div>
 									<span class="help-block"><?php esc_html_e( 'Scan this QR code with your phone.', 'wpga' ); ?></span>
