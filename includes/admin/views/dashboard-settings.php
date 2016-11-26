@@ -84,7 +84,7 @@ if ( ! defined( 'WPINC' ) ) {
 									<div class="col-md-5">
 										<div class="input-group">
 											<input type="text" class="form-control" id="wpga-opt-confirm" name="wpga_otp" placeholder="<?php esc_html_e( 'OTP', 'wpga' ); ?>">
-											<span class="input-group-btn"><input type="submit" class="btn btn-info"><?php esc_html_e( 'Verify', 'wpga' ); ?></input></span>
+											<span class="input-group-btn"><input type="submit" class="btn btn-info" value="<?php esc_html_e( 'Verify', 'wpga' ); ?>"></span>
 										</div>
 										<span class="help-block"><?php esc_html_e( 'Input your One Time Password (OTP) to confirm 2-steps authentication activation.', 'wpga' ); ?></span>
 									</div>
