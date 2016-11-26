@@ -148,12 +148,9 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 			self::$instance->setup_database_constants();
 			self::$instance->includes();
 			self::$instance->authenticate = new WPGA_Authenticate();
-			self::$instance->recovery = new WPGA_Recovery_Key();
-			self::$instance->access_log = new WPGA_Access_Log();
-
-			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
-				self::$instance->settings = new WPGA_Settings( 'network' );
-			}
+			self::$instance->recovery     = new WPGA_Recovery_Key();
+			self::$instance->access_log   = new WPGA_Access_Log();
+			self::$instance->settings     = new WPGA_Settings( 'network' );
 
 			add_action( 'plugins_loaded', array( self::$instance, 'load_plugin_textdomain' ) );
 
