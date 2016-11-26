@@ -41,8 +41,10 @@
                 url: ajaxurl,
                 data: data,
                 success: function (data) {
-                    setup_qr_code();
-                    $('#wpga-otp-validation-wrapper').show();
+                    if ('' !== data) {
+                        setup_qr_code();
+                        $('#wpga-otp-validation-wrapper').show();
+                    }
                 }
             });
 
@@ -94,7 +96,7 @@
             type: 'POST',
             url: ajaxurl,
             data: data,
-            success: function (data) { console.log(data);
+            success: function (data) {
                 $('#wpga-2fa-validation-qr').html('').qrcode({
                     "ecLevel": "M",
                     "size": 300,
