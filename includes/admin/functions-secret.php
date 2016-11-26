@@ -133,7 +133,7 @@ add_action( 'wp_ajax_wpga_get_qr_code_uri', 'wpga_get_qr_code_uri_ajax' );
  * @return void
  */
 function wpga_get_qr_code_uri_ajax() {
-	wp_send_json_success( wpga_get_qr_code_info() );
+	wp_send_json_success( wpga_get_qr_code_info( true ) );
 	die();
 }
 
@@ -145,11 +145,10 @@ function wpga_get_qr_code_uri_ajax() {
  * @since 1.2
  * @return string QR Code URL
  */
-function wpga_get_qr_code_info() {
+function wpga_get_qr_code_info( $temp = false ) {
 
-	$options  = get_option( 'wpga_options', array() );
-	$blogname = isset( $options['blog_name'] ) ? rawurlencode( $options['blog_name'] ) : rawurlencode( get_bloginfo( 'name' ) );
-	$secret   = esc_attr( get_user_meta( get_current_user_id(), 'wpga_secret', true ) );
+	$blogname = rawurlencode( wpga_get_option( 'blog_name', get_bloginfo( 'name' ) ) );
+	$secret   = true === $temp ? wpga_get_user_temp_secret() : esc_attr( get_user_meta( get_current_user_id(), 'wpga_secret', true ) );
 	$account  = get_user_meta( get_current_user_id(), 'user_login', true );
 	$label    = $blogname . ':' . rawurlencode( $account );
 
