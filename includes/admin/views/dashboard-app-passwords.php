@@ -27,7 +27,7 @@ if ( ! defined( 'WPINC' ) ) {
 				global $current_user;
 				$passwords = WPGA()->recovery->get_key_by( 'user_id', $current_user->ID, false, 'app_password' );
 
-				if ( ! empty( $passwords ) ): ?>
+				if ( ! empty( $passwords ) ) : ?>
 					<table class="table table-hover general-table">
 						<thead>
 						<tr>
@@ -38,17 +38,17 @@ if ( ! defined( 'WPINC' ) ) {
 						</tr>
 						</thead>
 						<tbody>
-						<?php foreach ( $passwords as $password ): ?>
+						<?php foreach ( $passwords as $password ) : ?>
 							<tr>
-								<td><?php echo $password['name']; ?></td>
-								<td><?php echo $password['count']; ?></td>
+								<td><?php echo esc_attr( $password['name'] ); ?></td>
+								<td><?php echo esc_attr( $password['count'] ); ?></td>
 								<td class="hidden-phone">-</td>
 								<td><a href="#" type="button" class="btn btn-danger"><i class="fa fa-trash"></i></a></td>
 							</tr>
 						<?php endforeach; ?>
 						</tbody>
 					</table>
-				<?php else: esc_html_e( 'You do not have any app passwords at the moment.', 'wpga' ); ?>
+				<?php else : esc_html_e( 'You do not have any app passwords at the moment.', 'wpga' ); ?>
 				<?php endif; ?>
 			</div>
 		</section>

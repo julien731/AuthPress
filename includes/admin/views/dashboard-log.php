@@ -25,7 +25,7 @@ if ( ! defined( 'WPINC' ) ) {
 				global $current_user;
 				$log = WPGA()->access_log->get_entries_by( 'user_id', $current_user->ID );
 
-				if ( ! empty( $log ) ): ?>
+				if ( ! empty( $log ) ) : ?>
 					<table class="table table-hover general-table">
 						<thead>
 						<tr>
@@ -36,12 +36,12 @@ if ( ! defined( 'WPINC' ) ) {
 						</tr>
 						</thead>
 						<tbody>
-							<?php foreach ( $log as $entry ): ?>
+							<?php foreach ( $log as $entry ) : ?>
 								<tr>
-									<td>#<?php echo $entry['key_id']; ?></td>
-									<td><?php echo date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $entry['time'] ) ); ?></td>
-									<td><?php echo $entry['ip']; ?></td>
-									<td class="hidden-phone"><?php echo $entry['user_agent']; ?></td>
+									<td>#<?php echo esc_attr( $entry['key_id'] ); ?></td>
+									<td><?php echo esc_attr( date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $entry['time'] ) ) ); ?></td>
+									<td><?php echo esc_attr( $entry['ip'] ); ?></td>
+									<td class="hidden-phone"><?php echo esc_attr( $entry['user_agent'] ); ?></td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
