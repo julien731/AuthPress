@@ -245,7 +245,13 @@ class WPGA_User {
 		$options          = get_option( 'wpga_options' );
 		$drift            = isset( $options['authorized_delay'] ) ? (int) $options['authorized_delay'] * 2 : 1;
 		$currentTimeSlice = floor( time() / 30 );
-		$secret           = false === $validate ? $this->get_secret() : wpga_get_user_temp_secret();
+
+		if ( is_user_logged_in() ) {
+			$secret = false === $validate ? $this->get_secret() : wpga_get_user_temp_secret();
+		} else {
+			// When authenticating the user, he is still not logged-in at this point. We need to get the secret "manually".
+			$secret = get_user_meta( $this->user_id, 'wpga_secret', true );
+		}
 
 		// Generate all OTPs for the allowed time range and compare them to the OTP we got
 		for ( $i = - $drift; $i <= $drift; $i ++ ) {
