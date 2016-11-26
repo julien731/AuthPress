@@ -59,10 +59,10 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int    $user_id The ID of the user whose key it is
-	 * @param string $key     The key to add
-	 * @param string $name    An optional name for the key to be added
-	 * @param string $type    The type of entry
+	 * @param int    $user_id The ID of the user whose key it is.
+	 * @param string $key     The key to add.
+	 * @param string $name    An optional name for the key to be added.
+	 * @param string $type    The type of entry.
 	 *
 	 * @return int|false New row ID if insertion is successful, false otherwise
 	 */
@@ -70,12 +70,12 @@ class WPGA_Recovery_Key {
 
 		$user = get_user_by( 'id', $user_id );
 
-		// Make sure the user exists
+		// Make sure the user exists.
 		if ( ! is_object( $user ) || ! is_a( $user, 'WP_User' ) ) {
 			return false;
 		}
 
-		// Sanitize the entry type
+		// Sanitize the entry type.
 		if ( ! $this->type_exists( $type ) ) {
 			$type = 'recovery_key';
 		}
@@ -103,7 +103,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $type Key type
+	 * @param string $type Key type.
 	 *
 	 * @return bool
 	 */
@@ -116,21 +116,21 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $field  What field to use to lookup the key
-	 * @param mixed  $value  Value of the lookup field
-	 * @param bool   $single Should the method return a single result or not
-	 * @param string $type   Optional specify what type of key should be looked up
+	 * @param string $field  What field to use to lookup the key.
+	 * @param mixed  $value  Value of the lookup field.
+	 * @param bool   $single Should the method return a single result or not.
+	 * @param string $type   Optional specify what type of key should be looked up.
 	 *
 	 * @return array|WP_Error An array containing the key information on success
 	 */
 	public function get_key_by( $field = 'ID', $value, $single = false, $type = '' ) {
 
-		// Sanitize field
+		// Sanitize field.
 		if ( ! in_array( $field, array( 'ID', 'code', 'user_id', 'type' ) ) ) {
 			return new WP_Error( 'invalid_field', esc_html__( 'The field you are trying to lookup is invalid', 'wpga' ) );
 		}
 
-		// Make sure the user exists
+		// Make sure the user exists.
 		if ( 'user_id' === $field ) {
 
 			$user = get_user_by( 'id', $value );
@@ -138,10 +138,9 @@ class WPGA_Recovery_Key {
 			if ( ! is_object( $user ) || ! is_a( $user, 'WP_User' ) ) {
 				return new WP_Error( 'invalid_user', esc_html__( 'The user is invalid', 'wpga' ) );
 			}
-
 		}
 
-		// Make sure the id field is uppercase
+		// Make sure the id field is uppercase.
 		if ( 'id' === $field ) {
 			$field = 'ID';
 		}
@@ -150,10 +149,10 @@ class WPGA_Recovery_Key {
 			$value = md5( $value );
 		}
 
-		// Set the base query arguments
+		// Set the base query arguments.
 		$args = array( 'where' => "$field = '$value'" );
 
-		// Possibly add the key type
+		// Possibly add the key type.
 		if ( ! empty( $type ) && $this->type_exists( $type ) ) {
 			$args['where'] .= " AND type = '$type'";
 		}
@@ -173,7 +172,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $key The key to check
+	 * @param string $key The key to check.
 	 *
 	 * @return bool
 	 */
@@ -204,7 +203,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int $user_id ID of the user whose keys we want to retrieve
+	 * @param int $user_id ID of the user whose keys we want to retrieve.
 	 *
 	 * @return array
 	 */
@@ -217,7 +216,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param $user_id
+	 * @param int $user_id ID of the user.
 	 *
 	 * @return bool|string
 	 */
@@ -243,7 +242,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param array $key A user's key
+	 * @param array $key A user's key.
 	 *
 	 * @return false|string
 	 */
@@ -262,7 +261,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int $id ID of the key to delete
+	 * @param int $id ID of the key to delete.
 	 *
 	 * @return bool
 	 */
@@ -287,7 +286,7 @@ class WPGA_Recovery_Key {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int $key_id ID of the key to increment
+	 * @param int $key_id ID of the key to increment.
 	 *
 	 * @return false|int New count
 	 */
@@ -316,8 +315,8 @@ class WPGA_Recovery_Key {
 	 *
 	 * @global       $wpdb
 	 *
-	 * @param array  $args   Query arguments
-	 * @param string $output Desired output format
+	 * @param array  $args   Query arguments.
+	 * @param string $output Desired output format.
 	 *
 	 * @return array
 	 */

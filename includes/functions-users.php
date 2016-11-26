@@ -19,7 +19,7 @@ add_filter( 'manage_users_columns', 'wpga_add_user_2fa_column' );
  *
  * @since 1.2.0
  *
- * @param array $columns Existing columns
+ * @param array $columns Existing columns.
  *
  * @return array
  */
@@ -29,12 +29,11 @@ function wpga_add_user_2fa_column( $columns ) {
 
 	foreach ( $columns as $column => $title ) {
 
-		$new[$column] = $title;
+		$new[ $column ] = $title;
 
 		if ( 'role' === $column ) {
 			$new['2fa'] = esc_html__( '2FA', 'wpga' );
 		}
-
 	}
 
 	return $new;
@@ -48,9 +47,9 @@ add_action( 'manage_users_custom_column', 'wpga_2fa_usr_column_content', 10, 3 )
  *
  * @since 1.2.0
  *
- * @param string $value       The column output
- * @param string $column_name Column ID
- * @param int    $user_id     Current user ID
+ * @param string $value       The column output.
+ * @param string $column_name Column ID.
+ * @param int    $user_id     Current user ID.
  *
  * @return string
  */
@@ -73,8 +72,8 @@ function wpga_2fa_usr_column_content( $value, $column_name, $user_id ) {
  *
  * @since 1.2
  *
- * @param string $option  Name of the option to retrieve
- * @param mixed  $default Default value to return if the option doesn't exist
+ * @param string $option  Name of the option to retrieve.
+ * @param mixed  $default Default value to return if the option doesn't exist.
  *
  * @return mixed
  */
@@ -84,7 +83,7 @@ function wpga_get_user_option( $option, $default = false ) {
 		return false;
 	}
 
-	// Make sure that the option is prefixed
+	// Make sure that the option is prefixed.
 	if ( 'wpga_' !== substr( $option, 0, 4 ) ) {
 		$option = 'wpga_' . $option;
 	}
@@ -124,7 +123,7 @@ add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret_aj
  * @return void
  */
 function wpga_get_user_temp_secret_ajax() {
-	echo wpga_get_user_temp_secret();
+	echo esc_attr( wpga_get_user_temp_secret() );
 	die();
 }
 
@@ -136,13 +135,13 @@ add_action( 'wp_ajax_wpga_setup_secret', 'wpga_setup_secret' );
  *
  * @since 1.2
  *
- * @param bool $confirmed Whether or not the secret has been confirmed
+ * @param bool $confirmed Whether or not the secret has been confirmed.
  */
 function wpga_setup_secret( $confirmed = false ) {
 
 	$secret = wpga_get_user_option( 'secret' );
 
-	// If the secret has already been generated and validated, we do nothing
+	// If the secret has already been generated and validated, we do nothing.
 	if ( is_string( $secret ) && ! empty( $secret ) ) {
 		return;
 	}
@@ -157,9 +156,8 @@ function wpga_setup_secret( $confirmed = false ) {
 		if ( true === $confirmed ) {
 			add_user_meta( $user_id, 'wpga_secret', $key );
 		} else {
-			set_transient( 'wpga_tmp_secret_' . $user_id, $key, 86400 ); // Set the transient for 24 hours
+			set_transient( 'wpga_tmp_secret_' . $user_id, $key, 86400 ); // Set the transient for 24 hours.
 		}
-
 	} else {
 		if ( true === $confirmed ) {
 			add_user_meta( $user_id, 'wpga_secret', $temp );
@@ -180,6 +178,8 @@ add_action( 'wp_ajax_wpga_disable_2fa', 'wpga_disable_2fa' );
 function wpga_disable_2fa() {
 
 	/**
+	 * Instantiate a WPAS_User object
+	 *
 	 * @var WPGA_User
 	 */
 	$user = new WPGA_User( get_current_user_id() );
@@ -198,11 +198,13 @@ add_action( 'init', 'wpga_opt_confirm' );
  */
 function wpga_opt_confirm() {
 
-	if ( ! isset( $_POST['wpga_otp_confirm'] ) ) {
+	$opt_confirm = filter_input( INPUT_POST, '', FILTER_SANITIZE_STRING );
+
+	if ( empty( $opt_confirm ) ) {
 		return;
 	}
 
-	if ( ! wp_verify_nonce( $_POST['wpga_otp_confirm'], 'validate_otp' ) ) {
+	if ( ! wp_verify_nonce( $opt_confirm, 'validate_otp' ) ) {
 		return;
 	}
 

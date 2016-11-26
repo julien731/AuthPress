@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! class_exists( 'WP_Google_Authenticator' ) ):
+if ( ! class_exists( 'WP_Google_Authenticator' ) ) :
 
 	/**
 	 * Main WP Google Authenticator class
@@ -37,6 +37,8 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 	final class WP_Google_Authenticator {
 
 		/**
+		 * The one instance of the plugin.
+		 *
 		 * @var WP_Google_Authenticator Holds the unique instance of WP Google Authenticator
 		 * @since 1.2.0
 		 */
@@ -126,20 +128,20 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 */
 		private function init() {
 
-			// First of all we need the constants
+			// First of all we need the constants.
 			self::$instance->setup_constants();
 
-			// Make sure the WordPress version is recent enough
+			// Make sure the WordPress version is recent enough.
 			if ( ! self::$instance->is_version_compatible() ) {
 				self::$instance->add_error( sprintf( __( 'WP Google Authenticator requires WordPress version %s or above. Please update WordPress to run this plugin.', 'wpga' ), self::$instance->wordpress_version_required ) );
 			}
 
-			// Make sure we have a version of PHP that's not too old
+			// Make sure we have a version of PHP that's not too old.
 			if ( ! self::$instance->is_php_version_enough() ) {
-				self::$instance->add_error( sprintf( __( 'WP Google Authenticator requires PHP version %s or above. Read more information about <a %s>how you can update</a>.', 'wpga' ), self::$instance->wordpress_version_required, 'a href="http://www.wpupdatephp.com/update/" target="_blank"' ) );
+				self::$instance->add_error( sprintf( __( 'WP Google Authenticator requires PHP version %1$s or above. Read more information about <a %2$s>how you can update</a>.', 'wpga' ), self::$instance->wordpress_version_required, 'a href="http://www.wpupdatephp.com/update/" target="_blank"' ) );
 			}
 
-			// If we have any error, don't load the plugin
+			// If we have any error, don't load the plugin.
 			if ( is_a( self::$instance->error, 'WP_Error' ) ) {
 				add_action( 'admin_notices', array( self::$instance, 'display_error' ), 10, 0 );
 				return;
@@ -154,7 +156,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 
 			add_action( 'plugins_loaded', array( self::$instance, 'load_plugin_textdomain' ) );
 
-			// Check for network activation
+			// Check for network activation.
 			add_action( 'admin_notices', array( self::$instance, 'multisite_check' ), 5 );
 
 		}
@@ -169,8 +171,8 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 * @return void
 		 */
 		public function __clone() {
-			// Cloning instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'wpga' ), '1.2.0' );
+			// Cloning instances of the class is forbidden.
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'wpga' ), '1.2.0' );
 		}
 
 		/**
@@ -180,8 +182,8 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 * @return void
 		 */
 		public function __wakeup() {
-			// Unserializing instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'wpga' ), '1.2.0' );
+			// Unserializing instances of the class is forbidden.
+			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'wpga' ), '1.2.0' );
 		}
 
 		/**
@@ -306,7 +308,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 *
 		 * @since  1.2.0
 		 *
-		 * @param string $message Error message to add
+		 * @param string $message Error message to add.
 		 *
 		 * @return void
 		 */
@@ -343,11 +345,11 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 					if ( count( $message ) > 1 ) {
 						echo '<ul>';
 						foreach ( $message as $msg ) {
-							echo "<li>$msg</li>";
+							echo esc_html( "<li>$msg</li>" );
 						}
 						echo '</li>';
 					} else {
-						echo $message[0];
+						echo esc_html( $message[0] );
 					}
 					?>
 				</p>
@@ -365,20 +367,18 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 
 			if ( is_admin() ) {
 
-				// We don't need all this during Ajax processing
+				// We don't need all this during Ajax processing.
 				if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 
 					require( WPGA_PATH . 'includes/admin/functions-user-profile.php' );
 					require( WPGA_PATH . 'includes/admin/functions-misc.php' );
 					require( WPGA_PATH . 'includes/admin/install.php' );
 
-					// Load all the options callbacks
+					// Load all the options callbacks.
 					foreach ( glob( WPGA_PATH . 'includes/admin/views/options/option-*.php' ) as $filename ) {
 						include $filename;
 					}
-
 				}
-
 			}
 
 			require( WPGA_PATH . 'includes/admin/class-settings.php' );
@@ -438,5 +438,5 @@ function WPGA() {
 	return WP_Google_Authenticator::instance();
 }
 
-// Get WP Google Authenticator Running
+// Get WP Google Authenticator Running.
 WPGA();

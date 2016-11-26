@@ -19,7 +19,7 @@ if ( ! defined( 'WPINC' ) ) {
  * It is an unchangeable unique value.
  *
  * @since  1.1.0
- * @param  string $hash Hash of the newly created password
+ * @param  string $hash Hash of the newly created password.
  * @return string       Unique identifying key
  */
 function wpga_make_unique_key( $hash ) {
@@ -27,7 +27,7 @@ function wpga_make_unique_key( $hash ) {
 	$passwords = wpga_get_app_passwords();
 	$key       = substr( $hash, 0, 5 );
 
-	if ( !array_key_exists( $key, $passwords ) ) {
+	if ( ! array_key_exists( $key, $passwords ) ) {
 		return $key;
 	}
 
@@ -44,8 +44,6 @@ function wpga_make_unique_key( $hash ) {
 }
 
 function wpga_get_last_access( $key ) {
-
-	global $current_user;
 
 	$log  = wpga_get_app_passwords_log();
 	$last = array();
@@ -66,7 +64,7 @@ function wpga_get_last_access( $key ) {
 
 	$count = count( $last ) - 1;
 
-	return $last[$count];
+	return $last[ $count ];
 
 }
 
@@ -75,7 +73,7 @@ function wpga_get_last_access( $key ) {
  *
  * @since 1.1
  *
- * @param null|int $user_id
+ * @param null|int $user_id ID of the user.
  *
  * @return array
  */
@@ -111,7 +109,7 @@ function wpga_get_app_passwords_log( $user_id = null ) {
  *
  * @since 1.1
  *
- * @param string $id ID of the key to delete
+ * @param string $id ID of the key to delete.
  *
  * @return bool
  */
@@ -158,25 +156,27 @@ add_action( 'wp_ajax_wpga_create_app_password', 'wpga_create_app_password' );
  */
 function wpga_create_app_password() {
 
-	if ( ! isset( $_POST['description'] ) || empty( $_POST['description'] ) ) {
+	$description = filter_input( INPUT_POST, 'description', FILTER_SANITIZE_STRING );
+
+	if ( empty( $description ) ) {
 		die();
 	}
 
 	global $current_user;
 
 	$pwd     = WPGA()->recovery->generate_key();
-	$app_pwd = WPGA()->recovery->add_key( $current_user->ID, $pwd, sanitize_text_field( $_POST['description'] ), 'app_password' );
+	$app_pwd = WPGA()->recovery->add_key( $current_user->ID, $pwd, $description, 'app_password' );
 
 	if ( false !== $app_pwd ) {
-		$return = json_encode( array(
-			'desc' => sanitize_text_field( $_POST['description'] ),
+		$return = wp_json_encode( array(
+			'desc' => $description,
 			'pwd'  => esc_attr( $pwd ),
 		) );
 	} else {
-		$return = json_encode( array( 'error' ) );
+		$return = wp_json_encode( array( 'error' ) );
 	}
 
-	echo esc_attr( urlencode( $return ) );
+	echo esc_attr( rawurlencode( $return ) );
 	die();
 
 }
@@ -196,7 +196,7 @@ function wpga_add_app_password_menu() {
 }
 
 /**
- * Display the applications passwords apge.
+ * Display the applications passwords page.
  *
  * @since 1.1.0
  */
@@ -217,15 +217,19 @@ add_action( 'admin_init', 'wpas_apps_passwords_actions' );
  */
 function wpas_apps_passwords_actions() {
 
-	if ( isset( $_GET['action'] ) && isset( $_GET['wpga_nonce'] ) ) {
+	$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+	$nonce = filter_input( INPUT_GET, 'wpga_nonce', FILTER_SANITIZE_STRING );
+	$key = filter_input( INPUT_GET, 'key', FILTER_SANITIZE_STRING );
 
-		if ( wp_verify_nonce( $_GET['wpga_nonce'], 'wpga_action' ) ) {
+	if ( ! empty( $action ) && ! empty( $nonce ) ) {
 
-			switch ( $_GET['action'] ) {
+		if ( wp_verify_nonce( $nonce, 'wpga_action' ) ) {
+
+			switch ( $action ) {
 				case 'delete':
 
-					if ( isset( $_GET['key'] ) ) {
-						$delete_key = sanitize_key( $_GET['key'] );
+					if ( ! empty( $key ) ) {
+						$delete_key = sanitize_key( $key );
 						wpga_delete_app_password( $delete_key );
 					}
 
@@ -240,10 +244,9 @@ function wpas_apps_passwords_actions() {
 					break;
 
 			}
-
 		}
 
-		wp_redirect( add_query_arg( array( 'page' => 'wpga_apps_passwords' ), admin_url( 'users.php') ) );
+		wp_safe_redirect( add_query_arg( array( 'page' => 'wpga_apps_passwords' ), admin_url( 'users.php') ) );
 		exit;
 
 	}
@@ -263,7 +266,7 @@ function wpga_apps_access_log_create_table() {
 	$table           = wpga_apps_access_log_table;
 	$charset_collate = $wpdb->get_charset_collate();
 
-	// Prepare DB structure if not already existing
+	// Prepare DB structure if not already existing.
 	if ( $wpdb->get_var( "show tables like '$table'" ) != $table ) {
 
 		$sql = "CREATE TABLE $table (

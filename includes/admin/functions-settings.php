@@ -19,6 +19,9 @@ add_filter( 'wpga_get_settings', 'wpga_get_settings' );
  * Register all the core settings for the plugin.
  *
  * @since 1.0
+ *
+ * @param array $options The list of plugin options.
+ *
  * @return array
  */
 function wpga_get_settings( $options ) {
@@ -115,8 +118,8 @@ function wpga_get_editable_roles() {
  *
  * @since 1.2.0
  *
- * @param string $option  ID of the option to lookup
- * @param mixed  $default Default value to return
+ * @param string $option  ID of the option to lookup.
+ * @param mixed  $default Default value to return.
  *
  * @return mixed
  */

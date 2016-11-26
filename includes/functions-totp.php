@@ -17,7 +17,7 @@ if ( ! defined( 'WPINC' ) ) {
  *
  * @since 1.2.0
  *
- * @param string $totp TOTP to invalidate
+ * @param string $totp TOTP to invalidate.
  *
  * @return bool
  */
@@ -25,7 +25,7 @@ function wpga_revoke_totp( $totp ) {
 
 	$used = get_option( 'wpga_used_totp', array() );
 
-	if ( is_array( $used ) && ! in_array( md5( $totp ), $used ) ) {
+	if ( is_array( $used ) && ! in_array( md5( $totp ), $used, true ) ) {
 
 		array_push( $used, md5( $totp ) );
 
@@ -42,37 +42,37 @@ function wpga_revoke_totp( $totp ) {
 /**
  * Calculate the code, with given secret and point in time
  *
- * @param string  $secret
- * @param integer $timeSlice
+ * @param string  $secret User secret key.
+ * @param integer $time_slice The allowed time slice.
  *
  * @return string Generated code
  */
-function wpga_get_code( $secret, $timeSlice = null ) {
+function wpga_get_code( $secret, $time_slice = null ) {
 
-	if ( $timeSlice === null ) {
-		$timeSlice = floor( time() / 30 );
+	if ( null === $time_slice ) {
+		$time_slice = floor( time() / 30 );
 	}
 
 	$code_length = apply_filters( 'wpga_code_length', 6 );
 	$secretkey   = wpga_base32_decode( $secret );
 
-	// Pack time into binary string
-	$time = chr( 0 ) . chr( 0 ) . chr( 0 ) . chr( 0 ) . pack( 'N*', $timeSlice );
+	// Pack time into binary string.
+	$time = chr( 0 ) . chr( 0 ) . chr( 0 ) . chr( 0 ) . pack( 'N*', $time_slice );
 
-	// Hash it with users secret key
+	// Hash it with users secret key.
 	$hm = hash_hmac( 'SHA1', $time, $secretkey, true );
 
-	// Use last nipple of result as index/offset
+	// Use last nipple of result as index/offset.
 	$offset = ord( substr( $hm, - 1 ) ) & 0x0F;
 
-	// grab 4 bytes of the result
+	// grab 4 bytes of the result.
 	$hashpart = substr( $hm, $offset, 4 );
 
-	// Unpak binary value
+	// Unpak binary value.
 	$value = unpack( 'N', $hashpart );
 	$value = $value[1];
 
-	// Only 32 bits
+	// Only 32 bits.
 	$value = $value & 0x7FFFFFFF;
 
 	$modulo = pow( 10, $code_length );
@@ -83,52 +83,52 @@ function wpga_get_code( $secret, $timeSlice = null ) {
 /**
  * Decode base32 string
  *
- * @param  string $string String to decode
+ * @param  string $string String to decode.
  *
  * @return string Decoded string
  */
 function wpga_base32_decode( $string ) {
 
 	$lut = array(
-		"A" => 0,
-		"B" => 1,
-		"C" => 2,
-		"D" => 3,
-		"E" => 4,
-		"F" => 5,
-		"G" => 6,
-		"H" => 7,
-		"I" => 8,
-		"J" => 9,
-		"K" => 10,
-		"L" => 11,
-		"M" => 12,
-		"N" => 13,
-		"O" => 14,
-		"P" => 15,
-		"Q" => 16,
-		"R" => 17,
-		"S" => 18,
-		"T" => 19,
-		"U" => 20,
-		"V" => 21,
-		"W" => 22,
-		"X" => 23,
-		"Y" => 24,
-		"Z" => 25,
-		"2" => 26,
-		"3" => 27,
-		"4" => 28,
-		"5" => 29,
-		"6" => 30,
-		"7" => 31
+		'A' => 0,
+		'B' => 1,
+		'C' => 2,
+		'D' => 3,
+		'E' => 4,
+		'F' => 5,
+		'G' => 6,
+		'H' => 7,
+		'I' => 8,
+		'J' => 9,
+		'K' => 10,
+		'L' => 11,
+		'M' => 12,
+		'N' => 13,
+		'O' => 14,
+		'P' => 15,
+		'Q' => 16,
+		'R' => 17,
+		'S' => 18,
+		'T' => 19,
+		'U' => 20,
+		'V' => 21,
+		'W' => 22,
+		'X' => 23,
+		'Y' => 24,
+		'Z' => 25,
+		'2' => 26,
+		'3' => 27,
+		'4' => 28,
+		'5' => 29,
+		'6' => 30,
+		'7' => 31,
 	);
 
 	$string = strtoupper( $string );
 	$l      = strlen( $string );
 	$n      = 0;
 	$j      = 0;
-	$binary = "";
+	$binary = '';
 
 	for ( $i = 0; $i < $l; $i ++ ) {
 
@@ -166,7 +166,7 @@ function wpga_clean_totps() {
  *
  * @since 1.2.0
  *
- * @param WP_User|bool $user Object of the user who's trying to login
+ * @param WP_User|bool $user Object of the user who's trying to login.
  *
  * @return bool
  */
@@ -175,10 +175,10 @@ function wpga_is_2fa_active( $user = false ) {
 	$active = wpga_get_option( 'active', false );
 
 	if ( $active && is_array( $active ) ) {
-		$active = in_array( 'yes', $active ) ? true : false;
+		$active = in_array( 'yes', $active, true ) ? true : false;
 	}
 
-	// If 2FA is enabled on the site, make sure the current user, if any, has it enabled for his account
+	// If 2FA is enabled on the site, make sure the current user, if any, has it enabled for his account.
 	if ( true === $active && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
 		$wpga_user = new WPGA_User( $user );
 		$active    = $wpga_user->has_2fa();
@@ -193,7 +193,7 @@ function wpga_is_2fa_active( $user = false ) {
  *
  * @since 1.2.0
  *
- * @param array $roles Roles to check for forced 2FA
+ * @param array $roles Roles to check for forced 2FA.
  *
  * @return bool
  */
@@ -202,7 +202,7 @@ function wpga_is_2fa_forced( $roles = array() ) {
 	$options = get_option( 'wpga_options', array() );
 
 	/* Check if 2FA is forced by the admin */
-	if ( ! isset( $options['force_2fa'] ) || ! in_array( 'yes', (array) $options['force_2fa'] ) ) {
+	if ( ! isset( $options['force_2fa'] ) || ! in_array( 'yes', (array) $options['force_2fa'], true ) ) {
 		return false;
 	}
 
@@ -229,7 +229,7 @@ function wpga_is_2fa_forced( $roles = array() ) {
  *
  * @since 1.2
  *
- * @param string $otp The OPT to check
+ * @param string $otp The OPT to check.
  *
  * @return bool
  */
@@ -237,7 +237,7 @@ function wpga_was_otp_used( $otp ) {
 
 	$used = get_option( 'wpga_used_totp', array() );
 
-	if ( is_array( $used ) && ! in_array( md5( $totp ), $used ) ) {
+	if ( is_array( $used ) && ! in_array( md5( $totp ), $used, true ) ) {
 		return false;
 	} else {
 		return true;

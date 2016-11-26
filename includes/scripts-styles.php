@@ -65,11 +65,13 @@ function wpga_load_styles() {
 	wp_register_style( 'wpga-style-responsive', WPGA_URL . 'assets/css/style-responsive.css', null, WPGA_VERSION, 'all' );
 	wp_register_style( 'wpga-font-awesome', WPGA_URL . 'assets/css/vendors/font-awesome/css/font-awesome.css', null, '4.6.3', 'all' );
 
-	if ( in_array( $pagenow, array( 'wp-login.php', 'users.php' ) ) ) {
+	if ( in_array( $pagenow, array( 'wp-login.php', 'users.php' ), true ) ) {
+
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
 
 		wp_enqueue_style( 'wpga-simple-hint', WPGA_URL . 'assets/css/wpga.css', array(), null, 'all' );
 
-		if ( isset( $_GET['page'] ) && 'authpress' === $_GET['page'] ) {
+		if ( 'authpress' === $page ) {
 			wp_enqueue_style( 'wpga-bootstrap' );
 			wp_enqueue_style( 'wpga-bootstrap-reset' );
 			wp_enqueue_style( 'wpga-font-awesome' );
@@ -77,7 +79,6 @@ function wpga_load_styles() {
 			wp_enqueue_style( 'wpga-style' );
 			wp_enqueue_style( 'wpga-style-responsive' );
 		}
-
 	}
 
 }

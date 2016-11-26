@@ -167,9 +167,9 @@ final class WPGA_Settings {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $option  The ID of the option to retrieve
+	 * @param string $option  The ID of the option to retrieve.
 	 * @param mixed  $default The default value to return if no value is found in database. Set to null to get the
-	 *                        option's default value as declared in $_options
+	 *                        option's default value as declared in $_options.
 	 *
 	 * @return mixed Option value if found, null otherwise
 	 */
@@ -229,7 +229,7 @@ final class WPGA_Settings {
 	 * Lookup values in the database and store them in the _values_current of this instance.
 	 *
 	 * @since 1.2
-	 * @return array
+	 * @return void
 	 */
 	protected function _set_values() {
 		$key                   = 'wpga_options';
@@ -266,7 +266,7 @@ final class WPGA_Settings {
 	 * an empty one is used instead.
 	 *
 	 * @since 1.2
-	 * @return array
+	 * @return void
 	 */
 	protected function _set_defaults() {
 
@@ -308,7 +308,7 @@ final class WPGA_Settings {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $option ID of the option to retrieve the default value for
+	 * @param string $option ID of the option to retrieve the default value for.
 	 *
 	 * @return mixed Option default value, false if the option doesn't exist
 	 */
@@ -360,7 +360,9 @@ final class WPGA_Settings {
 	 */
 	public function save_options() {
 
-		if ( ! isset( $_POST['wpga_nonce'] ) || ! wp_verify_nonce( $_POST['wpga_nonce'], 'save_options' ) ) {
+		$nonce = filter_input( INPUT_POST, 'wpga_nonce', FILTER_SANITIZE_STRING );
+
+		if ( ! empty( $nonce ) || ! wp_verify_nonce( $nonce, 'save_options' ) ) {
 			return;
 		}
 
@@ -372,18 +374,17 @@ final class WPGA_Settings {
 		$new     = array();
 
 		foreach ( $options as $option ) {
-			if ( isset( $_POST[ WPGA()->settings->get_field_name( $option['id'] ) ] ) ) {
-				$new[ $option['id'] ] = $_POST[ WPGA()->settings->get_field_name( $option['id'] ) ];
-			} else {
-				if ( isset( $options[ $option['id'] ] ) ) {
 
-				}
+			$option_value = filter_input( INPUT_POST, WPGA()->settings->get_field_name( $option['id'] ), FILTER_SANITIZE_STRING );
+
+			if ( ! empty( $option_value ) ) {
+				$new[ $option['id'] ] = $option_value;
 			}
 		}
 
 		$this->update_option( 'wpga_options', $new );
 
-		// Read-only redirect
+		// Read-only redirect.
 		wp_safe_redirect( add_query_arg( 'updated', 'true', wpga_get_option_page_link() ) );
 		exit;
 
@@ -394,8 +395,8 @@ final class WPGA_Settings {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $name  Option ID
-	 * @param mixed  $value Option value
+	 * @param string $name  Option ID.
+	 * @param mixed  $value Option value.
 	 *
 	 * @return void
 	 */
@@ -412,8 +413,8 @@ final class WPGA_Settings {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $name  Option ID
-	 * @param mixed  $value Option value
+	 * @param string $name  Option ID.
+	 * @param mixed  $value Option value.
 	 *
 	 * @return void
 	 */
@@ -448,7 +449,7 @@ final class WPGA_Settings {
 
 			<h2><?php printf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ); ?></h2>
 
-			<form action="<?php echo $form_action; ?>" method="post">
+			<form action="<?php echo esc_attr( $form_action ); ?>" method="post">
 				<?php
 				foreach ( $this->get_settings() as $section ) {
 
@@ -457,23 +458,23 @@ final class WPGA_Settings {
 
 					foreach ( $section['options'] as $option ) {
 
-						// If no callback is defined we skip this option
+						// If no callback is defined we skip this option.
 						if ( ! isset( $option['callback'] ) || ! function_exists( $option['callback'] ) ) {
 							continue;
 						}
 
-						// Open a new row and print the option title
+						// Open a new row and print the option title.
 						printf( '<th scope="row">%1$s</th><td>', esc_attr( $option['title'] ) );
 
-						// Run the option callback
+						// Run the option callback.
 						call_user_func( $option['callback'], $option );
 
-						// Possibly add a description
+						// Possibly add a description.
 						if ( isset( $option['desc'] ) ) {
 							printf( '<p class="description">%1$s</p>', wp_kses( $option['desc'], array( 'code' => array() ) ) );
 						}
 
-						// Close the row
+						// Close the row.
 						printf( '</td></tr>' );
 
 					}
@@ -498,7 +499,7 @@ final class WPGA_Settings {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $id Option ID
+	 * @param string $id Option ID.
 	 *
 	 * @return string
 	 */

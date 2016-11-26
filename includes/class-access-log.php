@@ -19,12 +19,12 @@ class WPGA_Access_Log {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int    $user_id    ID of the user who logged in
-	 * @param int    $key_id     ID of the app password used
-	 * @param string $time       Access time
-	 * @param string $ip         IP address used to login
-	 * @param string $user_agent The user user agent
-	 * @param string $method     Login method
+	 * @param int    $user_id    ID of the user who logged in.
+	 * @param int    $key_id     ID of the app password used.
+	 * @param string $time       Access time.
+	 * @param string $ip         IP address used to login.
+	 * @param string $user_agent The user user agent.
+	 * @param string $method     Login method.
 	 *
 	 * @return false|int
 	 */
@@ -32,12 +32,12 @@ class WPGA_Access_Log {
 
 		$user = get_user_by( 'id', $user_id );
 
-		// Make sure the user exists
+		// Make sure the user exists.
 		if ( ! is_object( $user ) || ! is_a( $user, 'WP_User' ) ) {
 			return false;
 		}
 
-		if ( empty( $data['time'] ) || '0000-00-00 00:00:00' == $data['time'] ) {
+		if ( empty( $data['time'] ) || '0000-00-00 00:00:00' === $data['time'] ) {
 			$data['time'] = current_time( 'mysql' );
 		}
 
@@ -74,14 +74,14 @@ class WPGA_Access_Log {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $field Database table column to select
-	 * @param mixed  $value Column value
+	 * @param string $field Database table column to select.
+	 * @param mixed  $value Column value.
 	 *
 	 * @return array|WP_Error
 	 */
 	public function get_entries_by( $field, $value ) {
 
-		if ( ! in_array( $field, array( 'user_id', 'key_id' ) ) ) {
+		if ( ! in_array( $field, array( 'user_id', 'key_id' ), true ) ) {
 			return new WP_Error( 'invalid_field', esc_html__( 'The field you are trying to select is invalid', 'wpga' ) );
 		}
 
@@ -102,8 +102,8 @@ class WPGA_Access_Log {
 	 *
 	 * @global       $wpdb
 	 *
-	 * @param array  $args   Query arguments
-	 * @param string $output Desired output format
+	 * @param array  $args   Query arguments.
+	 * @param string $output Desired output format.
 	 *
 	 * @return array
 	 */
@@ -123,10 +123,10 @@ class WPGA_Access_Log {
 			$query .= ' WHERE 1';
 		}
 
-		// Order the results
+		// Order the results.
 		$query .= ' ORDER BY time DESC';
 
-		// Add a limit
+		// Add a limit.
 		$query .= ' LIMIT 0, ' . (int) $args['limit'];
 
 		$row = $wpdb->get_results( $query, $output );

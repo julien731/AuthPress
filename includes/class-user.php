@@ -78,7 +78,7 @@ class WPGA_User {
 	 *
 	 * @since 1.2
 	 *
-	 * @param int|WP_User $user
+	 * @param int|WP_User $user Either a user ID or a user object.
 	 */
 	public function __construct( $user ) {
 
@@ -92,7 +92,6 @@ class WPGA_User {
 			if ( is_object( $this->user ) && is_a( $this->user, 'WP_User' ) ) {
 				$this->user_id = $this->user->ID;
 			}
-
 		}
 
 	}
@@ -175,13 +174,13 @@ class WPGA_User {
 		}
 
 		$options      = get_option( 'wpga_options', array() );
-		$max_attempts = ( isset( $options['max_attempts'] ) && '' != $options['max_attempts'] ) ? (int) $options['max_attempts'] : 3;
+		$max_attempts = ( isset( $options['max_attempts'] ) && '' !== $options['max_attempts'] ) ? (int) $options['max_attempts'] : 3;
 
 		if ( - 1 === $max_attempts ) {
 			return $max_attempts;
 		}
 
-		$this->remaining_attempts = 0; // Set the remaining attempts number ot 0 for security
+		$this->remaining_attempts = 0; // Set the remaining attempts number ot 0 for security.
 		$attempts                 = $this->login_attempts();
 
 		if ( $attempts < $max_attempts ) {
@@ -202,10 +201,10 @@ class WPGA_User {
 
 		$attempts = $this->login_attempts();
 
-		// Increment in database
+		// Increment in database.
 		update_user_meta( $this->user_id, 'wpga_attempts', $attempts + 1, $attempts );
 
-		// Update the internal property
+		// Update the internal property.
 		$this->login_attempts = $attempts + 1;
 
 		return $this->login_attempts;
@@ -223,7 +222,7 @@ class WPGA_User {
 		delete_user_meta( $this->user_id, 'wpga_active' );
 		delete_user_meta( $this->user_id, 'wpga_attempts' );
 		delete_user_meta( $this->user_id, 'wpga_secret' );
-		delete_transient( 'wpga_tmp_secret_' . $this->user_id ); // Just to make sure
+		delete_transient( 'wpga_tmp_secret_' . $this->user_id ); // Just to make sure.
 	}
 
 	/**
@@ -231,20 +230,20 @@ class WPGA_User {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $otp      The OTP to check with this user
-	 * @param bool   $validate Whether the check is to validate the user's OTP (used during the activation process)
+	 * @param string $otp      The OTP to check with this user.
+	 * @param bool   $validate Whether the check is to validate the user's OTP (used during the activation process).
 	 *
 	 * @return bool|WP_Error
 	 */
 	public function is_otp_valid( $otp, $validate = false ) {
 
-		// Set the validity to false for the start
+		// Set the validity to false for the start.
 		$valid = false;
 
-		// Get the authorized discrepancy delay and calculate the allowed time range
-		$options          = get_option( 'wpga_options' );
-		$drift            = isset( $options['authorized_delay'] ) ? (int) $options['authorized_delay'] * 2 : 1;
-		$currentTimeSlice = floor( time() / 30 );
+		// Get the authorized discrepancy delay and calculate the allowed time range.
+		$options            = get_option( 'wpga_options' );
+		$drift              = isset( $options['authorized_delay'] ) ? (int) $options['authorized_delay'] * 2 : 1;
+		$current_time_slice = floor( time() / 30 );
 
 		if ( is_user_logged_in() ) {
 			$secret = false === $validate ? $this->get_secret() : wpga_get_user_temp_secret();
@@ -253,17 +252,16 @@ class WPGA_User {
 			$secret = get_user_meta( $this->user_id, 'wpga_secret', true );
 		}
 
-		// Generate all OTPs for the allowed time range and compare them to the OTP we got
+		// Generate all OTPs for the allowed time range and compare them to the OTP we got.
 		for ( $i = - $drift; $i <= $drift; $i ++ ) {
 
-			// Generate a new valid OTP
-			$currently_valid_otp = wpga_get_code( $secret, $currentTimeSlice + $i );
+			// Generate a new valid OTP.
+			$currently_valid_otp = wpga_get_code( $secret, $current_time_slice + $i );
 
 			if ( $currently_valid_otp === $otp ) {
 				$valid = true;
-				break; // If we get a match no need to generate other OTPs
+				break; // If we get a match no need to generate other OTPs.
 			}
-
 		}
 
 		// If we didn't find a valid OTP no need to go any further. The login attempt is simply invalid.
@@ -271,7 +269,7 @@ class WPGA_User {
 			return false;
 		}
 
-		// Make sure that the OTP hasn't been used yet, in which case we do not accept it
+		// Make sure that the OTP hasn't been used yet, in which case we do not accept it.
 		if ( true === wpga_was_otp_used( $otp ) ) {
 			$valid = new WP_Error( 'expired_totp', esc_html__( 'The one time password you used has already been revoked.', 'wpga' ) );
 		}
@@ -285,7 +283,7 @@ class WPGA_User {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $key
+	 * @param string $key A possible recovery key to check.
 	 *
 	 * @return bool
 	 */
@@ -294,7 +292,7 @@ class WPGA_User {
 		$is_key = false;
 		$keys   = wpga_get_user_recovery_keys( $this->user_id );
 
-		if ( in_array( md5( sanitize_key( $key ) ), $keys ) ) {
+		if ( in_array( md5( sanitize_key( $key ) ), $keys, true ) ) {
 			$is_key = true;
 		}
 

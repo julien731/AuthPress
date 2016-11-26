@@ -70,7 +70,7 @@ class WPGA_Authenticate {
 	/**
 	 * Add TOTP check to WordPress authentication process
 	 *
-	 * @param  WP_User|WP_Error $user
+	 * @param  WP_User|WP_Error $user A user object or a WP error.
 	 *
 	 * @return object User object on success or WP_Error on failure
 	 */
@@ -82,7 +82,7 @@ class WPGA_Authenticate {
 
 		if ( ! is_wp_error( $user ) ) {
 
-			// Instantiate our user class for easy access to user data
+			// Instantiate our user class for easy access to user data.
 			if ( is_null( $this->user ) ) {
 				$this->user = new WPGA_User( $user );
 			}
@@ -107,10 +107,10 @@ class WPGA_Authenticate {
 					return $totp_valid;
 				}
 
-				// If TOTP is valid we revoke it and continue loggin in
+				// If TOTP is valid we revoke it and continue loggin in.
 				if ( true === $totp_valid ) {
 
-					// Revoke the TOTP
+					// Revoke the TOTP.
 					wpga_revoke_totp( $totp );
 
 					return $user;
