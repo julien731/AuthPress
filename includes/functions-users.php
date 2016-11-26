@@ -99,7 +99,6 @@ function wpga_get_user_option( $option, $default = false ) {
 
 }
 
-add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret' );
 /**
  * Get the user temporary secret
  *
@@ -113,6 +112,20 @@ add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret' )
  */
 function wpga_get_user_temp_secret() {
 	return get_transient( 'wpga_tmp_secret_' . get_current_user_id() );
+}
+
+add_action( 'wp_ajax_wpga_get_user_temp_password', 'wpga_get_user_temp_secret_ajax' );
+/**
+ * Get the user temporary secret via Ajax
+ *
+ * A simple wrapper for wpga_get_user_temp_secret() to be used in AJax processes.
+ *
+ * @since 2.0
+ * @return void
+ */
+function wpga_get_user_temp_secret_ajax() {
+	echo wpga_get_user_temp_secret();
+	die();
 }
 
 add_action( 'wp_ajax_wpga_setup_secret', 'wpga_setup_secret' );

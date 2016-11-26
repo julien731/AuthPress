@@ -32,12 +32,20 @@
         // Show validation fields if necessary
         if ($('#wpga-enable-2fa').is(':checked')) {
 
-            var tmp_pwd = get_user_temp_password();
+            var data = {
+                action: 'wpga_get_user_temp_password'
+            };
 
-            if ('string' === typeof tmp_pwd) {
-                setup_qr_code();
-                $('#wpga-otp-validation-wrapper').show();
-            }
+            jQuery.ajax({
+                type: 'POST',
+                url: ajaxurl,
+                data: data,
+                success: function (data) {
+                    setup_qr_code();
+                    $('#wpga-otp-validation-wrapper').show();
+                }
+            });
+
         }
 
     }
@@ -86,7 +94,7 @@
             type: 'POST',
             url: ajaxurl,
             data: data,
-            success: function (data) {
+            success: function (data) { console.log(data);
                 $('#wpga-2fa-validation-qr').html('').qrcode({
                     "ecLevel": "M",
                     "size": 300,
@@ -94,33 +102,6 @@
                 });
             }
         });
-
-    }
-
-    /**
-     * Get the user temporary secret
-     *
-     * @since 1.2
-     * @returns {boolean|string}
-     */
-    function get_user_temp_password() {
-
-        var result = false;
-
-        var data = {
-            action: 'wpga_get_user_temp_password'
-        };
-
-        jQuery.ajax({
-            type: 'POST',
-            url: ajaxurl,
-            data: data,
-            success: function (data) {
-                result = data;
-            }
-        });
-
-        return result;
 
     }
 
