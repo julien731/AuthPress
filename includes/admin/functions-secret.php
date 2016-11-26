@@ -134,6 +134,7 @@ add_action( 'wp_ajax_wpga_get_qr_code_uri', 'wpga_get_qr_code_uri_ajax' );
  */
 function wpga_get_qr_code_uri_ajax() {
 	wp_send_json_success( wpga_get_qr_code_info() );
+	die();
 }
 
 /**
