@@ -46,7 +46,10 @@ if ( ! defined( 'WPINC' ) ) {
 							<?php endforeach; ?>
 						</tbody>
 					</table>
-				<?php endif; ?>
+				<?php
+				else :
+					esc_html_e( 'There is no entry in the access log yet.', 'authpress' );
+				endif; ?>
 			</div>
 		</section>
 	</div>
