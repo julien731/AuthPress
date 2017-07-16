@@ -1,0 +1,54 @@
+@import 'simple-hint.min.css';
+
+/* Required styles for the tooltip */
+.login form {
+    overflow: visible;
+}
+
+.wpga-label {
+    position: relative;
+}
+
+/* Style the tooltip */
+.wpga-label span:after {
+    line-height: 1.6;
+    font-size: 14px;
+    padding: 10px 15px;
+}
+
+/* Reset the link style */
+.wpga-hint {
+    text-decoration: none;
+}
+
+.wpga-hint:focus {
+    box-shadow: none;
+}
+
+/* Hide the tooltip on mobiles */
+@media only screen and (max-width: 768px) {
+    .wpga-label span {
+        display: none;
+    }
+}
+
+/* Tags */
+.wpga-tag {
+    display: inline-block;
+    margin: 0 .3em .3em 0;
+    max-width: 80px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 1em;
+    background-color: #2e8ece;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #2c3e50;
+    font-size: 13px;
+    text-decoration: none;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
