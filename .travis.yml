@@ -38,7 +38,6 @@ before_script:
     phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
 
 script:
-  - phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
   - phpunit
 
 after_script:
