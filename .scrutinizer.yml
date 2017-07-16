@@ -1,5 +1,5 @@
 tools:
-    external_code_coverage: false
+    external_code_coverage: true
     js_hint: true
     php_mess_detector:
         config:
