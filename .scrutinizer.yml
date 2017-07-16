@@ -5,4 +5,4 @@ tools:
     php_pdepend: true
     php_loc:
         enabled: true
-        excluded_dirs: [languages]
+        excluded_dirs: [tests, languages]
