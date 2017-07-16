@@ -1,3 +1,10 @@
+filter:
+    excluded_paths:
+        - 'vendor/*'
+        - '*/vendor/*'
+        - 'languages/*'
+        - 'asstes/js/jquery-qrcode.min.js'
+
 tools:
     external_code_coverage: false
     php_code_sniffer: true
@@ -5,4 +12,4 @@ tools:
     php_pdepend: true
     php_loc:
         enabled: true
-        excluded_dirs: [tests, languages]
+        excluded_dirs: [vendor, languages]
