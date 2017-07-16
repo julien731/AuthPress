@@ -10,15 +10,16 @@ branches:
     - master
 
 php:
-  - 5.3
   - 5.6
+  - 7.0
+  - 7.1
 
 env:
   - WP_VERSION=latest WP_MULTISITE=0
 
 matrix:
   include:
-    - php: 5.3
+    - php: 5.6
       env: WP_VERSION=latest WP_MULTISITE=1
 
 before_script:
@@ -37,3 +38,7 @@ before_script:
 script:
   - phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
   - phpunit
+
+after_script:
+    - if [[ $TRAVIS_PHP_VERSION = '5.6' && $WP_VERSION = 'master' && $WP_ALLOW_MULTISITE != '1' ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+    - if [[ $TRAVIS_PHP_VERSION = '5.6' && $WP_VERSION = 'master' && $WP_ALLOW_MULTISITE != '1' ]]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
