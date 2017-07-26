@@ -52,7 +52,7 @@ class PluginTests extends WP_UnitTestCase {
 	}
 
 	function test_wordpress_version_pass() {
-		// We only run tests on PHP 5.6+ so this test must pass as is.
+		// We only run tests on WordPress 4.6 so this test must pass as is.
 		$this->assertTrue( authpress()->is_wordpress_version_ok() );
 	}
 
