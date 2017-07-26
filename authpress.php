@@ -55,12 +55,12 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		protected $error = null;
 
 		/**
-		 * Minimum version of WordPress required ot run the plugin
+		 * Minimum version of WordPress required ot run the plugin.
 		 *
 		 * @since 2.0.0
 		 * @var string
 		 */
-		public $wordpress_version_required = '3.8';
+		public $wordpress_version_required = '4.6';
 
 		/**
 		 * Required version of PHP.
@@ -219,6 +219,20 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		}
 
 		/**
+		 * Check if the installed WordPress version is compatible with the plugin.
+		 *
+		 * @since 2.0.0
+		 * @return bool
+		 */
+		public function is_wordpress_version_ok() {
+			if ( version_compare( get_bloginfo( 'version' ), self::$instance->wordpress_version_required, '<' ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
 		 * Check if the plugin can be initialized.
 		 *
 		 * This method runs a number of checks to make sure that all compatibility requirements are met.
@@ -231,6 +245,11 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			// Make sure we have a version of PHP that's not too old.
 			if ( ! self::$instance->is_php_version_ok() ) {
 				self::$instance->add_error( 'php_version_too_old', sprintf( __( 'AuthPress requires PHP version %s or above. Read more about <a %s>how you can update on this page</a>.', 'authpress' ), self::$instance->php_version_required, 'a href="http://www.wpupdatephp.com/update/" target="_blank"' ) );
+			}
+
+			// Make sure we have a version of WordPress that's not too old.
+			if ( ! self::$instance->is_wordpress_version_ok() ) {
+				self::$instance->add_error( 'wordpress_version_too_old', sprintf( __( 'AuthPress requires WordPress version %1$s or above. Please update WordPress to run this plugin.', 'authpress' ), self::$instance->wordpress_version_required ) );
 			}
 
 			if ( is_wp_error( self::$instance->get_errors() ) ) {
