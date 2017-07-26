@@ -26,4 +26,13 @@ class PluginTests extends WP_UnitTestCase {
 	function test_php_min_version() {
 		$this->assertEquals( '5.6', authpress()->php_version_required );
 	}
+
+	function test_textdomain_loaded() {
+		add_filter( 'plugin_locale', array( $this, 'set_locale_fr' ) );
+		$this->assertTrue( authpress()->load_plugin_textdomain() );
+	}
+
+	function set_locale_fr() {
+		return 'fr_FR';
+	}
 }
