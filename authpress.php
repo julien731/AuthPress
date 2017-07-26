@@ -156,7 +156,8 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 */
 		private function setup_constants() {
 			define( 'AUTHPRESS_DB_VERSION', 2 );
-			define( 'AUTHPRESS_BASENAME', plugin_basename( __FILE__ ) );
+			define( 'AUTHPRESS_BASENAME',   plugin_basename( __FILE__ ) );
+			define( 'AUTHPRESS_PATH',       trailingslashit( plugin_dir_path( __FILE__ ) ) );
 		}
 	}
 
