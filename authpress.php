@@ -84,6 +84,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AuthPress ) ) {
 				self::$instance = new AuthPress;
+				self::$instance->init();
 			}
 			return self::$instance;
 		}
@@ -101,6 +102,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			// Cloning instances of the class is forbidden.
 			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'authpress' ), '2.0.0' );
 		}
+
 		/**
 		 * Disable unserializing of the class.
 		 *
@@ -130,6 +132,31 @@ if ( ! class_exists( 'AuthPress' ) ) :
 				$this->error = new WP_Error();
 			}
 			$this->error->add( $code, $message );
+		}
+
+		/**
+		 * Initialize the plugin.
+		 *
+		 * This method is what loads everything we need. It is responsible for triggering all the functions that make this plugin work.
+		 *
+		 * @since 2.0.0
+		 * @return void
+		 */
+		private function init() {
+
+			// First of all, we need to declare our constants.
+			self::$instance->setup_constants();
+		}
+
+		/**
+		 * Declare plugin constants.
+		 *
+		 * @since 2.0.0
+		 * @return void
+		 */
+		private function setup_constants() {
+			define( 'AUTHPRESS_DB_VERSION', 2 );
+			define( 'AUTHPRESS_BASENAME', plugin_basename( __FILE__ ) );
 		}
 	}
 
