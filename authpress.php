@@ -159,6 +159,35 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			define( 'AUTHPRESS_BASENAME',   plugin_basename( __FILE__ ) );
 			define( 'AUTHPRESS_PATH',       trailingslashit( plugin_dir_path( __FILE__ ) ) );
 		}
+
+		/**
+		 * Load the plugin text domain for translation.
+		 *
+		 * 1. Check for the language pack in the WordPress core directory
+		 * 2. Check for the translation file in the plugin's language directory
+		 * 3. Fallback to loading the textdomain the classic way
+		 *
+		 * @since 2.0.0
+		 * @return boolean True if the language file was loaded, false otherwise
+		 */
+		public function load_plugin_textdomain() {
+			$lang_dir       = AUTHPRESS_PATH . 'languages/';
+			$lang_path      = AUTHPRESS_PATH . 'languages/';
+			$locale         = apply_filters( 'plugin_locale', get_locale(), 'authpress' );
+			$mofile         = "authpress-$locale.mo";
+			$glotpress_file = WP_LANG_DIR . '/plugins/authpress/' . $mofile;
+
+			// Look for the GlotPress language pack first of all
+			if ( file_exists( $glotpress_file ) ) {
+				$language = load_textdomain( 'authpress', $glotpress_file );
+			} elseif ( file_exists( $lang_path . $mofile ) ) {
+				$language = load_textdomain( 'authpress', $lang_path . $mofile );
+			} else {
+				$language = load_plugin_textdomain( 'authpress', false, $lang_dir );
+			}
+
+			return $language;
+		}
 	}
 
 endif;
