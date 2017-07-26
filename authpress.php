@@ -128,10 +128,20 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @return void
 		 */
 		private function add_error( $code = 'init_error', $message ) {
-			if ( ! is_object( $this->error ) || ! is_a( $this->error, 'WP_Error' ) ) {
-				$this->error = new WP_Error();
+			if ( ! is_object( self::$instance->error ) || ! is_a( self::$instance->error, 'WP_Error' ) ) {
+				self::$instance->error = new WP_Error();
 			}
-			$this->error->add( $code, $message );
+			self::$instance->error->add( $code, $message );
+		}
+
+		/**
+		 * Get potential error message(s).
+		 *
+		 * @since 2.0.0
+		 * @return null|WP_Error
+		 */
+		public function get_errors() {
+			return self::$instance->error;
 		}
 
 		/**
@@ -146,6 +156,11 @@ if ( ! class_exists( 'AuthPress' ) ) :
 
 			// First of all, we need to declare our constants.
 			self::$instance->setup_constants();
+
+			// Check all requirements and abort plugin initialization if they are not met.
+			if ( false === self::$instance->can_init() ) {
+				return;
+			}
 		}
 
 		/**
@@ -187,6 +202,42 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			}
 
 			return $language;
+		}
+
+		/**
+		 * Check if the installed PHP version is compatible with the plugin.
+		 *
+		 * @since 2.0.0
+		 * @return bool
+		 */
+		public function is_php_version_ok() {
+			if ( version_compare( phpversion(), self::$instance->php_version_required, '<' ) ) {
+				return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Check if the plugin can be initialized.
+		 *
+		 * This method runs a number of checks to make sure that all compatibility requirements are met.
+		 * If just one requirement isn't, then the plugin won't be allowed to boot.
+		 *
+		 * @return bool True if the plugin can initialize, false otherwise.
+		 */
+		public function can_init() {
+
+			// Make sure we have a version of PHP that's not too old.
+			if ( ! self::$instance->is_php_version_ok() ) {
+				self::$instance->add_error( 'php_version_too_old', sprintf( __( 'AuthPress requires PHP version %s or above. Read more about <a %s>how you can update on this page</a>.', 'authpress' ), self::$instance->php_version_required, 'a href="http://www.wpupdatephp.com/update/" target="_blank"' ) );
+			}
+
+			if ( is_wp_error( self::$instance->get_errors() ) ) {
+				return false;
+			}
+
+			return true;
 		}
 	}
 
