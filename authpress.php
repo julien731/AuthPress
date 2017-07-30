@@ -60,7 +60,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @since 2.0.0
 		 * @var string
 		 */
-		public $wordpress_version_required = '5.6';
+		public $wordpress_version_required = '4.6';
 
 		/**
 		 * Required version of PHP.
@@ -73,7 +73,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @since 2.0.0
 		 * @var string
 		 */
-		public $php_version_required = '8.6';
+		public $php_version_required = '5.6';
 
 		/**
 		 * Instantiate and return the unique AuthPress object.
