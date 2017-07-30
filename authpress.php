@@ -60,7 +60,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @since 2.0.0
 		 * @var string
 		 */
-		public $wordpress_version_required = '4.6';
+		public $wordpress_version_required = '5.6';
 
 		/**
 		 * Required version of PHP.
@@ -73,7 +73,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @since 2.0.0
 		 * @var string
 		 */
-		public $php_version_required = '5.6';
+		public $php_version_required = '8.6';
 
 		/**
 		 * Instantiate and return the unique AuthPress object.
@@ -159,6 +159,14 @@ if ( ! class_exists( 'AuthPress' ) ) :
 
 			// Check all requirements and abort plugin initialization if they are not met.
 			if ( false === self::$instance->can_init() ) {
+
+				// If we have any error, don't load the plugin
+				if ( is_wp_error( $this->get_errors() ) ) {
+					add_action( 'admin_notices', array( self::$instance, 'display_error' ), 10, 0 );
+
+					return;
+				}
+
 				return;
 			}
 		}
@@ -257,6 +265,37 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			}
 
 			return true;
+		}
+
+		/**
+		 * Display error.
+		 *
+		 * Get all the error messages and display them
+		 * in the admin notices.
+		 *
+		 * @since  2.0.0
+		 * @return void
+		 */
+		public function display_error() {
+
+			// Make sure we have WP errors to display.
+			if ( ! is_wp_error( $this->get_errors() ) ) {
+				return;
+			}
+
+			$message = $this->get_errors()->get_error_messages();
+
+			if ( count( $message ) > 1 ) {
+				$error = '<ul>';
+				foreach ( $message as $msg ) {
+					$error .= "<li>$msg</li>";
+				}
+				$error .= '</ul>';
+			} else {
+				$error = $message[0];
+			}
+
+			printf( '<div class="error"><p>%1$s</p></div>', $error );
 		}
 	}
 
