@@ -1,0 +1,5 @@
+{
+  "require": {
+    "julien731/wp-dismissible-notices-handler": "1.x"
+  }
+}
