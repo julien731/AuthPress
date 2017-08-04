@@ -70,4 +70,8 @@ class PluginTests extends WP_UnitTestCase {
 		$this->assertContains( 'php_version_too_old', authpress()->get_errors()->get_error_codes() );
 		$this->assertContains( 'wordpress_version_too_old', authpress()->get_errors()->get_error_codes() );
 	}
+
+	function test_dependencies_loaded() {
+		$this->assertTrue( class_exists( 'Dismissible_Notices_Handler' ) );
+	}
 }

@@ -169,6 +169,11 @@ if ( ! class_exists( 'AuthPress' ) ) :
 
 				return;
 			}
+
+			// Load required dependencies.
+			if ( is_dir( __DIR__ . '/vendor' ) ) {
+				require( 'vendor/autoload.php' );
+			}
 		}
 
 		/**
