@@ -174,6 +174,9 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			if ( is_dir( __DIR__ . '/vendor' ) ) {
 				require( 'vendor/autoload.php' );
 			}
+
+			// Include all our required files.
+			self::$instance->includes();
 		}
 
 		/**
@@ -301,6 +304,36 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			}
 
 			printf( '<div class="error"><p>%1$s</p></div>', $error );
+		}
+
+		/**
+		 * Load all the files required for the plugin to run properly.
+		 *
+		 * This method checks if the current screen is admin or not and calls the appropriate method.
+		 * The files includes are separated in two other methods so that they can be tested. PHPUnit doesn't run as an admin screen so
+		 * we need to be able to manually load admin files.
+		 *
+		 * @since 2.0
+		 * @return void
+		 */
+		protected function includes() {
+			// Load the files that are only necessary on the admin side of WordPress.
+			if ( is_admin() ) {
+				self::$instance->includes_admin();
+			}
+		}
+
+		/**
+		 * Load all the admin-side files required for the plugin to run.
+		 *
+		 * @since 2.0.0
+		 * @return void
+		 */
+		public function includes_admin() {
+			// Load the files that aren't required during Ajax processes.
+			if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+				require( 'includes/admin/functions-helper.php' );
+			}
 		}
 	}
 
