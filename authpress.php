@@ -170,11 +170,6 @@ if ( ! class_exists( 'AuthPress' ) ) :
 				return;
 			}
 
-			// Load required dependencies.
-			if ( is_dir( __DIR__ . '/vendor' ) ) {
-				require( 'vendor/autoload.php' );
-			}
-
 			// Include all our required files.
 			self::$instance->includes();
 
@@ -355,6 +350,12 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @return void
 		 */
 		protected function includes() {
+
+			// Load required dependencies.
+			if ( is_dir( __DIR__ . '/vendor' ) ) {
+				require( 'vendor/autoload.php' );
+			}
+			
 			// Load the files that are only necessary on the admin side of WordPress.
 			if ( is_admin() ) {
 				self::$instance->includes_admin();
