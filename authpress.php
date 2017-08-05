@@ -177,6 +177,10 @@ if ( ! class_exists( 'AuthPress' ) ) :
 
 			// Include all our required files.
 			self::$instance->includes();
+
+			// Check for network activation.
+			// If the install is WPMS but the plugin is not network-activated, we need to warn the user through an admin notice.
+			add_action( 'admin_notices', array( self::$instance, 'multisite_check' ), 5 );
 		}
 
 		/**
@@ -273,6 +277,40 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			}
 
 			return true;
+		}
+
+		/**
+		 * Check if the site is a multisite network and, if so, if the plugin is network-activated or not.
+		 *
+		 * If the plugin is not network activated, we display a warning message highlighting the security issue related to having it active on a per-site basis.
+		 *
+		 * @since 2.0
+		 * @return void
+		 */
+		public function multisite_check() {
+			if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
+				authpress_register_notice( 'authpress_not_network_activated', 'error', sprintf( __( 'AuthPress is only active on the current site of your network. This introduces a security risk. <strong>It is strongly advised that you network-activate the plugin for maximum security</strong>. <a href="%1$s" target="_blank">Read more about this</a>.', 'authpress' ), '#' ) );
+			}
+		}
+
+		/**
+		 * Check if the plugin is network-enabled
+		 *
+		 * @since 2.0
+		 * @return bool
+		 */
+		public function is_network_enabled() {
+
+			if ( false === is_multisite() ) {
+				return false;
+			}
+
+			if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+				require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+			}
+
+			return is_plugin_active_for_network( AUTHPRESS_BASENAME );
+
 		}
 
 		/**

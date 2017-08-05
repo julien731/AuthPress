@@ -74,4 +74,16 @@ class PluginTests extends WP_UnitTestCase {
 	function test_dependencies_loaded() {
 		$this->assertTrue( class_exists( 'Dismissible_Notices_Handler' ) );
 	}
+
+	function test_ms_activation_notice() {
+
+		// Get the registered admin notices.
+		$notices = DNH()->get_notices();
+
+		if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
+			$this->assertArrayHasKey( 'authpress_not_network_activated', $notices );
+		} else {
+			$this->assertArrayNotHasKey( 'authpress_not_network_activated', $notices );
+		}
+	}
 }
