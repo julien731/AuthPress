@@ -289,7 +289,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 */
 		public function multisite_check() {
 			if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
-				authpress_register_notice( 'authpress_not_network_activated', 'error', sprintf( __( 'AuthPress is only active on the current site of your network. This introduces a security risk. <strong>It is strongly advised that you network-activate the plugin for maximum security</strong>. <a href="%1$s" target="_blank">Read more about this</a>.', 'authpress' ), '#' ) );
+				authpress_register_notice( 'authpress_not_network_activated', 'error', sprintf( __( 'AuthPress is only active on the current site of your network. This introduces a security risk. <strong>It is strongly advised that you network-activate the plugin for maximum security</strong>. <a href="%1$s" target="_blank">Read more about this</a>.', 'authpress' ), esc_url( 'https://github.com/julien731/AuthPress/wiki/Multisite-Activation' ) ) );
 			}
 		}
 
