@@ -80,7 +80,7 @@ class PluginTests extends WP_UnitTestCase {
 		// Get the registered admin notices.
 		$notices = DNH()->get_notices();
 
-		if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
+		if ( true === is_multisite() && false === authpress()->is_network_enabled() ) {
 			$this->assertArrayHasKey( 'authpress_not_network_activated', $notices );
 		} else {
 			$this->assertArrayNotHasKey( 'authpress_not_network_activated', $notices );
