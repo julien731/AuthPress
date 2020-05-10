@@ -237,11 +237,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @return bool
 		 */
 		public function is_wordpress_version_ok() {
-			if ( version_compare( get_bloginfo( 'version' ), self::$instance->wordpress_version_required, '<' ) ) {
-				return false;
-			}
-
-			return true;
+			return version_compare( get_bloginfo( 'version' ), self::$instance->wordpress_version_required, '>=' );
 		}
 
 		/**
