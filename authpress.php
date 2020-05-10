@@ -223,11 +223,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * @return bool
 		 */
 		public function is_php_version_ok() {
-			if ( version_compare( phpversion(), self::$instance->php_version_required, '<' ) ) {
-				return false;
-			}
-
-			return true;
+			return version_compare( phpversion(), self::$instance->php_version_required, '>=' );
 		}
 
 		/**
