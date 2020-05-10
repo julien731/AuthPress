@@ -173,9 +173,6 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			// Include all our required files.
 			self::$instance->includes();
 
-			// Check for network activation.
-			// If the install is WPMS but the plugin is not network-activated, we need to warn the user through an admin notice.
-			add_action( 'admin_notices', array( self::$instance, 'multisite_check' ), 5 );
 		}
 
 		/**
@@ -267,6 +264,10 @@ if ( ! class_exists( 'AuthPress' ) ) :
 				self::$instance->add_error( 'wordpress_version_too_old', sprintf( __( 'AuthPress requires WordPress version %1$s or above. Please update WordPress to run this plugin.', 'authpress' ), self::$instance->wordpress_version_required ) );
 			}
 
+			if ( ! self::$instance->multisite_check() ) {
+				self::$instance->add_error( 'authpress_not_network_activated', sprintf( __( '<strong>AuthPress is not active.</strong> Your WordPress install is a multisite, but you have only enabled AuthPress on one site. This introduces a security risk. Please enable AuthPress network-wide to use it. <a href="%1$s" target="_blank">Read more about this</a>.', 'authpress' ), esc_url( 'https://github.com/julien731/AuthPress/wiki/Multisite-Activation' ) ) );
+			}
+
 			if ( is_wp_error( self::$instance->get_errors() ) ) {
 				return false;
 			}
@@ -280,12 +281,14 @@ if ( ! class_exists( 'AuthPress' ) ) :
 		 * If the plugin is not network activated, we display a warning message highlighting the security issue related to having it active on a per-site basis.
 		 *
 		 * @since 2.0
-		 * @return void
+		 * @return bool
 		 */
 		public function multisite_check() {
 			if ( true === is_multisite() && false === self::$instance->is_network_enabled() ) {
-				authpress_register_notice( 'authpress_not_network_activated', 'error', sprintf( __( 'AuthPress is only active on the current site of your network. This introduces a security risk. <strong>It is strongly advised that you network-activate the plugin for maximum security</strong>. <a href="%1$s" target="_blank">Read more about this</a>.', 'authpress' ), esc_url( 'https://github.com/julien731/AuthPress/wiki/Multisite-Activation' ) ) );
+				return false;
 			}
+
+			return true;
 		}
 
 		/**
@@ -355,7 +358,7 @@ if ( ! class_exists( 'AuthPress' ) ) :
 			if ( is_dir( __DIR__ . '/vendor' ) ) {
 				require( 'vendor/autoload.php' );
 			}
-			
+
 			// Load the files that are only necessary on the admin side of WordPress.
 			if ( is_admin() ) {
 				self::$instance->includes_admin();
