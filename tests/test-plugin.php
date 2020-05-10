@@ -57,7 +57,7 @@ class PluginTests extends WP_UnitTestCase {
 	}
 
 	function test_wordpress_version_fail() {
-		authpress()->wordpress_version_required = '5';
+		authpress()->wordpress_version_required = '10';
 		$this->assertFalse( authpress()->is_wordpress_version_ok() );
 	}
 
