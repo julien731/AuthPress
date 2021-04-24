@@ -1,4 +1,4 @@
-Google Authenticator for WordPress
+Authenticator for WordPress
 ==================================
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/julien731/WP-Google-Authenticator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/julien731/WP-Google-Authenticator/?branch=master)
@@ -6,8 +6,6 @@ Google Authenticator for WordPress
 If you are concerned about security, you should look into 2-factor authentication.
 
 *Quick reminder:* 2-factor authentication adds an extra layer of security by requesting a one time password in addition to standard username / password credentials.
-
-This plugin uses the Google Authenticator app. I bet you know Google, and you probably know they have some good products out there. Google Authenticator is one of them.
 
 [Download the Google Authenticator app](https://support.google.com/accounts/answer/1066447?hl=en) on your phone (iPhone, Android or Blackberry). Install this plugin on your site. After activating it and generating a secret key, you will be able to add the site to your app by scanning a QR code. That's it!
 
@@ -29,7 +27,8 @@ What the plugin does:
 - Recovery code in case the user can't use the app
 
 ### Using Authy
-You're using [Authy](https://www.authy.com/)? Google Authenticator for WordPress is fully compatible with Authy. You can add the 2-steps authentication and use Authy to generate the one time password.
+
+You're using [Authy](https://www.authy.com/)? Authenticator for WordPress is fully compatible with Authy. You can add the 2-steps authentication and use Authy to generate the one time password.
 
 ## Changelog ##
 
