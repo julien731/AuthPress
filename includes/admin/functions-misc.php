@@ -100,13 +100,12 @@ function wpga_force_set_secret() {
 
 }
 
-add_filter( 'contextual_help', 'wpga_contextual_help', 10, 3 );
 /**
  * Register the contextual help for the plugin admin screen
  */
 function wpga_contextual_help() {
 
-	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'wpga_options' ) {
+	if ( ! isset( $_GET['page'] ) || $_GET['page'] != 'wpga-settings' ) {
 		return;
 	}
 

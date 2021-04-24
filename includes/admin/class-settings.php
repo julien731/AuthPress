@@ -89,21 +89,24 @@ final class WPGA_Settings {
 	 */
 	function network_settings_page() {
 
-		// Standalone site menu
-		if ( true === is_multisite() && false === WPGA()->is_network_enabled() ) {
-			add_submenu_page( 'options-general.php', sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
+		// Network admin menu.
+		if ( true === is_multisite() && true === WPGA()->is_network_enabled() ) {
+			$menu_page = add_submenu_page( 'settings.php', esc_html__( 'Authenticator Network Settings', 'wpga' ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
 				$this,
 				'settings_page',
 			) );
 		}
 
-		// Network admin menu
+		// Standalone admin menu.
 		else {
-			add_submenu_page( 'settings.php', esc_html__( 'Authenticator Network Settings', 'wpga' ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
+			$menu_page = add_submenu_page( 'options-general.php', sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
 				$this,
 				'settings_page',
 			) );
 		}
+
+		// Adds my_help_tab when my_admin_page loads
+		add_action( 'load-' . $menu_page, 'wpga_contextual_help' );
 
 	}
 
