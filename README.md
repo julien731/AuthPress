@@ -32,6 +32,12 @@ You're using [Authy](https://www.authy.com/)? Authenticator for WordPress is ful
 
 ## Changelog ##
 
+### 1.1.1
+
+* Fix an issue with the settings page not showing up
+* Contextual help deprecated bug
+* Remove mentions of Google in the plugin name chore
+
 ### 1.1.0
 * Add support for apps passwords
 * Admins can now force 2FA by user role
