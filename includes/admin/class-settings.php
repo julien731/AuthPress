@@ -91,7 +91,7 @@ final class WPGA_Settings {
 
 		// Network admin menu.
 		if ( true === is_multisite() && true === WPGA()->is_network_enabled() ) {
-			add_submenu_page( 'settings.php', esc_html__( 'Authenticator Network Settings', 'wpga' ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
+			$menu_page = add_submenu_page( 'settings.php', esc_html__( 'Authenticator Network Settings', 'wpga' ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
 				$this,
 				'settings_page',
 			) );
@@ -99,11 +99,14 @@ final class WPGA_Settings {
 
 		// Standalone admin menu.
 		else {
-			add_submenu_page( 'options-general.php', sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
+			$menu_page = add_submenu_page( 'options-general.php', sprintf( esc_html__( '%1$s Settings', 'wpga' ), WPGA_NAME ), esc_html__( 'Authenticator', 'wpga' ), 'administrator', 'wpga-settings', array(
 				$this,
 				'settings_page',
 			) );
 		}
+
+		// Adds my_help_tab when my_admin_page loads
+		add_action( 'load-' . $menu_page, 'wpga_contextual_help' );
 
 	}
 
