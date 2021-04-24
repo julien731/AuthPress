@@ -10,7 +10,7 @@
  * Plugin Name:       WP Authenticator
  * Plugin URI:        https://wordpress.org/plugins/wp-google-authenticator/
  * Description:       WP Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            Julien Liabeuf
  * Author URI:        https://julienliabeuf.com
  * Text Domain:       wpga
@@ -194,7 +194,7 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		 * @return void
 		 */
 		private function setup_constants() {
-			define( 'WPGA_VERSION', '1.1.0' );
+			define( 'WPGA_VERSION', '1.1.1' );
 			define( 'WPGA_DB_VERSION', '1' );
 			define( 'WPGA_NAME', 'WP Authenticator' );
 			define( 'WPGA_AUTHOR', 'Julien Liabeuf' );
