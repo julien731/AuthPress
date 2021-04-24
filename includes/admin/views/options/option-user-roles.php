@@ -19,7 +19,7 @@
 function wpga_option_callback_user_roles( $option ) {
 
 	$option_id      = esc_attr( $option['id'] );
-	$value          = WPGA()->settings->get_option( $option_id );
+	$value          = WPGA()->settings->get_option( $option_id, array() );
 	$status         = WPGA()->settings->get_option( 'user_role_status', 'all' );
 	$checked_all    = ( 'all' === $status ) ? 'checked="checked"' : '';
 	$checked_custom = ( 'custom' === $status ) ? 'checked="checked"' : '';
