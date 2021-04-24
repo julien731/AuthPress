@@ -7,9 +7,9 @@
  * @copyright 2016 Julien Liabeuf
  *
  * @wordpress-plugin
- * Plugin Name:       WP Google Authenticator
+ * Plugin Name:       WP Authenticator
  * Plugin URI:        https://wordpress.org/plugins/wp-google-authenticator/
- * Description:       WP Google Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
+ * Description:       WP Authenticator provides a safe way to add 2-factor authentication to your WordPress site using the Google 2FA system with the Google Authenticator app.
  * Version:           1.1.0
  * Author:            Julien Liabeuf
  * Author URI:        https://julienliabeuf.com
