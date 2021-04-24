@@ -196,9 +196,9 @@ if ( ! class_exists( 'WP_Google_Authenticator' ) ):
 		private function setup_constants() {
 			define( 'WPGA_VERSION', '1.1.0' );
 			define( 'WPGA_DB_VERSION', '1' );
-			define( 'WPGA_NAME', 'WP Google Authenticator' );
+			define( 'WPGA_NAME', 'WP Authenticator' );
 			define( 'WPGA_AUTHOR', 'Julien Liabeuf' );
-			define( 'WPGA_URI', 'http://julienliabeuf.com' );
+			define( 'WPGA_URI', 'https://julienliabeuf.com' );
 			define( 'WPGA_URL', plugin_dir_url( __FILE__ ) );
 			define( 'WPGA_PATH', plugin_dir_path( __FILE__ ) );
 			define( 'WPGA_ROOT', trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) );
