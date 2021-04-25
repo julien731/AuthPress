@@ -3,6 +3,7 @@ filter:
         - 'vendor/*'
         - '*/vendor/*'
         - 'languages/*'
+        - 'asstes/js/jquery-qrcode.min.js'
 
 tools:
     external_code_coverage: false

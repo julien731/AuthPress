@@ -46,11 +46,11 @@ $alt       = 'class="alternate"';
 										$last_ip   = false !== $last ? $last['ip'] : '-';
 										?>
 										<tr <?php echo $alt; ?>>
-											<td class="row-title"><?php echo esc_html( $password['description'] ); ?></td>
+											<td class="row-title"><?php echo esc_html( $password['name'] ); ?></td>
 											<td><?php echo intval( $password['count'] ); ?></td>
 											<td><?php echo esc_html( $last_date ); ?></td>
 											<td><?php echo esc_html( $last_ip ); ?></td>
-											<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'wpga_apps_passwords', 'action' => 'delete', 'key' => $key, 'wpga_nonce' => wp_create_nonce( 'wpga_action' ) ), admin_url( 'users.php' ) ) ); ?>"><?php esc_html_e( 'Delete', 'wpga' ); ?></a></td>
+											<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'wpga_apps_passwords', 'action' => 'delete', 'key' => $password['ID'], 'wpga_nonce' => wp_create_nonce( 'wpga_action' ) ), admin_url( 'users.php' ) ) ); ?>"><?php esc_html_e( 'Delete', 'wpga' ); ?></a></td>
 										</tr>
 									<?php endforeach;
 								endif; ?>

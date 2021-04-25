@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "74b82c97a6218853ebdff019f454ba00",
+    "packages": [
+        {
+            "name": "julien731/wp-dismissible-notices-handler",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/julien731/WP-Dismissible-Notices-Handler.git",
+                "reference": "062b1472ddbac450f87a85fc4b979e04cde3a344"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/julien731/WP-Dismissible-Notices-Handler/zipball/062b1472ddbac450f87a85fc4b979e04cde3a344",
+                "reference": "062b1472ddbac450f87a85fc4b979e04cde3a344",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "handler.php",
+                    "includes/helper-functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU GPL"
+            ],
+            "authors": [
+                {
+                    "name": "Julien Liabeuf",
+                    "email": "julien@liabeuf.fr",
+                    "homepage": "https://julienliabeuf.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "A simple library to handle Ajax-dismissible admin notices for WordPress",
+            "homepage": "https://github.com/julien731/WP-Dismissible-Notices-Handler",
+            "support": {
+                "issues": "https://github.com/julien731/WP-Dismissible-Notices-Handler/issues",
+                "source": "https://github.com/julien731/WP-Dismissible-Notices-Handler/tree/1.2.2"
+            },
+            "time": "2021-02-17T15:56:18+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}
