@@ -33,7 +33,7 @@ function wpga_user_profile_fields( $user ) {
 	$backup = get_user_meta( $user->ID, 'wpga_backup_key', true );
 
 	if ( isset( $_GET['user_id'] ) ) {
-		$args['user_id'] = (int) $_GET['user_id'];
+		$args['user_id'] = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
 	}
 
 	$regenerate = wp_nonce_url( add_query_arg( $args, admin_url( 'profile.php' ) ), 'regenerate_key' );
@@ -138,7 +138,7 @@ function wpga_admin_custom_profile_fields() {
 		return;
 	}
 
-	$user_id      = (int) $_GET['user_id'];
+	$user_id      = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
 	$secret       = esc_attr( get_user_meta( $user_id, 'wpga_secret', true ) );
 	$args         = array( 'action' => 'revoke', 'user_id' => $user_id );
 	$rst_arg      = array( 'action' => 'reset', 'user_id' => $user_id );

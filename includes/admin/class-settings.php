@@ -440,7 +440,9 @@ final class WPGA_Settings {
 	 */
 	public function settings_page() {
 
-		if ( isset( $_GET['updated'] ) && 'true' === $_GET['updated'] && is_network_admin() ) { ?>
+		$updated = filter_input( INPUT_GET, 'updated', FILTER_SANITIZE_STRING );
+
+		if ( isset( $_GET['updated'] ) && 'true' === $updated && is_network_admin() ) { ?>
 			<div id="setting-error-settings_updated" class="updated settings-error notice is-dismissible">
 				<p><strong>Settings saved.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 			</div>

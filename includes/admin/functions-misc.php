@@ -30,7 +30,7 @@ function wpga_admin_notices() {
 		return;
 	}
 
-	$uid = isset( $_GET['user_id'] ) ? $_GET['user_id'] : '';
+	$uid = isset( $_GET['user_id'] ) ? filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT ) : '';
 
 	$messages = array(
 		'10' => esc_html__( 'Your secret key has been regenerated.', 'wpga' ),
@@ -38,13 +38,15 @@ function wpga_admin_notices() {
 		'12' => sprintf( esc_html__( 'The attempts count has been reset.', 'wpga' ), $uid ),
 	);
 
-	if ( ! isset( $messages[ $_GET['update'] ] ) ) {
+	$update = filter_input( INPUT_GET, 'update', FILTER_SANITIZE_STRING );
+
+	if ( ! isset( $messages[ $update ] ) ) {
 		return;
 	}
 
 	?>
 	<div class="updated">
-		<p><?php echo esc_html( $messages[ $_GET['update'] ] ); ?></p>
+		<p><?php echo esc_html( $messages[ $update ] ); ?></p>
 	</div>
 	<?php
 

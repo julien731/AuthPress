@@ -219,9 +219,12 @@ function wpas_apps_passwords_actions() {
 
 	if ( isset( $_GET['action'] ) && isset( $_GET['wpga_nonce'] ) ) {
 
-		if ( wp_verify_nonce( $_GET['wpga_nonce'], 'wpga_action' ) ) {
+		$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$nonce = filter_input( INPUT_GET, 'wpga_nonce', FILTER_SANITIZE_STRING );
 
-			switch ( $_GET['action'] ) {
+		if ( wp_verify_nonce( $nonce, 'wpga_action' ) ) {
+
+			switch ( $action ) {
 				case 'delete':
 
 					if ( isset( $_GET['key'] ) ) {
