@@ -68,6 +68,8 @@ function wpga_edit_secret() {
 		return;
 	}
 
+	$user_id = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+
 	switch( $_GET['action'] ):
 
 		case 'regenerate':
@@ -97,9 +99,9 @@ function wpga_edit_secret() {
 				return;
 			}
 
-			delete_user_meta( $_GET['user_id'], 'wpga_secret' );
-			delete_user_meta( $_GET['user_id'], 'wpga_backup_key' );
-			wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '11' ), admin_url( 'user-edit.php' ) ) );
+			delete_user_meta( $user_id, 'wpga_secret' );
+			delete_user_meta( $user_id, 'wpga_backup_key' );
+			wp_redirect( add_query_arg( array( 'user_id' => $user_id, 'update' => '11' ), admin_url( 'user-edit.php' ) ) );
 			exit;
 
 			break;
@@ -110,13 +112,13 @@ function wpga_edit_secret() {
 				return;
 			}
 
-			if ( ! current_user_can( 'edit_user', $_GET['user_id'] ) ) {
+			if ( ! current_user_can( 'edit_user', $user_id ) ) {
 				return;
 			}
 
-			delete_user_meta( $_GET['user_id'], 'wpga_attempts' );
-			delete_user_meta( $_GET['user_id'], 'wpga_backup_key' );
-			wp_redirect( add_query_arg( array( 'user_id' => $_GET['user_id'], 'update' => '12' ), admin_url( 'user-edit.php' ) ) );
+			delete_user_meta( $user_id, 'wpga_attempts' );
+			delete_user_meta( $user_id, 'wpga_backup_key' );
+			wp_redirect( add_query_arg( array( 'user_id' => $user_id, 'update' => '12' ), admin_url( 'user-edit.php' ) ) );
 			exit;
 
 			break;
